@@ -26,6 +26,15 @@ Confed Borrowing System/
 
 *(All old, fragmented files from initial drafting have been cleanly archived in `_legacy_archive/` so your working directory remains 100% clean).*
 
+**UPDATE: New Modular Architecture**
+The codebase has been refactored for better maintainability:
+- `index.php`: Now acts as a lightweight router/assembler.
+- `actions/`: Contains isolated backend logic (e.g., `auth_action.php`, `txn_action.php`).
+- `views/`: Contains UI templates split into `layout/`, `pages/`, and `modals/`.
+- `config/`: Contains `db.php`, `session.php`, and `helpers.php`.
+- `assets/`: Contains `css/style.css` and `js/app.js`.
+- `database/`: Contains SQL schema files.
+
 ---
 
 ## 🎯 Course Rubric & Specification Checklist
@@ -56,6 +65,11 @@ Confed Borrowing System/
 
 *Tip for Defense: On the login screen, you can click **"👤 Fill Admin"** or **"👔 Fill Staff"** for 1-click automatic credential filling! You can also click **"Register Staff Account"** to demonstrate creating a new clerk account.*
 
+**UPDATE: Revised Login Credentials**
+- **Administrator:** Email: `admin@csc.edu.ph` | Password: `admin123`
+- **Committee/Staff:** Email: `staff@csc.edu.ph` | Password: `staff123`
+The login form now features 1-click auto-fill buttons for these accounts for easy testing.
+
 ---
 
 ## 🐬 MySQL & phpMyAdmin Setup Instructions
@@ -79,6 +93,10 @@ Confed Borrowing System/
 4. Start by going to **Resources** &rarr; click **"+ Add Resource"** to input your council's equipment (speakers, sports gear, etc.).
 5. When students arrive at the desk, click **"+ Desk Checkout"** to list down who borrowed what!
 
+**UPDATE: Run Instructions**
+- The project folder is now `CBSFork`. Navigate to `http://localhost/CBSFork/`.
+- Use the updated email-based login credentials listed above.
+
 ---
 
 ## 🎓 Defense Guide: How to Explain the Code to Your Professor
@@ -89,8 +107,14 @@ Confed Borrowing System/
 ### 2. "How does the database connect and initialize?"
 > *"In `db.php`, we connect to MySQL in phpMyAdmin via PHP Data Objects (PDO) inside `get_db()`. We configured it with `utf8mb4` charset and prepared statements to prevent SQL injections. As required, we kept the inventory and bookings tables completely clean without artificial seed data, allowing our Admin and Staff to manually input the council's actual resources and list down transactions as students arrive at the desk."*
 
+**UPDATE: Database Config Location**
+> *The `db.php` file has been moved inside the `config/` directory to adhere to modular design principles.*
+
 ### 3. "Where does authentication and user roles happen?"
 > *"In `index.php` (around lines 25–90), we handle `action=login` and verify passwords using PHP's native `password_verify()`. If not logged in, the system displays only the secure Officer Sign In screen. Once authenticated, `$_SESSION['role']` determines permissions: `admin` gets full custody control (only Admins can add, edit, or delete equipment resources and manage staff accounts), while `staff` is strictly restricted to operational borrowing desk duties (checking out equipment, logging returns, rescheduling, and issuing gate passes)."*
+
+**UPDATE: Authentication Refactoring**
+> *Authentication logic has been moved from `index.php` to `actions/auth_action.php` for a cleaner separation of concerns. Session management is handled globally in `config/session.php`.*
 
 ### 4. "Show me the Desk Checkout process."
 > *"When an officer is logged in, clicking the **'+ Desk Checkout'** button opens `#newBookingModal`. The officer selects the equipment (showing live stock availability), enters the borrower's Student ID, Name, Organization, dates, and purpose. Clicking submit automatically decrements stock, records the client, creates the booking, and generates a printable Custody Slip/Gate Pass via `receipt.php`."*
