@@ -1,8 +1,3 @@
-              </div>
-            </div>
-          </div>
-
-          <!-- INVENTORY TAB -->
           <div class="tab-pane fade" id="tab-inventory">
             <div class="content-card">
               <div class="content-card-header d-flex justify-content-between align-items-center">
@@ -19,7 +14,7 @@
                   <thead><tr><th>ID</th><th>Description</th><th>Category</th><th>Total Qty</th><th>Available</th><th>Rate</th><th>Action</th></tr></thead>
                   <tbody>
                     <?php foreach($items as $i): ?>
-                      <tr id="row-<?= $i['itemID'] ?>">
+                      <tr id="row-item-<?= $i['itemID'] ?>">
                         <td><?= $i['itemID'] ?></td><td><?= htmlspecialchars($i['itemDesc']) ?></td><td><?= htmlspecialchars($i['itemCategory']) ?></td>
                         <td><?= $i['itemTotalQty'] ?></td><td><?= $i['itemAvailableQty'] ?></td><td><?= $i['itemRate'] ?></td>
                         <td>
@@ -28,3 +23,12 @@
                             <input type="hidden" name="action" value="archive_item"><input type="hidden" name="itemID" value="<?= $i['itemID'] ?>">
                             <button class="btn btn-sm btn-outline-danger py-0 px-2" style="font-size:12px;">Archive</button>
                           </form>
+                          <?php endif; ?>
+                        </td>
+                      </tr>
+                    <?php endforeach; ?>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>

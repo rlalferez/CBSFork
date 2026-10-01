@@ -1,46 +1,23 @@
-                      </div>
-                    </div>
-                  </div>
-                  <div class="modal-footer bg-light border-0 rounded-bottom"><button type="submit" class="btn btn-success py-2 px-4">Confirm Return</button></div>
-                </form>
-            </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-  
-  <!-- Modal: Add Purchase -->
-  <div class="modal fade" id="modalPurchase" tabindex="-1">
+  <!-- Modal: Add Borrower -->
+  <div class="modal fade" id="modalBorrower" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <form action="actions/borrower_action.php" method="POST">
-          <input type="hidden" name="action" value="purchase_item">
-          <div class="modal-header"><h5 class="modal-title fw-bold">Log Purchase</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+          <input type="hidden" name="action" value="save_borrower">
+          <input type="hidden" name="brwID" value="NEW">
+          <div class="modal-header"><h5 class="modal-title fw-bold">Add Borrower Profile</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
           <div class="modal-body p-4">
-            <div class="mb-3">
-              <label class="form-label fw-bold">Equipment</label>
-              <select name="itemID" class="form-select select2-init" required style="width:100%;">
-                <?php foreach($items as $i): ?><option value="<?= $i['itemID'] ?>"><?= htmlspecialchars($i['itemDesc']) ?></option><?php endforeach; ?>
-              </select>
+            <div class="mb-3"><label class="form-label fw-bold">Student ID</label><input type="text" name="brwStudentID" class="form-control" required></div>
+            <div class="row">
+              <div class="col-md-6 mb-3"><label class="form-label fw-bold">First Name</label><input type="text" name="brwFName" class="form-control" required></div>
+              <div class="col-md-6 mb-3"><label class="form-label fw-bold">Last Name</label><input type="text" name="brwLName" class="form-control" required></div>
             </div>
-            <div class="mb-3"><label class="form-label fw-bold">OR Number</label><input type="text" name="purORNo" class="form-control" required></div>
-            <div class="mb-3"><label class="form-label fw-bold">Quantity Bought</label><input type="number" name="purQty" class="form-control" value="1" required></div>
+            <div class="mb-3"><label class="form-label fw-bold">College</label><input type="text" name="brwCollege" class="form-control" required></div>
+            <div class="mb-3"><label class="form-label fw-bold">Organization</label><input type="text" name="brwOrg" class="form-control"></div>
+            <div class="mb-3"><label class="form-label fw-bold">Contact No.</label><input type="text" name="brwContactNo" class="form-control"></div>
           </div>
-          <div class="modal-footer"><button type="submit" class="btn btn-success py-2 px-4">Log Purchase</button></div>
+          <div class="modal-footer"><button type="submit" class="btn btn-primary-action py-2 px-4">Save Borrower</button></div>
         </form>
       </div>
     </div>
   </div>
-
-  <!-- Modal: Add/Edit Item -->
-  <div class="modal fade" id="modalItem" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <form action="actions/borrower_action.php" method="POST">
-          <input type="hidden" name="action" value="save_item">
-          <input type="hidden" name="itemID" value="NEW">
-          <div class="modal-header"><h5 class="modal-title fw-bold">Add Equipment</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-          <div class="modal-body p-4">
-            <div class="mb-3"><label class="form-label fw-bold">Description / Name</label><input type="text" name="itemDesc" class="form-control" required></div>
-            <div class="mb-3"><label class="form-label fw-bold">Category</label><input type="text" name="itemCategory" class="form-control" value="Audio & Visual" required></div>

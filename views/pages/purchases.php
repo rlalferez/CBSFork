@@ -1,7 +1,4 @@
-                </div>
-              </div>
-            </div>
-          </div>
+
 
           <!-- PURCHASES TAB -->
           <div class="tab-pane fade" id="tab-purchases">
@@ -20,10 +17,13 @@
                   <thead><tr><th>PUR ID</th><th>OR No.</th><th>Item</th><th>Qty</th><th>Date</th><th>Logged By</th></tr></thead>
                   <tbody>
                     <?php foreach($purchases as $p): ?>
-                      <tr id="row-<?= $p['purTransID'] ?>">
+                      <tr id="row-pur-<?= $p['purTransID'] ?>">
                         <td><?= $p['purTransID'] ?></td><td><?= htmlspecialchars($p['purORNo']) ?></td>
-                        <td><a href="#" onclick="switchTabAndHighlight('#tab-inventory', 'row-<?= $p['itemID'] ?>'); return false;" class="text-decoration-none fw-bold"><?= htmlspecialchars($p['itemDesc']) ?></a></td><td><?= $p['purQty'] ?></td>
+                        <td><a href="#" onclick="switchTabAndHighlight('#tab-inventory', 'row-item-<?= $p['itemID'] ?>'); return false;" class="text-decoration-none fw-bold"><?= htmlspecialchars($p['itemDesc']) ?></a></td><td><?= $p['purQty'] ?></td>
                         <td><?= $p['purDate'] ?></td><td><?= htmlspecialchars($p['userFName'].' '.$p['userLName']) ?></td>
                       </tr>
                     <?php endforeach; ?>
-                  </tbody>
+                  </tbody>                </table>
+              </div>
+            </div>
+          </div>

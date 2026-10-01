@@ -1,6 +1,3 @@
-              </div>
-            </div>
-          </div>
 
           <!-- REPORTS TAB -->
           <div class="tab-pane fade <?= $isReportActive ? 'show active' : '' ?>" id="tab-reports">
@@ -163,4 +160,8 @@
                           </tr>
                         <?php endforeach; ?>
                       </tbody>
-                    </table>
+                    </table>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>

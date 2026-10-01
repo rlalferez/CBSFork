@@ -117,13 +117,24 @@ $repInventory = $db->query("SELECT * FROM item WHERE is_archived = 0 ORDER BY it
 require_once 'views/layout/header.php';
 ?>
 
+<?php require_once 'views/layout/topbar.php'; ?>
 <div class="app-shell pb-0 no-print">
-    <?php require_once 'views/layout/topbar.php'; ?>
-    
     <div class="app-layout">
         <?php require_once 'views/layout/sidebar.php'; ?>
         
         <main class="app-main">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2 no-print">
+              <div>
+                <h3 class="fw-bold text-dark mb-1">Council Desk Station</h3>
+                <div class="text-muted small">
+                  Welcome, <strong><?= htmlspecialchars($currentUser['full_name']) ?></strong> &bull; Assigned as <span class="badge bg-primary-subtle text-primary border border-primary-subtle text-uppercase"><?= htmlspecialchars($currentUser['role']) ?></span>
+                </div>
+              </div>
+              <div class="bg-white px-3 py-2 rounded-pill border shadow-sm small text-muted d-flex align-items-center gap-2">
+                <svg width="16" height="16" class="text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span>Date: <strong><?= date('F d, Y') ?></strong></span>
+              </div>
+            </div>
             <!-- Alert Display -->
             <?php if (!empty($alert['message'])): ?>
             <div class="px-4 pt-4 pb-0 no-print">

@@ -1,16 +1,3 @@
-<?php if($isAdmin): ?>
-                            <button class="btn btn-sm btn-outline-danger py-0 px-2" style="font-size:12px;">Archive</button>
-                          </form>
-                        </td>
-                      </tr>
-                    <?php endforeach; ?>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          <!-- USER MANAGEMENT TAB -->
           <?php if($isAdmin): ?>
           <div class="tab-pane fade" id="tab-users">
             <div class="content-card">
@@ -29,4 +16,20 @@
                       <tr>
                         <td><?= $u['userID'] ?></td><td><?= htmlspecialchars($u['userFName'].' '.$u['userLName']) ?></td>
                         <td><?= htmlspecialchars($u['userRole']) ?></td>
-<?php endif; ?>
+                        <td><a href="https://mail.google.com/mail/?view=cm&fs=1&to=<?= urlencode($u['userEmail']) ?>" target="_blank"><?= htmlspecialchars($u['userEmail']) ?></a></td>
+                        <td><?= htmlspecialchars($u['userContactNo']) ?></td>
+                        <td>
+                          <button class="btn btn-sm btn-outline-primary py-0 px-2" style="font-size:12px;" onclick="editUser('<?= $u['userID'] ?>', '<?= addslashes($u['userFName']) ?>', '<?= addslashes($u['userLName']) ?>', '<?= addslashes($u['userEmail']) ?>', '<?= addslashes($u['userContactNo']) ?>', '<?= addslashes($u['userRole']) ?>')">Edit</button>
+                          <form action="actions/user_action.php" method="POST" class="d-inline" onsubmit="return confirm('Archive?');">
+                            <input type="hidden" name="action" value="archive_user"><input type="hidden" name="userID" value="<?= $u['userID'] ?>">
+                            <button class="btn btn-sm btn-outline-danger py-0 px-2" style="font-size:12px;">Archive</button>
+                          </form>
+                        </td>
+                      </tr>
+                    <?php endforeach; ?>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <?php endif; ?>

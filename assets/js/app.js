@@ -1,3 +1,4 @@
+    $(document).ready(function() {
         // AJAX Search for Borrower Auto-population
         let searchTimeout;
         $('#borrowerSearch').on('input', function() {
@@ -32,26 +33,28 @@
         $('#borrowerResults').hide();
     }
     
-    // AJAX Search for Transaction Auto-population
-    let txnSearchTimeout;
-    $('#transactionSearch').on('input', function() {
-        clearTimeout(txnSearchTimeout);
-        let query = $(this).val();
-        if(query.length < 3) {
-            $('#transactionResults').hide();
-            return;
-        }
-        txnSearchTimeout = setTimeout(function() {
-            $.post('index.php', { action: 'search_transaction', query: query }, function(data) {
-                let html = '';
-                data.forEach(function(t) {
-                    html += `<a href="#" class="list-group-item list-group-item-action" onclick="selectTransaction('${t.brwTransID}', '${t.itemID}', '${t.itemDesc}', '${t.brwID}', '${t.brwFName} ${t.brwLName}', '${t.brwTransItemQty}')">
-                              <strong>${t.brwTransID}</strong> - ${t.itemDesc} (Borrower: ${t.brwFName} ${t.brwLName})
-                             </a>`;
+    $(document).ready(function() {
+        // AJAX Search for Transaction Auto-population
+        let txnSearchTimeout;
+        $('#transactionSearch').on('input', function() {
+            clearTimeout(txnSearchTimeout);
+            let query = $(this).val();
+            if(query.length < 3) {
+                $('#transactionResults').hide();
+                return;
+            }
+            txnSearchTimeout = setTimeout(function() {
+                $.post('index.php', { action: 'search_transaction', query: query }, function(data) {
+                    let html = '';
+                    data.forEach(function(t) {
+                        html += `<a href="#" class="list-group-item list-group-item-action" onclick="selectTransaction('${t.brwTransID}', '${t.itemID}', '${t.itemDesc}', '${t.brwID}', '${t.brwFName} ${t.brwLName}', '${t.brwTransItemQty}')">
+                                  <strong>${t.brwTransID}</strong> - ${t.itemDesc} (Borrower: ${t.brwFName} ${t.brwLName})
+                                 </a>`;
+                    });
+                    $('#transactionResults').html(html).show();
                 });
-                $('#transactionResults').html(html).show();
-            });
-        }, 300);
+            }, 300);
+        });
     });
 
     // Helper function to handle transaction selection
@@ -102,8 +105,8 @@
             const row = document.getElementById(rowId);
             if (row) {
                 row.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                row.classList.add('table-warning');
-                setTimeout(() => row.classList.remove('table-warning'), 2500);
+                row.classList.add('row-highlight');
+                setTimeout(() => row.classList.remove('row-highlight'), 2500);
             }
         }, 150);
     }
@@ -114,8 +117,8 @@
             const row = document.getElementById(rowId);
             if (row) {
                 row.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                row.classList.add('table-warning');
-                setTimeout(() => row.classList.remove('table-warning'), 2500);
+                row.classList.add('row-highlight');
+                setTimeout(() => row.classList.remove('row-highlight'), 2500);
             }
         }, 200);
     }
@@ -144,6 +147,3 @@
         this.querySelector('input[name="password"]').placeholder = "";
     });
   
-</body>
-</html>
-

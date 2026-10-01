@@ -1,35 +1,22 @@
-            <div class="mb-3"><label class="form-label fw-bold">Contact No.</label><input type="text" name="userContactNo" class="form-control"></div>
+  <!-- Modal: Add Purchase -->
+  <div class="modal fade" id="modalPurchase" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form action="actions/purchase_action.php" method="POST">
+          <input type="hidden" name="action" value="purchase_item">
+          <div class="modal-header"><h5 class="modal-title fw-bold">Log Purchase</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+          <div class="modal-body p-4">
             <div class="mb-3">
-              <label class="form-label fw-bold">Role</label>
-              <select name="userRole" class="form-select">
-                <option value="Committee">Committee</option>
-                <option value="Council">Council (Admin)</option>
+              <label class="form-label fw-bold">Equipment</label>
+              <select name="itemID" class="form-select select2-init" required style="width:100%;">
+                <?php foreach($items as $i): ?><option value="<?= $i['itemID'] ?>"><?= htmlspecialchars($i['itemDesc']) ?></option><?php endforeach; ?>
               </select>
             </div>
-            <div class="mb-3"><label class="form-label fw-bold">Password</label><input type="password" name="password" class="form-control" required></div>
+            <div class="mb-3"><label class="form-label fw-bold">OR Number</label><input type="text" name="purORNo" class="form-control" required></div>
+            <div class="mb-3"><label class="form-label fw-bold">Quantity Bought</label><input type="number" name="purQty" class="form-control" value="1" required></div>
           </div>
-          <div class="modal-footer"><button type="submit" class="btn btn-primary-action py-2 px-4">Save User</button></div>
+          <div class="modal-footer"><button type="submit" class="btn btn-success py-2 px-4">Log Purchase</button></div>
         </form>
       </div>
     </div>
   </div>
-
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-  <script>
-    $(document).ready(function() {
-        // Initialize Select2 dropdown inside bootstrap modals
-        $('.select2-init').select2({ dropdownParent: $('.modal') });
-        
-        // Mobile Sidebar Toggle Logic
-        $('#sidebarToggle').click(function() {
-            $('#sidebarMenu').addClass('show-sidebar');
-        });
-        $('#sidebarClose').click(function() {
-            $('#sidebarMenu').removeClass('show-sidebar');
-        });
-        
-        // Handle Sidebar Tab switching to mimic the old custom active state logic
-        $('.nav-tab-btn').click(function() {
-           $('.nav-tab-btn').removeClass('active');

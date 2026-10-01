@@ -11,7 +11,7 @@ if ($currentUser) { header('Location: index.php'); exit; }
   <title>Confederates Student Council &bull; Resource Management System</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=<?= time() ?>">
+  <link rel="stylesheet" href="assets/css/style.css?v=<?= time() ?>">
   <style>
     .modal-body .form-label { font-size: 1.05rem; margin-bottom: 0.5rem; }
       @media print {
