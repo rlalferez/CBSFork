@@ -12,7 +12,7 @@
                 $.post('actions/borrower_action.php', { action: 'search_borrower', query: query }, function(data) {
                     let html = '';
                     data.forEach(function(b) {
-                        html += `<a href="#" class="list-group-item list-group-item-action" onclick="selectBorrower('${b.brwID}', '${b.brwStudentID}', '${b.brwFName}', '${b.brwLName}', '${b.brwCollege}', '${b.brwDept}', '${b.brwContact}')">
+                        html += `<a href="#" class="list-group-item list-group-item-action" onclick="selectBorrower('${b.brwID}', '${b.brwStudentID}', '${b.brwFName}', '${b.brwLName}', '${b.brwCollege}', '${b.brwOrg}', '${b.brwContactNo}')">
                                   ${b.brwFName} ${b.brwLName} (${b.brwStudentID})
                                  </a>`;
                     });
@@ -179,3 +179,26 @@
         this.querySelector('input[name="password"]').required = true;
         this.querySelector('input[name="password"]').placeholder = "";
     });
+
+    // Item Edit Helper
+    function editItem(id, desc, category, rate) {
+        document.querySelector('#modalItem input[name="itemID"]').value = id;
+        document.querySelector('#modalItem input[name="itemDesc"]').value = desc;
+        document.querySelector('#modalItem select[name="itemCategory"]').value = category;
+        document.querySelector('#modalItem input[name="itemRate"]').value = rate;
+        
+        document.getElementById('itemModalTitle').textContent = 'Edit Item';
+        document.getElementById('itemModalBtn').textContent = 'Save Changes';
+        
+        var modal = new bootstrap.Modal(document.getElementById('modalItem'));
+        modal.show();
+    }
+
+    // Reset modalItem when hidden
+    document.getElementById('modalItem')?.addEventListener('hidden.bs.modal', function () {
+        this.querySelector('form').reset();
+        this.querySelector('input[name="itemID"]').value = 'NEW';
+        document.getElementById('itemModalTitle').textContent = 'Add Item';
+        document.getElementById('itemModalBtn').textContent = 'Save Item';
+    });
+

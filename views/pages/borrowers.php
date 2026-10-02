@@ -1,14 +1,14 @@
           <div class="tab-pane fade" id="tab-borrowers">
             <div class="content-card">
-              <div class="content-card-header border-bottom-0 pb-0 d-flex justify-content-between align-items-center">
+              <div class="content-card-header border-bottom d-flex justify-content-between align-items-center">
                 <div>
-                  <h5 class="fw-bold mb-1 text-dark">Borrower Directory</h5>
+                  <h5 class="fw-bold mb-1 text-dark">Borrower Management</h5>
                   <p class="text-muted small mb-0">Manage student and organization profiles.</p>
                 </div>
-                <button class="btn btn-primary-action btn-sm" data-bs-toggle="modal" data-bs-target="#modalBorrower">Add Borrower</button>
-              </div>
-              <div class="px-4 pt-4 pb-3 d-flex gap-3 align-items-center border-bottom bg-light">
-                  <input type="text" class="form-control form-control-sm table-search ms-auto" data-target="#borrowersTable" placeholder="Search borrowers..." style="max-width: 250px;">
+                <div class="d-flex align-items-center gap-3">
+                  <input type="text" class="form-control form-control-sm table-search" data-target="#borrowersTable" placeholder="Search borrowers..." style="max-width: 250px;">
+                  <button class="btn btn-primary-action btn-sm text-nowrap" data-bs-toggle="modal" data-bs-target="#modalBorrower">Add Borrower</button>
+                </div>
               </div>
               <div class="table-responsive">
                 <table class="table-custom" id="borrowersTable">

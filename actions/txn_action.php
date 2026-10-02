@@ -58,7 +58,7 @@ if ($action === 'search_transaction') {
     // Create new borrower if brwID is empty but details are provided
     if (empty($brwID) && !empty($_POST['brwStudentID'])) {
         $brwID = generate_id($db, 'borrower', 'brwID', 'BRW-');
-        $stmt = $db->prepare("INSERT INTO borrower (brwID, brwStudentID, brwFName, brwLName, brwContact, brwCollege, brwDept) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $db->prepare("INSERT INTO borrower (brwID, brwStudentID, brwFName, brwLName, brwContactNo, brwCollege, brwOrg) VALUES (?, ?, ?, ?, ?, ?, ?)");
         $stmt->execute([
             $brwID, 
             $_POST['brwStudentID'], 
