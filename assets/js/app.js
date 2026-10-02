@@ -1,5 +1,5 @@
     $(document).ready(function() {
-        // AJAX Search for Borrower Auto-population
+        // AJAX Search for Borrower Auto-population (Checkout)
         let searchTimeout;
         $('#borrowerSearch').on('input', function() {
             clearTimeout(searchTimeout);
@@ -8,76 +8,111 @@
                 $('#borrowerResults').hide();
                 return;
             }
-            // Delay request to prevent spam
             searchTimeout = setTimeout(function() {
-                $.post('index.php', { action: 'search_borrower', query: query }, function(data) {
+                $.post('actions/borrower_action.php', { action: 'search_borrower', query: query }, function(data) {
                     let html = '';
                     data.forEach(function(b) {
-                        html += `<a href="#" class="list-group-item list-group-item-action" onclick="selectBorrower('${b.brwID}', '${b.brwFName} ${b.brwLName}', '${b.brwCollege} / ${b.brwOrg}')">
+                        html += `<a href="#" class="list-group-item list-group-item-action" onclick="selectBorrower('${b.brwID}', '${b.brwStudentID}', '${b.brwFName}', '${b.brwLName}', '${b.brwCollege}', '${b.brwDept}', '${b.brwContact}')">
                                   ${b.brwFName} ${b.brwLName} (${b.brwStudentID})
                                  </a>`;
                     });
+                    if (data.length === 0) {
+                        html = '<div class="list-group-item text-muted">No results found.</div>';
+                    }
                     $('#borrowerResults').html(html).show();
                 });
             }, 300);
         });
-    });
 
-    // Helper function to handle borrower selection
-    function selectBorrower(id, name, org) {
-        $('#selectedBrwID').val(id);
-        $('#borrowerSearch').val(name);
-        $('#pvName').text(name);
-        $('#pvOrg').text(org);
-        $('#borrowerPreview').show();
-        $('#borrowerResults').hide();
-    }
-    
-    $(document).ready(function() {
-        // AJAX Search for Transaction Auto-population
-        let txnSearchTimeout;
-        $('#transactionSearch').on('input', function() {
-            clearTimeout(txnSearchTimeout);
+        // AJAX Search for Borrower (Return)
+        let retSearchTimeout;
+        $('#retBorrowerSearch').on('input', function() {
+            clearTimeout(retSearchTimeout);
             let query = $(this).val();
-            if(query.length < 3) {
-                $('#transactionResults').hide();
+            if(query.length < 2) {
+                $('#retBorrowerResults').hide();
                 return;
             }
-            txnSearchTimeout = setTimeout(function() {
-                $.post('index.php', { action: 'search_transaction', query: query }, function(data) {
+            retSearchTimeout = setTimeout(function() {
+                $.post('actions/borrower_action.php', { action: 'search_borrower', query: query }, function(data) {
                     let html = '';
-                    data.forEach(function(t) {
-                        html += `<a href="#" class="list-group-item list-group-item-action" onclick="selectTransaction('${t.brwTransID}', '${t.itemID}', '${t.itemDesc}', '${t.brwID}', '${t.brwFName} ${t.brwLName}', '${t.brwTransItemQty}')">
-                                  <strong>${t.brwTransID}</strong> - ${t.itemDesc} (Borrower: ${t.brwFName} ${t.brwLName})
+                    data.forEach(function(b) {
+                        html += `<a href="#" class="list-group-item list-group-item-action" onclick="selectRetBorrower('${b.brwID}', '${b.brwStudentID}', '${b.brwFName}', '${b.brwLName}')">
+                                  ${b.brwFName} ${b.brwLName} (${b.brwStudentID})
                                  </a>`;
                     });
-                    $('#transactionResults').html(html).show();
+                    if (data.length === 0) {
+                        html = '<div class="list-group-item text-muted">No results found.</div>';
+                    }
+                    $('#retBorrowerResults').html(html).show();
                 });
             }, 300);
         });
+        
+        // Setup Table Search Filter
+        $('.table-search').on('keyup', function() {
+            let value = $(this).val().toLowerCase();
+            let targetTable = $(this).data('target');
+            $(targetTable + ' tbody tr').filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+        
+        // Setup Select2 for Item Modal Category
+        if ($('.select2-init').length > 0) {
+            $('.select2-init').select2({
+                tags: true,
+                dropdownParent: $('#modalItem')
+            });
+        }
     });
 
-    // Helper function to handle transaction selection
-    function selectTransaction(txnID, itemID, itemDesc, brwID, brwName, maxQty) {
-        $('#transactionSearch').val(txnID);
-        $('#retItemID').val(itemID);
-        $('#retBrwID').val(brwID);
-        $('#retQty').val(maxQty);
-        $('#retQty').attr('max', maxQty);
-        
-        $('#ptTxnID').text(txnID);
-        $('#ptItemDesc').text(itemDesc + ' (ID: ' + itemID + ')');
-        $('#ptBorrower').text(brwName + ' (ID: ' + brwID + ')');
-        $('#transactionPreview').show();
-        $('#transactionResults').hide();
+    // Helper function to handle checkout borrower selection
+    function selectBorrower(id, studentId, fname, lname, college, dept, contact) {
+        $('#selectedBrwID').val(id);
+        $('#borrowerSearch').val(studentId);
+        $('#bStudentID').val(studentId).attr('readonly', true);
+        $('#bfName').val(fname).attr('readonly', true);
+        $('#blName').val(lname).attr('readonly', true);
+        $('#bCollege').val(college).attr('readonly', true);
+        $('#bDept').val(dept).attr('readonly', true);
+        $('#bContact').val(contact).attr('readonly', true);
+        $('#borrowerResults').hide();
     }
     
-    // Reports Period Toggler
-    function togglePeriodInputs() {
-        let val = document.getElementById('repPeriod').value;
-        document.getElementById('repDayContainer').style.display = (val === 'day') ? 'block' : 'none';
-        document.getElementById('repMonthContainer').style.display = (val === 'month') ? 'block' : 'none';
-        document.getElementById('repYearContainer').style.display = (val === 'year') ? 'block' : 'none';
+    // Helper function to handle return borrower selection
+    function selectRetBorrower(id, studentId, fname, lname) {
+        $('#retSelectedBrwID').val(id);
+        $('#retBorrowerSearch').val(studentId);
+        $('#retPvName').text(fname + ' ' + lname);
+        $('#retPvStudentID').text(studentId);
+        $('#retBorrowerPreview').show();
+        $('#retBorrowerResults').hide();
+        
+        // Fetch active borrows
+        $.post('actions/txn_action.php', { action: 'search_active_borrows', brwID: id }, function(data) {
+            let options = '<option value="">Select borrowed item...</option>';
+            data.forEach(function(item) {
+                let remaining = item.brwTransItemQty - item.returned_qty;
+                options += `<option value="${item.brwTransID}" data-date="${item.brwTransBorrowOnDate}" data-qty="${remaining}">
+                              ${item.itemDesc} (Txn: ${item.brwTransID}) - ${remaining} unreturned
+                            </option>`;
+            });
+            // Update all active-borrows-select in case there are multiple
+            $('.active-borrows-select').html(options);
+        });
+    }
+    
+    // Table Filter by Pill
+    function filterTableByPill(tableId, filterText, colIndex) {
+        if(filterText === 'All') {
+            $(tableId + ' tbody tr').show();
+        } else {
+            $(tableId + ' tbody tr').each(function() {
+                let cellText = $(this).find('td').eq(colIndex).text();
+                $(this).toggle(cellText.indexOf(filterText) > -1);
+            });
+        }
     }
 
     // Open Subtab from Sidebar
@@ -86,8 +121,6 @@
         if (parentBtn) {
             new bootstrap.Tab(parentBtn).show();
         }
-        
-        // Wait a small delay to ensure parent pane is active before showing subtab
         setTimeout(() => {
             const childBtn = document.querySelector(`[data-bs-target="${subTabId}"]`);
             if (childBtn) {
@@ -146,4 +179,3 @@
         this.querySelector('input[name="password"]').required = true;
         this.querySelector('input[name="password"]').placeholder = "";
     });
-  

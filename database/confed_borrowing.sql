@@ -85,6 +85,7 @@ CREATE TABLE `borrow_transaction` (
   `brwTransReturnByDate` DATE NOT NULL, -- Deadline to return
   `brwTransPayStat` VARCHAR(20) DEFAULT 'Free',
   `brwTransTotal` DOUBLE DEFAULT 0.00,
+  `brwTransStatus` VARCHAR(20) NOT NULL DEFAULT 'Released',
   
   -- COMPOSITE PRIMARY KEY: Allows same transaction ID to have multiple different items
   PRIMARY KEY (`brwTransID`, `itemID`),

@@ -31,7 +31,7 @@ $profileUser = $db->query("SELECT * FROM user WHERE userID = " . $db->quote($cur
 $unifiedTransactions = $db->query("
     SELECT 
         b.brwTransID, b.brwTransDate, b.brwTransBorrowOnDate, b.brwTransReturnByDate,
-        b.itemID, i.itemDesc, b.brwTransItemQty as borrow_qty, b.brwTransPayStat, b.itemRate,
+        b.itemID, i.itemDesc, b.brwTransItemQty as borrow_qty, b.brwTransPayStat, b.brwTransStatus, b.itemRate,
         b.brwID, br.brwFName, br.brwLName, u1.userFName as borrow_staff_f, u1.userLName as borrow_staff_l,
         r.retTransID, r.retReturnedOnDate, r.brwTransQty as return_qty,
         u2.userFName as return_staff_f, u2.userLName as return_staff_l
@@ -59,43 +59,27 @@ $purchases = $db->query("SELECT p.*, i.itemDesc, u.userFName, u.userLName
 // ==========================================================
 // 3. REPORT QUERIES
 // ==========================================================
-$isReportActive = isset($_GET['period']);
+$isReportActive = isset($_GET['start_date']) || isset($_GET['end_date']);
 if ($isReportActive) {
     $activeTab = 'tab-reports';
 }
-$repPeriod = $_GET['period'] ?? 'all';
-$repDate = $_GET['date_val'] ?? '';
-$repMonth = $_GET['month_val'] ?? '';
-$repYear = $_GET['year_val'] ?? date('Y');
-$repBrw = trim($_GET['brw_val'] ?? '');
+$repStartDate = $_GET['start_date'] ?? date('Y-m-01');
+$repEndDate = $_GET['end_date'] ?? date('Y-m-d');
 
 $repWhereB = "1=1"; $repWhereR = "1=1"; $repWhereP = "1=1";
 
-if (!empty($repBrw)) {
-    $q = $db->quote("%$repBrw%");
-    $repWhereB .= " AND (b.brwID LIKE $q OR br.brwStudentID LIKE $q OR br.brwFName LIKE $q OR br.brwLName LIKE $q)";
-    $repWhereR .= " AND (r.brwID LIKE $q OR br.brwStudentID LIKE $q OR br.brwFName LIKE $q OR br.brwLName LIKE $q)";
-    // purchases has no brwID
-}
-
-if ($repPeriod === 'day' && !empty($repDate)) {
-    $repWhereB .= " AND DATE(b.brwTransDate) = " . $db->quote($repDate);
-    $repWhereR .= " AND DATE(r.retReturnedOnDate) = " . $db->quote($repDate);
-    $repWhereP .= " AND DATE(p.purDate) = " . $db->quote($repDate);
-} elseif ($repPeriod === 'month' && !empty($repMonth)) {
-    $repWhereB .= " AND b.brwTransDate LIKE " . $db->quote($repMonth . '%');
-    $repWhereR .= " AND r.retReturnedOnDate LIKE " . $db->quote($repMonth . '%');
-    $repWhereP .= " AND p.purDate LIKE " . $db->quote($repMonth . '%');
-} elseif ($repPeriod === 'year' && !empty($repYear)) {
-    $repWhereB .= " AND YEAR(b.brwTransDate) = " . (int)$repYear;
-    $repWhereR .= " AND YEAR(r.retReturnedOnDate) = " . (int)$repYear;
-    $repWhereP .= " AND YEAR(p.purDate) = " . (int)$repYear;
+if (!empty($repStartDate) && !empty($repEndDate)) {
+    $start = $db->quote($repStartDate . ' 00:00:00');
+    $end = $db->quote($repEndDate . ' 23:59:59');
+    $repWhereB .= " AND b.brwTransDate BETWEEN $start AND $end";
+    $repWhereR .= " AND r.retReturnedOnDate BETWEEN $start AND $end";
+    $repWhereP .= " AND p.purDate BETWEEN $start AND $end";
 }
 
 $repUnified = $db->query("
     SELECT 
         b.brwTransID, b.brwTransDate, b.brwTransBorrowOnDate, b.brwTransReturnByDate,
-        b.itemID, i.itemDesc, b.brwTransItemQty as borrow_qty, b.brwTransPayStat, b.itemRate,
+        b.itemID, i.itemDesc, b.brwTransItemQty as borrow_qty, b.brwTransPayStat, b.brwTransStatus, b.itemRate,
         b.brwID, br.brwFName, br.brwLName, u1.userFName as borrow_staff_f, u1.userLName as borrow_staff_l,
         r.retTransID, r.retReturnedOnDate, r.brwTransQty as return_qty,
         u2.userFName as return_staff_f, u2.userLName as return_staff_l
@@ -123,18 +107,6 @@ require_once 'views/layout/header.php';
         <?php require_once 'views/layout/sidebar.php'; ?>
         
         <main class="app-main">
-            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2 no-print">
-              <div>
-                <h3 class="fw-bold text-dark mb-1">Council Desk Station</h3>
-                <div class="text-muted small">
-                  Welcome, <strong><?= htmlspecialchars($currentUser['full_name']) ?></strong> &bull; Assigned as <span class="badge bg-primary-subtle text-primary border border-primary-subtle text-uppercase"><?= htmlspecialchars($currentUser['role']) ?></span>
-                </div>
-              </div>
-              <div class="bg-white px-3 py-2 rounded-pill border shadow-sm small text-muted d-flex align-items-center gap-2">
-                <svg width="16" height="16" class="text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                <span>Date: <strong><?= date('F d, Y') ?></strong></span>
-              </div>
-            </div>
             <!-- Alert Display -->
             <?php if (!empty($alert['message'])): ?>
             <div class="px-4 pt-4 pb-0 no-print">

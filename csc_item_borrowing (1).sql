@@ -54,7 +54,8 @@ CREATE TABLE `borrow_transaction` (
   `brwTransBorrowOnDate` date NOT NULL,
   `brwTransReturnByDate` date NOT NULL,
   `brwTransPayStat` varchar(7) DEFAULT NULL,
-  `brwTransTotal` double DEFAULT NULL
+  `brwTransTotal` double DEFAULT NULL,
+  `brwTransStatus` varchar(20) NOT NULL DEFAULT 'Released'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------

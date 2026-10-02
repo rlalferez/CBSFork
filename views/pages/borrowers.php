@@ -1,14 +1,17 @@
           <div class="tab-pane fade" id="tab-borrowers">
             <div class="content-card">
-              <div class="content-card-header d-flex justify-content-between align-items-center">
+              <div class="content-card-header border-bottom-0 pb-0 d-flex justify-content-between align-items-center">
                 <div>
                   <h5 class="fw-bold mb-1 text-dark">Borrower Directory</h5>
                   <p class="text-muted small mb-0">Manage student and organization profiles.</p>
                 </div>
                 <button class="btn btn-primary-action btn-sm" data-bs-toggle="modal" data-bs-target="#modalBorrower">Add Borrower</button>
               </div>
+              <div class="px-4 pt-4 pb-3 d-flex gap-3 align-items-center border-bottom bg-light">
+                  <input type="text" class="form-control form-control-sm table-search ms-auto" data-target="#borrowersTable" placeholder="Search borrowers..." style="max-width: 250px;">
+              </div>
               <div class="table-responsive">
-                <table class="table-custom">
+                <table class="table-custom" id="borrowersTable">
                   <thead><tr><th>ID</th><th>Student ID</th><th>Name</th><th>College</th><th>Org</th><th>Contact</th><th>Action</th></tr></thead>
                   <tbody>
                     <?php foreach($borrowers as $b): ?>

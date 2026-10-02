@@ -7,38 +7,20 @@
                   <h5 class="fw-bold mb-1 text-dark">System Reports</h5>
                   <p class="text-muted small mb-0">Generate and print transaction snapshots.</p>
                 </div>
-                <button class="btn btn-outline-secondary btn-sm no-print" onclick="window.print()">Print Report</button>
               </div>
               
               <div class="p-4 bg-light border-bottom no-print">
                 <form method="GET" class="row g-3 align-items-end" id="reportFilterForm">
-                  <div class="col-md-3">
-                     <label class="form-label fw-bold small">Period Type</label>
-                     <select class="form-select form-select-sm" id="repPeriod" name="period" onchange="togglePeriodInputs()">
-                        <option value="all" <?= $repPeriod=='all'?'selected':'' ?>>All Time</option>
-                        <option value="day" <?= $repPeriod=='day'?'selected':'' ?>>Specific Day</option>
-                        <option value="month" <?= $repPeriod=='month'?'selected':'' ?>>Specific Month</option>
-                        <option value="year" <?= $repPeriod=='year'?'selected':'' ?>>Specific Year</option>
-                     </select>
+                  <div class="col-md-4">
+                     <label class="form-label fw-bold small">Start Date</label>
+                     <input type="date" class="form-control form-control-sm" name="start_date" id="repStartDate" value="<?= htmlspecialchars($repStartDate ?? '') ?>" onchange="document.getElementById('repEndDate').min=this.value; this.form.submit();">
                   </div>
-                  <div class="col-md-3" id="repDayContainer" style="display:<?= $repPeriod=='day'?'block':'none' ?>;">
-                     <label class="form-label fw-bold small">Select Date</label>
-                     <input type="date" class="form-control form-control-sm" name="date_val" value="<?= htmlspecialchars($repDate) ?>">
+                  <div class="col-md-4">
+                     <label class="form-label fw-bold small">End Date</label>
+                     <input type="date" class="form-control form-control-sm" name="end_date" id="repEndDate" value="<?= htmlspecialchars($repEndDate ?? '') ?>" min="<?= htmlspecialchars($repStartDate ?? '') ?>" onchange="this.form.submit();">
                   </div>
-                  <div class="col-md-3" id="repMonthContainer" style="display:<?= $repPeriod=='month'?'block':'none' ?>;">
-                     <label class="form-label fw-bold small">Select Month</label>
-                     <input type="month" class="form-control form-control-sm" name="month_val" value="<?= htmlspecialchars($repMonth) ?>">
-                  </div>
-                  <div class="col-md-3" id="repYearContainer" style="display:<?= $repPeriod=='year'?'block':'none' ?>;">
-                     <label class="form-label fw-bold small">Select Year</label>
-                     <input type="number" class="form-control form-control-sm" name="year_val" min="2000" max="2100" value="<?= htmlspecialchars($repYear) ?>">
-                  </div>
-                  <div class="col-md-3">
-                     <label class="form-label fw-bold small">Borrower ID</label>
-                     <input type="text" class="form-control form-control-sm" name="brw_val" placeholder="Leave blank for all" value="<?= htmlspecialchars($repBrw) ?>">
-                  </div>
-                  <div class="col-md-3">
-                     <button type="submit" class="btn btn-primary-action btn-sm w-100">Generate Snapshot</button>
+                  <div class="col-md-4">
+                     <button type="button" class="btn btn-primary-action btn-sm w-100" onclick="window.print()">Print Report</button>
                   </div>
                 </form>
               </div>
@@ -61,14 +43,14 @@
                         <?php foreach($repUnified as $t): ?>
                           <tr>
                             <td>
-                                <?php if($t['retTransID']): ?>
+                                <?php if($t['retTransID'] || strcasecmp($t['brwTransStatus'], 'Returned') === 0): ?>
                                     <span class="badge bg-success">Returned</span>
-                                <?php elseif(strcasecmp($t['brwTransPayStat'], 'Free') === 0 || $t['itemRate'] == 0): ?>
-                                    <span class="badge bg-secondary">Free</span>
-                                <?php elseif(strcasecmp($t['brwTransPayStat'], 'Paid') === 0): ?>
-                                    <span class="badge bg-info text-dark">Paid</span>
+                                <?php elseif(strcasecmp($t['brwTransStatus'], 'Reserved') === 0): ?>
+                                    <span class="badge bg-warning text-dark">Reserved</span>
+                                <?php elseif(strcasecmp($t['brwTransStatus'], 'Cancelled') === 0): ?>
+                                    <span class="badge bg-secondary">Cancelled</span>
                                 <?php else: ?>
-                                    <span class="badge bg-danger">Not Paid</span>
+                                    <span class="badge bg-primary">Released</span>
                                 <?php endif; ?>
                             </td>
                             <td><?= $t['brwTransID'] ?></td>
