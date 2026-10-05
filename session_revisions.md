@@ -71,12 +71,19 @@
 ---
 
 ## Implemented Revisions (Batches 6, 7 & 8)
+## Implemented Revisions (Batches 6, 7 & 8)
 *(These revisions have been successfully implemented and functionally integrated)*
 
 ### 28. Contact Number Backend Regex Verification
 * **Files to Revise:** `actions/profile_action.php`, `actions/user_action.php`
 * **Status:** Implemented. Added `preg_match('/^\d{11}$/', )` backend validation.
+### 28. Contact Number Backend Regex Verification
+* **Files to Revise:** `actions/profile_action.php`, `actions/user_action.php`
+* **Status:** Implemented. Added `preg_match('/^\d{11}$/', )` backend validation.
 
+### 29. Graceful Duplicate Student ID Handling
+* **Files to Revise:** `actions/borrower_action.php`
+* **Status:** Already implemented. Pre-check `SELECT brwID FROM borrower WHERE brwStudentID = ?` exists and functions correctly.
 ### 29. Graceful Duplicate Student ID Handling
 * **Files to Revise:** `actions/borrower_action.php`
 * **Status:** Already implemented. Pre-check `SELECT brwID FROM borrower WHERE brwStudentID = ?` exists and functions correctly.
@@ -88,11 +95,24 @@
 ### 31. Mobile Sidebar Toggle Integration
 * **Files to Revise:** `assets/js/app.js`
 * **Status:** Implemented. Added jQuery event listeners for `#sidebarToggle` and `#sidebarClose`.
+### 30. Purchase Transaction Reversal/Edit Logic
+* **Files to Revise:** `views/pages/purchases.php`, `actions/txn_action.php`
+* **Status:** Implemented. Added 'Archive Purchase' function that automatically recalculates and subtracts the logged stock from the `item` table.
+
+### 31. Mobile Sidebar Toggle Integration
+* **Files to Revise:** `assets/js/app.js`
+* **Status:** Implemented. Added jQuery event listeners for `#sidebarToggle` and `#sidebarClose`.
 
 ### 32. Topbar to Sidebar Profile Migration
 * **Files to Revise:** `views/layout/topbar.php`, `views/layout/sidebar.php`
 * **Status:** Implemented. Migrated the sign out logic to the sidebar and removed the old topbar dropdown structure.
+### 32. Topbar to Sidebar Profile Migration
+* **Files to Revise:** `views/layout/topbar.php`, `views/layout/sidebar.php`
+* **Status:** Implemented. Migrated the sign out logic to the sidebar and removed the old topbar dropdown structure.
 
+### 33. UI Text & Terminology Polish
+* **Files to Revise:** `views/modals/modal_txn.php`, `views/pages/reports.php`, `views/pages/transactions.php`
+* **Status:** Implemented. Updated headers ('Desk Checkout' -> 'Process Borrow', 'System Reports' -> 'Reports', 'Resource Transactions' -> 'Manage Transactions').
 ### 33. UI Text & Terminology Polish
 * **Files to Revise:** `views/modals/modal_txn.php`, `views/pages/reports.php`, `views/pages/transactions.php`
 * **Status:** Implemented. Updated headers ('Desk Checkout' -> 'Process Borrow', 'System Reports' -> 'Reports', 'Resource Transactions' -> 'Manage Transactions').
@@ -102,7 +122,17 @@
 * **Status:** Implemented. Converted the 'Item Name / Desc' input into a `<datalist>`-powered searchable dropdown with auto-fill for the Category.
 
 ### 35. Global Double-Submit Prevention Guard
+### 34. Dynamic Searchable Item Input in Purchase Modal
+* **Files to Revise:** `views/modals/modal_purchase.php`
+* **Status:** Implemented. Converted the 'Item Name / Desc' input into a `<datalist>`-powered searchable dropdown with auto-fill for the Category.
+
+### 35. Global Double-Submit Prevention Guard
 * **Files to Revise:** `assets/js/app.js`
+* **Status:** Implemented. Added a global jQuery event listener that intercepts all `<form>` submissions, disabling the submit button and appending a loading spinner.
+
+### 36. Empty States for Purchases and Reports Tab
+* **Files to Revise:** `views/pages/purchases.php`, `views/pages/reports.php`
+* **Status:** Implemented. Added adaptive empty state UI for the Purchases and Reports tabs.
 * **Status:** Implemented. Added a global jQuery event listener that intercepts all `<form>` submissions, disabling the submit button and appending a loading spinner.
 
 ### 36. Empty States for Purchases and Reports Tab
