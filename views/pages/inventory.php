@@ -2,8 +2,8 @@
             <div class="content-card">
               <div class="content-card-header border-bottom d-flex justify-content-between align-items-center">
                 <div>
-                  <h5 class="fw-bold mb-1 text-dark">Items</h5>
-                  <p class="text-muted small mb-0">Manage resources, stock, and fees.</p>
+                  <h5 class="fw-bold mb-1 text-dark">Manage Items</h5>
+                  <p class="text-muted small mb-0">Record items on hand.</p>
                 </div>
                 <div class="d-flex align-items-center gap-3">
                   <input type="text" class="form-control form-control-sm table-search" data-target="#inventoryTable" placeholder="Search items..." style="max-width: 250px;">
@@ -14,7 +14,7 @@
               </div>
               <div class="table-responsive">
                 <table class="table-custom" id="inventoryTable">
-                  <thead><tr><th>ID</th><th>Description</th><th>Category</th><th>Total Qty</th><th>Available</th><th>Rate</th><th>Action</th></tr></thead>
+                  <thead><tr><th>ID</th><th>Item Name</th><th>Category</th><th>Total Qty</th><th>Available</th><th>Rate</th><th>Action</th></tr></thead>
                   <tbody>
                     <?php foreach($items as $i): ?>
                       <tr id="row-item-<?= $i['itemID'] ?>">

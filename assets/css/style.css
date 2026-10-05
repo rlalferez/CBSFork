@@ -307,6 +307,26 @@ body {
   color: #1d4ed8;
 }
 
+.nav-tab-btn.nav-tab-logout {
+  color: #dc2626;
+  margin-top: 0.25rem;
+}
+
+.nav-tab-btn.nav-tab-logout svg {
+  color: #dc2626;
+}
+
+.nav-tab-btn.nav-tab-logout:hover {
+  color: #b91c1c;
+  background-color: #fef2f2;
+  border-color: #fecaca;
+}
+
+.nav-tab-btn.nav-tab-logout:hover svg {
+  color: #b91c1c;
+  transform: translateX(2px);
+}
+
 /* ==========================================================
    KPI STAT CARDS (SPACIOUS & ENGAGING)
    ========================================================== */

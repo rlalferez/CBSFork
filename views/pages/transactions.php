@@ -5,8 +5,8 @@
             <div class="content-card">
               <div class="content-card-header d-flex justify-content-between align-items-center flex-wrap gap-3">
                 <div>
-                  <h5 class="fw-bold mb-1 text-dark">Resource Transactions</h5>
-                  <p class="text-muted small mb-0">View borrows, returns, and process checkout operations.</p>
+                  <h5 class="fw-bold mb-1 text-dark">Manage Transactions</h5>
+                  <p class="text-muted small mb-0">View borrowed items, returned items, and process transactions.</p>
                 </div>
                 <div class="d-flex gap-2">
                   <button class="btn btn-primary-action btn-sm shadow-sm" data-bs-toggle="modal" data-bs-target="#modalTransaction">

@@ -1,4 +1,12 @@
     $(document).ready(function() {
+        // Mobile Sidebar Toggle
+        $('#sidebarToggle').on('click', function() {
+            $('#sidebarMenu').addClass('show-sidebar');
+        });
+        $('#sidebarClose').on('click', function() {
+            $('#sidebarMenu').removeClass('show-sidebar');
+        });
+
         // AJAX Search for Borrower Auto-population (Checkout)
         let searchTimeout;
         $('#borrowerSearch').on('input', function() {

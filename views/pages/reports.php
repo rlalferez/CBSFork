@@ -4,7 +4,7 @@
             <div class="content-card">
               <div class="content-card-header d-flex justify-content-between align-items-center flex-wrap gap-3">
                 <div>
-                  <h5 class="fw-bold mb-1 text-dark">System Reports</h5>
+                  <h5 class="fw-bold mb-1 text-dark">Reports</h5>
                   <p class="text-muted small mb-0">Generate and print transaction snapshots.</p>
                 </div>
               </div>
@@ -27,7 +27,7 @@
 
               <!-- Subtabs for Report Types -->
               <ul class="nav folder-tabs px-4 pt-3 no-print" id="repTabs">
-                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#rep-unified">Unified View</button></li>
+                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#rep-unified">All</button></li>
                 <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#rep-borrow">Borrows</button></li>
                 <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#rep-return">Returns</button></li>
                 <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#rep-purchase">Purchases</button></li>

@@ -2,7 +2,6 @@
             <div class="content-card">
               <div class="content-card-header">
                 <h5 class="fw-bold mb-1 text-dark">Profile Management</h5>
-                <p class="text-muted small mb-0">Update your personal account details.</p>
               </div>
               <div class="p-4 bg-white" style="border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
                 <form action="actions/profile_action.php" method="POST" style="max-width: 600px;">

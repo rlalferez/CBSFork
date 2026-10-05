@@ -3,7 +3,7 @@
               <div class="content-card-header border-bottom d-flex justify-content-between align-items-center">
                 <div>
                   <h5 class="fw-bold mb-1 text-dark">Borrower Management</h5>
-                  <p class="text-muted small mb-0">Manage student and organization profiles.</p>
+                  <p class="text-muted small mb-0">Manage student or borrower profiles.</p>
                 </div>
                 <div class="d-flex align-items-center gap-3">
                   <input type="text" class="form-control form-control-sm table-search" data-target="#borrowersTable" placeholder="Search borrowers..." style="max-width: 250px;">
