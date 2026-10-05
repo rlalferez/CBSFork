@@ -11,10 +11,18 @@
     .modal-body .form-label { font-size: 1.05rem; margin-bottom: 0.5rem; }
       @media print {
           @page { size: landscape; margin: 10mm; }
-          body { overflow: visible !important; }
-          .app-main { overflow: visible !important; height: auto !important; }
+          body, html { overflow: visible !important; height: auto !important; min-height: auto !important; display: block !important; }
+          .app-shell, .app-layout, .app-main { 
+              display: block !important; 
+              height: auto !important; 
+              min-height: auto !important; 
+              overflow: visible !important; 
+              padding: 0 !important;
+              margin: 0 !important;
+          }
           .table-responsive { overflow: visible !important; }
           .no-print { display: none !important; }
+          .content-card { margin: 0 !important; padding: 0 !important; overflow: visible !important; }
       }
       /* Sidebar Mobile Toggle CSS */
       .app-sidebar { transition: transform 0.3s ease; z-index: 1040; }

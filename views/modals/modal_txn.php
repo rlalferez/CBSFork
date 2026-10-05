@@ -1,4 +1,4 @@
-﻿  <!-- Modal: Add Transaction (Merged Borrow & Return) -->
+  <!-- Modal: Add Transaction (Merged Borrow & Return) -->
   <div class="modal fade" id="modalTransaction" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content overflow-hidden border-0 shadow-lg bg-light">
@@ -115,6 +115,14 @@
                     </div>
 
                     <h6 class="fw-bold mb-3 text-muted" style="font-size:0.85rem; text-transform:uppercase;">Items to Return</h6>
+                    
+                    <!-- Header Labels -->
+                    <div class="row mb-1 px-1">
+                      <div class="col-md-5"><label class="form-label small fw-bold text-muted mb-0">Item Borrowed</label></div>
+                      <div class="col-md-4"><label class="form-label small fw-bold text-muted mb-0">Date Borrowed</label></div>
+                      <div class="col-md-3"><label class="form-label small fw-bold text-muted mb-0">Qty Returned</label></div>
+                    </div>
+                    
                     <div id="returnItemsContainer">
                         <!-- Cloned row goes here -->
                         <div class="row return-item-row mb-2">

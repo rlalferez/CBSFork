@@ -6,7 +6,7 @@
                   <h5 class="fw-bold mb-1 text-dark">User Management</h5>
                   <p class="text-muted small mb-0">Manage Council and Committee member access.</p>
                 </div>
-                <button class="btn btn-primary-action btn-sm" data-bs-toggle="modal" data-bs-target="#modalUser">Add User</button>
+                <button class="btn btn-primary-action btn-sm text-nowrap" data-bs-toggle="modal" data-bs-target="#modalUser">Add User</button>
               </div>
               <div class="px-4 pt-4 pb-3 d-flex gap-3 align-items-center border-bottom">
                   <div class="btn-group" role="group">
