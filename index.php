@@ -1,39 +1,30 @@
 <?php
-/**
- * ==========================================================
- * CONFEDERATES STUDENT COUNCIL - RESOURCE MANAGEMENT SYSTEM
- * Main Application Controller & View (index.php) - REFACTORED
- * ==========================================================
- */
-require_once 'config/db.php';
+require_once 'config/db.php';  //Opens each of the database configuration files from config folder once
 require_once 'config/session.php';
 require_once 'config/helpers.php';
 
+//More about require_once: https://www.w3schools.com/php/keyword_require_once.asp
+
 $db = get_db();
 
-// Determine Active Tab (Dashboard)
 $activeTab = $_SESSION['active_tab'] ?? 'tab-transactions';
-// Reset active tab for next load
 unset($_SESSION['active_tab']);
 
-// Fetch Alert
 $alert = $_SESSION['alert'] ?? ['type' => '', 'message' => ''];
 unset($_SESSION['alert']);
 
-// Trigger Receipt Print
 $printReceipt = $_SESSION['print_receipt'] ?? null;
 unset($_SESSION['print_receipt']);
 
-
-// 2. DATA QUERIES FOR DISPLAY
-// ==========================================================
+//SQL Queries
+//Individual table display queries
 $items = $db->query("SELECT * FROM item WHERE is_archived = 0 ORDER BY itemCategory ASC, itemDesc ASC")->fetchAll();
 $categories = $db->query("SELECT * FROM category ORDER BY categoryName ASC")->fetchAll();
 $borrowers = $db->query("SELECT * FROM borrower WHERE is_archived = 0 ORDER BY brwFName ASC")->fetchAll();
 $users = $isAdmin ? $db->query("SELECT * FROM user WHERE is_archived = 0 ORDER BY userRole ASC, userFName ASC")->fetchAll() : [];
 $profileUser = $db->query("SELECT * FROM user WHERE userID = " . $db->quote($currentUser['userID']))->fetch();
 
-// Unified Transactions (JOIN both borrow and return tables)
+//JOIN Queries table views displaying from multiple tables
 $unifiedTransactions = $db->query("
     SELECT 
         b.brwTransID, b.brwTransDate, b.brwTransBorrowOnDate, b.brwTransReturnByDate,
@@ -62,9 +53,7 @@ $purchases = $db->query("SELECT p.*, i.itemDesc, u.userFName, u.userLName
                          FROM purchase_transaction p JOIN item i ON p.itemID = i.itemID JOIN user u ON p.userID = u.userID
                          ORDER BY p.purDate DESC")->fetchAll();
 
-// ==========================================================
-// 3. REPORT QUERIES
-// ==========================================================
+//Report Queries
 $isReportActive = isset($_GET['start_date']) || isset($_GET['end_date']);
 if ($isReportActive) {
     $activeTab = 'tab-reports';
@@ -124,6 +113,7 @@ require_once 'views/layout/header.php';
             </div>
             <?php endif; ?>
 
+            <!-- More about Bootstrap CSS Classes: https://www.w3schools.com/bootstrap/bootstrap_ref_all_classes.asp-->
             <div class="tab-content" id="v-pills-tabContent">
                 <?php 
                     require_once 'views/pages/transactions.php';
