@@ -14,6 +14,13 @@ if ($action === 'update_profile') {
     $contact = trim($_POST['userContactNo'] ?? '');
     $pass = trim($_POST['password'] ?? '');
     
+    if (!empty($contact) && !preg_match('/^\d{11}$/', $contact)) {
+        $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Error: Contact number must be exactly 11 digits.'];
+        $_SESSION['active_tab'] = 'tab-profile';
+        header('Location: ../index.php');
+        exit;
+    }
+    
     // Ensure user can only update their own profile, unless Admin
     if ($uid === $currentUser['userID'] || $isAdmin) {
         

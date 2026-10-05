@@ -236,4 +236,43 @@ if ($action === 'search_transaction') {
     $_SESSION['active_tab'] = 'tab-transactions';
     header('Location: ../index.php');
     exit;
+} elseif ($action === 'archive_purchase') {
+    if (!$isAdmin) {
+        $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Permission Denied.'];
+    } else {
+        $purID = trim($_POST['purTransID'] ?? '');
+        try {
+            $db->beginTransaction();
+            
+            // Get purchase details to subtract qty
+            $stmt = $db->prepare("SELECT itemID, purQty FROM purchase_transaction WHERE purTransID = ?");
+            $stmt->execute([$purID]);
+            $pur = $stmt->fetch();
+            
+            if ($pur) {
+                // Deduct from item table
+                $qty = $pur['purQty'];
+                $itemID = $pur['itemID'];
+                
+                $db->prepare("UPDATE item SET itemTotalQty = itemTotalQty - ?, itemAvailableQty = itemAvailableQty - ? WHERE itemID = ?")
+                   ->execute([$qty, $qty, $itemID]);
+                   
+                // Delete purchase transaction
+                $db->prepare("DELETE FROM purchase_transaction WHERE purTransID = ?")->execute([$purID]);
+                
+                $db->commit();
+                $_SESSION['alert'] = ['type' => 'success', 'message' => 'Purchase record deleted and stock deducted.'];
+            } else {
+                throw new Exception("Purchase record not found.");
+            }
+        } catch (Exception $e) {
+            $db->rollBack();
+            $_SESSION['alert'] = ['type' => 'danger', 'message' => $e->getMessage()];
+        }
+    }
+    
+    $_SESSION['active_tab'] = 'tab-purchases';
+    header('Location: ../index.php');
+    exit;
 }
+

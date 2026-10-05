@@ -6,6 +6,28 @@
             });
         }, 4000);
 
+        // Sidebar Mobile Toggle
+        $('#sidebarToggle').on('click', function() {
+            $('#sidebarMenu').addClass('show-sidebar');
+        });
+        $('#sidebarClose').on('click', function() {
+            $('#sidebarMenu').removeClass('show-sidebar');
+        });
+        
+        // Global Double-Submit Prevention Guard
+        $('form').on('submit', function() {
+            let $btn = $(this).find('button[type="submit"]');
+            if ($btn.length) {
+                // Prevent multiple clicks
+                if ($btn.data('submitted') === true) {
+                    return false;
+                }
+                $btn.data('submitted', true);
+                $btn.prop('disabled', true);
+                $btn.html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Processing...');
+            }
+        });
+
         // Revision 21: Persistent Tab State
         let activeTab = localStorage.getItem('activeTab');
         if (activeTab) {
