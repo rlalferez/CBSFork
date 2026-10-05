@@ -1,8 +1,3 @@
-/* ==========================================================
-   CONFEDERATES STUDENT COUNCIL - RESOURCE MANAGEMENT SYSTEM
-   Modern, Spacious & User-Friendly Design System (style.css)
-   ========================================================== */
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
@@ -854,21 +849,34 @@ body {
   background-color: #fef08a !important;
   transition: background-color 0.3s ease;
 }
+
 @media print {
-    .no-print { display: none !important; }
-    .app-sidebar { display: none !important; }
-    .app-navbar { display: none !important; }
-    .main-content { 
-        margin-left: 0 !important; 
-        width: 100% !important; 
-        padding: 0 !important;
-        background-color: white !important;
-    }
-    body, html {
-        background-color: white !important;
-    }
-    .content-card {
-        box-shadow: none !important;
-        border: none !important;
-    }
+  .no-print {
+    display: none !important;
+  }
+
+  .app-sidebar {
+    display: none !important;
+  }
+
+  .app-navbar {
+    display: none !important;
+  }
+
+  .main-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+    padding: 0 !important;
+    background-color: white !important;
+  }
+
+  body,
+  html {
+    background-color: white !important;
+  }
+
+  .content-card {
+    box-shadow: none !important;
+    border: none !important;
+  }
 }

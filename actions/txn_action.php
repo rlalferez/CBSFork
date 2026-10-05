@@ -99,6 +99,7 @@ if ($action === 'search_transaction') {
         }
         $db->commit();
         $_SESSION['alert'] = ['type' => 'success', 'message' => "Checkout successful. Created " . count($transIDs) . " transaction(s)."];
+        $_SESSION['print_receipt'] = $transIDs;
     } catch (Exception $e) {
         $db->rollBack();
         $_SESSION['alert'] = ['type' => 'danger', 'message' => $e->getMessage()];

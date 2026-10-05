@@ -1,24 +1,12 @@
 <?php
-/**
- * ==========================================================
- * DATABASE CONNECTION & CONFIGURATION (db.php)
- * Confederates Student Council - Resource Management System
- * ==========================================================
- * Configured for MySQL (phpMyAdmin / XAMPP).
- * Can be switched to 'sqlite' for zero-config portable testing.
- */
-
-// Start session if not already active
+//Start session if not already active
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// ----------------------------------------------------------
-// DATABASE CONFIGURATION (Default: MySQL for phpMyAdmin)
-// ----------------------------------------------------------
-define('DB_TYPE', 'mysql'); // Set to 'mysql' for phpMyAdmin, or 'sqlite' for portable file
+define('DB_TYPE', 'mysql'); //Set to 'mysql' for phpMyAdmin, or 'sqlite' for portable file
 
-// MySQL Credentials (Standard XAMPP Settings)
+//MySQL Credentials (Standard XAMPP Settings)
 define('MYSQL_HOST', 'localhost');
 define('MYSQL_PORT', '3306');
 define('MYSQL_DB',   'confed_borrowing');
