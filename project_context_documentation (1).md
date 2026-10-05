@@ -123,3 +123,10 @@ To understand the exact flow of data, memory management, and file interactions, 
     *   The script captures the `ids` parameter from the URL `$_GET` array.
     *   It executes a complex SQL `JOIN` query to aggregate transaction metadata, equipment descriptions, the borrower's profile, and the processing staff's profile.
     *   It renders a clean HTML view structured explicitly for physical printing, utilizing an `<body onload="window.print()">` tag to automatically trigger the system's printer dialog for the staff member.
+
+## Tutorial Links
+- https://www.w3schools.com/bootstrap/bootstrap_ref_all_classes.asp
+- https://www.w3schools.com/php/keyword_require_once.asp
+- https://www.w3schools.com/html/html5_canvas.asp
+- https://github.com/zDR34M/Particle-Network-Animation/blob/main/index.html
+- https://codepen.io/JulianLaval/pen/KpLXOO/
