@@ -1,141 +1,125 @@
-# Confederates Student Council (CSC) - Borrowing System
+# Confederates Student Council (CSC) - Resource Management System
+## Product Requirements Document (PRD) & Codebase Architecture
 
-**Project Context & Foundational Documentation (PRD Format)**
+### 1. Project Overview
+The CSC Resource Management System is a centralized, internal web application designed for the Student Council's property desk. It operates on a **Clerk Terminal Paradigm**, meaning there is no public-facing catalog. Only authorized council officers (Administrators) and committee members (Staff) log into the system to manage inventory, process equipment checkouts for students, track overdue returns, and generate usage reports.
 
-## 1. Project Overview
-
-The CSC Borrowing System is a web-based internal inventory and transaction management application designed for the student council. It allows council officers to manage the checkout, return, and restocking of council-owned equipment (e.g., speakers, sports gear, tables) by students and organizations.
-
-The system utilizes a modular, procedural PHP architecture mapped to a MySQL database, featuring a clean, responsive Bootstrap 5 UI, AJAX-powered search functionalities, and role-based access control.
-
-## 2. Current Features & Capabilities
-
-### Authentication & User Roles
-* **Role-Based Access Control:** Two distinct roles exist:
-  * **Council (Admin):** Full CRUD access to all features, including adding/editing items, logging purchases, and managing user accounts.
-  * **Committee (Staff):** Operational access focused on processing borrows, processing returns, and viewing reports.
-* **Secure Authentication:** Passwords are encrypted using `bcrypt`.
-
-### Inventory Management
-* **Item Directory:** Displays all active inventory items, categorized (Audio & Visual, Furniture, etc.).
-* **Stock Tracking:** Tracks `itemTotalQty` (total owned) and `itemAvailableQty` (currently in storage).
-* **Restocking (Purchases):** Admins can log purchases using OR (Official Receipt) numbers, which dynamically increments the total and available stock of an item.
-
-### Borrower Management
-* **Borrower Directory:** Maintains a list of students and organizations with their contact details, college, and department.
-* **Archiving:** Soft-deletion (`is_archived` flag) prevents accidental data loss while hiding obsolete records from the active view.
-
-### Transaction Processing (The Core Loop)
-* **Desk Checkout (Borrow):** Staff can process out-going equipment. The system validates stock availability, deducts from the available quantity, and generates a composite transaction record.
-* **AJAX Search:** Staff can instantly search for a borrower by Student ID or Name via live dropdowns without reloading the page.
-* **Process Return:** Staff can search for an active transaction, confirm the returned quantity, and the system restores the available stock while logging the return date.
-* **Gate Pass Generation:** Generates a printable receipt (`print_receipt.php`) summarizing the items, borrower details, and expected fees upon successful checkout.
-
-### Reporting
-* **Date-Filtered Reports:** Generates snapshots of transactions between specific Start and End dates.
-* **Categorized Views:** Sorts data into Unified View, Borrows, Returns, Purchases, and Inventory state.
-* **Printable Output:** A print-ready layout that hides sidebars and navigation for physical filing.
-
-## 3. Codebase File Directory & Logic Map
-
-### Root Files
-* **`index.php`**: The main application controller and view assembler.
-* **`login.php`**: The public-facing authentication portal.
-* **`print_receipt.php`**: Generates the official printable gate pass for borrowers.
-* **`receipt.php`**: (Legacy) Defunct alternate version of the receipt.
-
-### `actions/` (Backend Logic Controllers)
-* **`auth_action.php`**: Handles login/logout credential checks.
-* **`borrower_action.php`**: Processes adding, updating, archiving, and AJAX searching borrowers.
-* **`item_action.php`**: Processes adding, updating, and archiving items (Admin only).
-* **`profile_action.php`**: Updates logged-in user details.
-* **`purchase_action.php`**: Logs restocks and increments item quantities.
-* **`txn_action.php`**: Core logic for checking out items, processing returns, and fetching active borrows.
-* **`user_action.php`**: Processes adding, editing, and archiving staff (Admin only).
-
-### `config/` (Configuration & Utilities)
-* **`db.php`**: Establishes PDO database connection (MySQL/SQLite).
-* **`helpers.php`**: Contains `generate_id()` for standard ID creation.
-* **`session.php`**: Starts session and checks authentication.
-
-### `views/` (UI Components)
-* **`layout/`**: Scaffolding (`header.php`, `topbar.php`, `sidebar.php`, `footer.php`).
-* **`pages/`**: Dashboard tabs (`transactions.php`, `inventory.php`, `reports.php`, etc.).
-* **`modals/`**: Hidden forms (`modal_txn.php`, `modal_item.php`, etc.).
-
-### `assets/` (Static)
-* **`css/style.css`**: UI theme and styling.
-* **`js/app.js`**: Frontend JS for AJAX requests, DOM manipulation, and tab toggling.
+The system utilizes a modular Single Page Application (SPA) style architecture built entirely on native PHP, MySQL/SQLite, and frontend technologies (HTML, CSS, JavaScript, and Bootstrap 5). 
 
 ---
 
-## 4. Unifying Scenario & Exhaustive Process Mapping
+### 2. Codebase Modular Architecture & File Directory
+To ensure maintainability, the application separates backend logic, database configurations, and frontend views into dedicated files.
 
-To thoroughly map the codebase, assume a unified human-interaction scenario: **A Council Officer logs in, sets up a new projector, processes a checkout for a student, prints a receipt, and handles a subsequent return.**
+*   **`index.php` (Master Assembler & Router):** The main entry point. It verifies the user's session, fetches necessary data from the database, and pieces together the HTML interface by dynamically including layout and page fragments.
+*   **`login.php` (Authentication Portal):** An isolated, public-facing page containing the login form. It explicitly blocks authenticated users and redirects them to the dashboard.
+*   **`print_receipt.php`:** An isolated script that generates a formatted, printable HTML gate pass for approved transactions.
+*   **`config/` (Core Configurations):**
+    *   `db.php`: Establishes the secure PDO (PHP Data Object) connection to the MySQL or SQLite database.
+    *   `session.php`: Initializes server sessions (`session_start()`), checks if a user is logged in, and manages role-based access.
+    *   `helpers.php`: Contains utility functions, such as ID generation (`generate_id`).
+*   **`actions/` (Backend Processors):** Invisible PHP scripts that receive form submissions (POST requests) or AJAX calls. They execute database updates, set session alerts, and redirect the user back to the UI.
+    *   `auth_action.php`, `item_action.php`, `borrower_action.php`, `user_action.php`, `profile_action.php`, `txn_action.php`.
+*   **`views/` (Frontend Components):** HTML fragments that `index.php` stitches together.
+    *   `layout/`: `header.php`, `topbar.php`, `sidebar.php`, `footer.php`.
+    *   `pages/`: The content for each tab (`transactions.php`, `inventory.php`, `reports.php`, etc.).
+    *   `modals/`: Hidden popup forms (`modal_txn.php`, `modal_item.php`, etc.).
+*   **`assets/` (Static Files):**
+    *   `css/style.css`: Custom styling complementing Bootstrap.
+    *   `js/app.js`: Client-side JavaScript handling live searches, tab switching, and modal triggers.
 
-### Phase 1: Authentication & Initialization
-*   **Action:** The Officer attempts to open the dashboard (`index.php`) without logging in.
-    *   *Backend Check:* `index.php` loads `config/session.php`. Inside `session.php` (Line ~9), `!$currentUser` evaluates to true. 
-    *   *System Response:* PHP executes `header('Location: login.php')` and halts.
-*   **Action:** The Officer is redirected to `login.php`, enters invalid credentials, and submits.
-    *   *Frontend Load:* `login.php` renders the split-screen HTML with canvas animation.
-    *   *Backend Routing:* Form `POST` sends data to `actions/auth_action.php` (Line ~6).
-    *   *Invalid Check:* The SQL query fails to match, or `password_verify()` returns false. 
-    *   *System Response:* `auth_action.php` (Line ~17) sets `$_SESSION['alert'] = ['type' => 'danger', 'message' => 'Invalid email or password.']` and redirects back to `login.php`.
-    *   *Frontend Display:* `login.php` reads `$_SESSION['alert']`, displays the red Bootstrap danger banner, and unsets the session alert.
-*   **Action:** The Officer enters valid credentials (`admin@csc.edu.ph` / `admin123`) and submits.
-    *   *Valid Check:* `actions/auth_action.php` verifies the hash. Sets `$_SESSION['userID']`, `$_SESSION['role']`, etc.
-    *   *System Response:* Redirects to `index.php`.
-    *   *Dashboard Assembly:* `index.php` (Lines 1-45) connects to `db.php`, queries DB for `$items`, `$borrowers`, and `$unifiedTransactions`. It then stitches the DOM using `require_once` for all `views/layout/` and `views/pages/` components.
+---
 
-### Phase 2: Setup (Adding a New Item)
-*   **Action:** The Officer clicks "Add Item" on the Inventory tab.
-    *   *Frontend Response:* Bootstrap's JS intercepts `data-bs-target="#modalItem"` and unhides the modal rendered via `views/modals/modal_item.php`.
-*   **Action:** The Officer fills out the projector details and clicks "Save".
-    *   *Backend Routing:* `POST` request hits `actions/item_action.php` (Line ~6).
-    *   *Logic Check:* Validates `$isAdmin`. True. Checks if `itemID` is 'NEW'. True.
-    *   *System Response:* `helpers.php`'s `generate_id()` function assigns a new ID (e.g., `ITM-005`). An `INSERT` query logs the projector with default 0 quantities. `$_SESSION['alert']` and `$_SESSION['active_tab'] = 'tab-inventory'` are set. Redirects to `index.php`.
-    *   *Frontend Refresh:* `index.php` loads, reads `$activeTab`, and sets the Inventory tab to `show active`.
+### 3. Database Schema Overview
+*   **`user`:** Stores council officers. Contains hashed passwords, roles (`Council` or `Committee`), and contact details.
+*   **`item`:** The equipment inventory (projectors, speakers, etc.). Tracks total stock, currently available stock, categories, and rental rates.
+*   **`borrower`:** Profiles of students and organizations who rent equipment.
+*   **`borrow_transaction`:** Ledger of all checkouts. Uses a composite key to link multiple items to a single transaction ID.
+*   **`return_transaction`:** Ledger of returned items, linking back to the original borrow transaction.
+*   **`purchase_transaction`:** Restock ledger logging when the council buys new equipment.
 
-### Phase 3: The Desk Checkout (Borrowing)
-*   **Action:** A student arrives. The Officer clicks "New Transaction", opening `views/modals/modal_txn.php`. They type "2024-0" into `#borrowerSearch`.
-    *   *Frontend Response:* `assets/js/app.js` (Line ~4) registers the `input` event. After a 300ms debounce, it executes `$.post('actions/borrower_action.php')`.
-    *   *Backend Response:* `borrower_action.php` executes a `LIKE` SQL query returning matched students as JSON.
-    *   *Frontend Render:* `app.js` generates a dropdown list. The Officer selects the student, triggering `selectBorrower()` which autofills the readonly inputs.
-*   **Action:** The Officer adds a row, selects the Projector, types `10` for quantity (Invalid interaction: Only 4 are available), and submits.
-    *   *Backend Routing:* `POST` to `actions/txn_action.php` (Line ~47).
-    *   *Invalid Check:* Inside the `for` loop, SQL checks `$item['itemAvailableQty'] < $qty` (4 < 10). Condition is true.
-    *   *System Response:* Throws an Exception. The `catch` block executes `$db->rollBack()`. Sets `danger` alert. Redirects to `index.php`. No data is saved.
-*   **Action:** The Officer corrects the quantity to `1` and submits (Valid).
-    *   *Backend Routing:* `POST` to `actions/txn_action.php`.
-    *   *Valid Check:* Stock is verified. A loop iterates through requested items.
-    *   *System Response:* 
-        1. `generate_id()` assigns `TXN-001`.
-        2. `INSERT` into `borrow_transaction` with status 'Released'.
-        3. `UPDATE item SET itemAvailableQty = itemAvailableQty - 1`.
-        4. Array of `$transIDs` is stored in `$_SESSION['print_receipt']`.
-        5. `$db->commit()` executes. Redirects to `index.php`.
-*   **Action:** Automated Receipt Printing.
-    *   *Frontend Load:* `index.php` (Line ~115) detects `$printReceipt`. It injects a `<script>` block that fires `window.open('print_receipt.php?ids=[...]')`.
-    *   *Print Layout:* `print_receipt.php` intercepts the request, runs a `JOIN` query to gather borrower and item names, and outputs a stripped-down, print-media CSS HTML page that automatically calls `onload="window.print()"`.
+---
 
-### Phase 4: Equipment Return
-*   **Action:** Two days later, the student returns the projector. The Officer opens the "Process Return" sub-tab in `#modalTransaction` and searches the Student ID.
-    *   *Frontend Response:* `app.js` (Line ~42) triggers `selectRetBorrower()`, which fires an AJAX POST to `actions/txn_action.php?action=search_active_borrows`.
-    *   *Backend Check:* Queries `borrow_transaction` where `(brwTransItemQty - returned_qty) > 0`. Returns JSON.
-    *   *Frontend Render:* Populates the "Item Borrowed" `<select>` dropdown with active TXN IDs.
-*   **Action:** The Officer selects the active transaction and submits.
-    *   *Backend Routing:* `POST` to `actions/txn_action.php` (Line ~96 `create_return`).
-    *   *System Response:*
-        1. `generate_id()` creates `RET-001`.
-        2. `INSERT` into `return_transaction` capturing the returned quantity and date.
-        3. `UPDATE item SET itemAvailableQty = itemAvailableQty + 1` (Restores stock).
-        4. `UPDATE borrow_transaction SET brwTransStatus = 'Returned'`.
-        5. Sets `success` alert and redirects to `index.php` on the `tab-transactions`.
+### 4. Unifying Scenario & Exhaustive Process Mapping
 
-### Phase 5: Report Generation
-*   **Action:** The Officer goes to the Reports tab (`views/pages/reports.php`) and changes the Start Date input.
-    *   *Frontend Response:* The HTML `onchange="this.form.submit()"` triggers a standard `GET` request.
-    *   *Backend Routing:* `index.php` (Line ~48) detects `isset($_GET['start_date'])`.
-    *   *System Response:* Evaluates `$isReportActive = true`. Appends `AND b.brwTransDate BETWEEN $start AND $end` to all SQL queries loading the page state. 
-    *   *Frontend Display:* The page loads with `$activeTab` forced to `tab-reports` and the data tables immediately reflect the narrowed timeframe. The Officer clicks "Print Report" to output the data.
+To understand the exact flow of data, memory management, and file interactions, we trace a complete end-to-end scenario: **A staff member attempting to access the system, failing a login, succeeding, and checking out a piece of equipment.**
+
+#### Step 1: The Initial Request & Unauthenticated Redirection
+**Scenario:** A staff member navigates to the application's base URL (e.g., `http://localhost/CBSFork/`).
+1.  **File Called (`index.php`):** The Apache server automatically routes root directory requests to `index.php`, the system's "landing page" and front controller. 
+2.  **Configuration Loading (Lines 6-8):** `index.php` initiates backend assembly via:
+    *   `require_once 'config/db.php';`
+    *   `require_once 'config/session.php';`
+    *   `require_once 'config/helpers.php';`
+    *   *Function Call Guideline:* `require_once` instructs PHP to import the contents of these files. The "once" suffix ensures PHP physically checks if the file was already loaded in the current execution thread. If it was, the call is ignored, preventing fatal "function already declared" errors or infinite loops.
+3.  **Session Initialization (`config/db.php` Line 7):** Inside `db.php`, the code calls `if (session_status() === PHP_SESSION_NONE) { session_start(); }`.
+    *   *Function Call Guideline:* HTTP is inherently stateless; the server forgets the user immediately after the page loads. `session_start()` resolves this by creating a temporary memory file on the server and issuing a unique Session ID cookie to the browser. The conditional `session_status()` check ensures PHP does not throw a fatal error by attempting to start a session that is already active.
+4.  **Authorization Check (`config/session.php`):** This file checks for the existence of an authenticated user via `if (!$currentUser)`.
+    *   *Data Evaluated:* Because the user just arrived and has not logged in, the `$_SESSION` global variable contains no authentication data. Therefore, `$currentUser` evaluates to `null` (or false).
+    *   *Execution:* Recognizing an unauthenticated state, the script executes `header('Location: login.php'); exit;`.
+    *   *Function Call Guideline:* The `header()` function sends raw HTTP routing instructions directly to the browser, commanding it to immediately redirect to `login.php`. The `exit;` function instantly kills the server's execution of `index.php`, preventing any secure dashboard HTML or database queries from leaking to the unauthorized browser.
+
+#### Step 2: The Login Page Load & Failed Form Submission
+**Scenario:** The browser redirects to `login.php`. The staff member inputs an incorrect password and clicks "Sign In".
+1.  **Rendering the Form (`login.php`):** 
+    *   The file calls `require_once` for `db.php` and `session.php` to ensure the session is active. It checks `if ($currentUser) { header('Location: index.php'); exit; }`. Because the session is still null, this evaluates to false, bypassing the redirect.
+    *   HTML is rendered to the browser, displaying a form mapped to backend logic: `<form method="POST" action="actions/auth_action.php">`.
+    *   *Data Passed:* When submitted, the browser packages the inputs into a secure HTTP POST payload: `['email' => 'staff@csc.edu.ph', 'password' => 'wrongpass', 'action' => 'login']`. The hidden input `<input type="hidden" name="action" value="login">` acts as an instruction flag so the backend knows exactly what logic to execute.
+2.  **Backend Processing (`actions/auth_action.php`):**
+    *   **Data Capture:** The script extracts the POST payload using `trim($_POST['email'] ?? '')`.
+    *   **Database Query Prep:** It executes `$stmt = $db->prepare("SELECT * FROM user WHERE userEmail = ? AND is_archived = 0 LIMIT 1");`. 
+    *   *Function Call Guideline:* `prepare()` compiles the SQL structure separately from the user's input (the `?` placeholder). This is a critical security measure that renders SQL injection mathematically impossible.
+    *   **Execution:** `$stmt->execute([$email]);` binds the email string payload to the placeholder and runs the query. 
+    *   **Data Returned:** `$user = $stmt->fetch();` retrieves the matching database row as an associative PHP array (e.g., `['userID' => 'USR-002', 'userPassword' => '$2y$10$...']`).
+3.  **The Invalid Path (Wrong Password):**
+    *   **Verification:** The script runs `if ($user && password_verify($password, $user['userPassword']))`. 
+    *   *Function Call Guideline:* `password_verify()` is a native PHP cryptography function. It securely compares the user's plain-text POST payload (`$password`) against the Bcrypt hashed string retrieved from the database (`$user['userPassword']`).
+    *   **Execution:** Since the password is wrong, the function returns the boolean `false`.
+    *   **Flash Data Storage:** The `else` block executes: `$_SESSION['alert'] = ['type' => 'danger', 'message' => 'Invalid email or password.'];`. This stores the error in the server's global session memory.
+    *   **Redirect:** The script calls `header('Location: ../login.php'); exit;`, commanding the browser to reload the login page.
+    *   **UI Update:** Upon reloading, `login.php` detects the `$_SESSION['alert']`, prints the red error box into the HTML, and immediately deletes the session variable using `unset()` so the alert does not persist upon subsequent manual refreshes.
+
+#### Step 3: Successful Authentication & Single-Page Assembly
+**Scenario:** The user types the correct password and submits.
+1.  **State Mutation (`actions/auth_action.php`):**
+    *   This time, `password_verify()` returns the boolean `true`.
+    *   The backend assigns the user's database identifiers to the global session: `$_SESSION['userID'] = $user['userID'];`, `$_SESSION['role'] = $user['userRole'];`, etc. 
+    *   *Data Context:* This acts as a persistent VIP wristband. Conceptually similar to a static class instance in object-oriented programming, assigning data to `$_SESSION` creates a globally accessible state for that specific user's active connection.
+    *   The script calls `header('Location: ../index.php'); exit;` to redirect to the dashboard.
+2.  **Dashboard Assembly (`index.php`):**
+    *   `session.php` runs. Because `$_SESSION['userID']` is populated, `$currentUser` evaluates to true. The redirect is bypassed.
+    *   **Data Hydration:** The script executes multiple SQL queries (e.g., `$items = $db->query("SELECT * FROM item...")->fetchAll();`) to pull all active inventory, borrower profiles, and transaction ledgers into local PHP arrays.
+    *   **Frontend Stitching:** Utilizing its modular architecture, `index.php` uses `require_once` to pull in `views/layout/header.php`, `topbar.php`, and `sidebar.php`.
+    *   **The SPA Container:** The script outputs `<div class="tab-content" id="v-pills-tabContent">`. 
+    *   *Function Call Guideline:* Inside this single `div`, the script utilizes `require_once` to load *all* page components (`transactions.php`, `inventory.php`, etc.) into the Document Object Model (DOM) simultaneously. The Bootstrap class `tab-content` and the ID `v-pills-tabContent` hook into frontend JavaScript. While all HTML is physically present in the browser's memory, the JS and CSS ensure only one child `tab-pane` is visible at a time. This allows instantaneous tab switching without further server requests.
+    *   **Modals:** At the bottom of `index.php`, all modals (`modal_txn.php`, `modal_user.php`) are loaded via `require_once`. They sit idle in the DOM, strictly hidden by CSS, until a specific button click or JS command targets their ID.
+
+#### Step 4: The Checkout Process (Interactivity & Backend Logic)
+**Scenario:** The staff clicks "Add Transaction", searches for a borrower, and checks out an item.
+1.  **Frontend Interactivity (`assets/js/app.js`):**
+    *   The user clicks the "Add Transaction" button. Bootstrap JavaScript intercepts the `data-bs-target="#modalTransaction"` attribute and overrides default browser behavior to unhide the HTML modal pre-loaded in Step 3.
+    *   **Live AJAX Search:** As the user types "John" into the borrower search bar, an event listener captures the keystrokes. It triggers `$.post('actions/txn_action.php', { action: 'search_borrower', query: 'John' })`.
+    *   **Data Exchange:** The backend executes `$stmt = $db->prepare("SELECT * FROM borrower WHERE brwFName LIKE ?...");`, returning a JSON string of matching profiles. The JavaScript receives this JSON and injects clickable dropdown results into the DOM without reloading the webpage.
+2.  **Form Submission (`actions/txn_action.php`):**
+    *   The user clicks "Process Checkout". The form sends a POST request payload containing `action=create_borrow`, `itemID`, `brwID`, and `qty`.
+    *   **Validation Check:** The script queries the item to retrieve `itemRate` and `itemAvailableQty`. It runs `if ($item['itemAvailableQty'] < $qty)`.
+    *   *Invalid Path:* If true, it assigns `$_SESSION['alert'] = ['type' => 'danger', 'message' => 'Not enough stock'];`, calls `header('Location: ../index.php');`, and stops execution.
+    *   **Valid Path (Data Mutations):** If false, the script calls `generate_id($db, 'borrow_transaction', ...)` to generate a unique key (e.g., `TXN-005`).
+    *   It runs an `INSERT INTO borrow_transaction ...` statement to create the immutable ledger record.
+    *   It runs an `UPDATE item SET itemAvailableQty = itemAvailableQty - ? WHERE itemID = ?` statement. This immediately deducts the checked-out quantity from the live inventory, ensuring data integrity.
+    *   **Trigger Generation:** The script assigns `$_SESSION['print_receipt'] = [$transID];` and `$_SESSION['active_tab'] = 'tab-transactions';`, then redirects the browser back to `index.php`.
+
+#### Step 5: Final UI Update & Automated Gate Pass Generation
+**Scenario:** The dashboard reloads to reflect the checkout and issues the official slip.
+1.  **Data Refresh (`index.php`):** 
+    *   Upon reload, `index.php` reads `$_SESSION['active_tab']` and injects the `show active` class into the Transactions `tab-pane`.
+    *   The `SELECT` queries pull fresh data from the database. The inventory table instantly reflects the decremented stock, and the transactions table displays the new `TXN-005` record.
+2.  **Receipt Script Injection:**
+    *   At the bottom of `index.php`, the script evaluates `if ($printReceipt)`. Because it was populated in Step 4, it evaluates to true.
+    *   **Output:** PHP dynamically writes a `<script>` block into the HTML payload, passing the `TXN-005` array into JavaScript via `json_encode($printReceipt)`.
+    *   **Execution:** The browser parses the incoming HTML, executes the injected JavaScript, and triggers `window.open('print_receipt.php?ids=["TXN-005"]', ...);`.
+3.  **Gate Pass Assembly (`print_receipt.php`):**
+    *   The new popup window initiates an independent GET request to `print_receipt.php`.
+    *   The script captures the `ids` parameter from the URL `$_GET` array.
+    *   It executes a complex SQL `JOIN` query to aggregate transaction metadata, equipment descriptions, the borrower's profile, and the processing staff's profile.
+    *   It renders a clean HTML view structured explicitly for physical printing, utilizing an `<body onload="window.print()">` tag to automatically trigger the system's printer dialog for the staff member.
