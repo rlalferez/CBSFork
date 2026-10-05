@@ -16,11 +16,11 @@
               <div class="row align-items-end mb-2 purchase-item-row">
                 <div class="col-md-5">
                   <label class="form-label fw-bold small">Item Name / Desc</label>
-                  <input type="text" name="purItemDesc[]" class="form-control" required>
+                  <input type="text" name="purItemDesc[]" class="form-control item-desc-input" list="purchaseItemsDatalist" required autocomplete="off" oninput="autoFillCategory(this)">
                 </div>
                 <div class="col-md-4">
                   <label class="form-label fw-bold small">Category</label>
-                  <select name="purCategory[]" class="form-select" required>
+                  <select name="purCategory[]" class="form-select item-category-select" required>
                     <?php foreach($categories as $c): ?><option value="<?= htmlspecialchars($c['categoryName']) ?>"><?= htmlspecialchars($c['categoryName']) ?></option><?php endforeach; ?>
                   </select>
                 </div>
@@ -33,6 +33,12 @@
                 </div>
               </div>
             </div>
+            <datalist id="purchaseItemsDatalist">
+              <?php foreach($items as $i): ?>
+                  <option value="<?= htmlspecialchars($i['itemDesc']) ?>" data-category="<?= htmlspecialchars($i['categoryName']) ?>"></option>
+              <?php endforeach; ?>
+            </datalist>
+            
             <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="add-pur-item-btn"><i class="fas fa-plus"></i> Add Item</button>
           </div>
           <div class="modal-footer"><button type="submit" class="btn btn-success py-2 px-4">Log Purchase</button></div>
@@ -40,3 +46,20 @@
       </div>
     </div>
   </div>
+
+  <script>
+    function autoFillCategory(inputElement) {
+        let val = inputElement.value;
+        let opts = document.getElementById('purchaseItemsDatalist').childNodes;
+        for (let i = 0; i < opts.length; i++) {
+            if (opts[i].value === val) {
+                let cat = opts[i].getAttribute('data-category');
+                if (cat) {
+                    let selectElement = inputElement.closest('.purchase-item-row').querySelector('.item-category-select');
+                    selectElement.value = cat;
+                }
+                break;
+            }
+        }
+    }
+  </script>

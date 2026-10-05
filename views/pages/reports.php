@@ -4,7 +4,7 @@
             <div class="content-card">
               <div class="content-card-header d-flex justify-content-between align-items-center flex-wrap gap-3">
                 <div>
-                  <h5 class="fw-bold mb-1 text-dark">System Reports</h5>
+                  <h5 class="fw-bold mb-1 text-dark">Reports</h5>
                   <p class="text-muted small mb-0">Generate and print transaction snapshots.</p>
                 </div>
               </div>
@@ -37,6 +37,12 @@
               <div class="tab-content border-top bg-white" style="border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
                 <div class="tab-pane fade show active" id="rep-unified">
                   <div class="table-responsive">
+                    <?php if (count($repUnified) == 0): ?>
+                      <div class="text-center py-5">
+                        <div class="text-muted mb-3"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></div>
+                        <h6 class="text-secondary fw-semibold">No transactions recorded for this period</h6>
+                      </div>
+                    <?php else: ?>
                     <table class="table-custom">
                       <thead><tr><th>Status</th><th>TXN ID</th><th>Item</th><th>Borrower</th><th>Qty Borrowed</th><th>Borrow Date</th><th>Processed By</th><th>RET ID</th><th>Qty Returned</th><th>Return Date</th><th>Returned To</th></tr></thead>
                       <tbody>
@@ -75,6 +81,7 @@
                         <?php endforeach; ?>
                       </tbody>
                     </table>
+                    <?php endif; ?>
                   </div>
                 </div>
 

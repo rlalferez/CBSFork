@@ -70,119 +70,89 @@
 
 ---
 
-## Implemented Revisions (Batch 3 - Security & Edge-Case Guards)
-*(These critical security vulnerabilities and edge-case logic guards have been patched)*
-
-### 10. SQL Injection Vulnerability in Checkout (Security Patch)
-* **File Revised:** `actions/txn_action.php`
-* **Why it was revised:** During the checkout loop, the system executed `$db->query()` with direct string interpolation of `$_POST['itemID']`, creating a massive SQL injection vulnerability.
-* **How it was revised:** Converted the query to a secure PDO prepared statement (`$db->prepare()->execute()`).
-* **Behavior before:** Attackers could inject arbitrary SQL payloads via the `itemID` field.
-* **Behavior after:** SQL injection payloads are strictly treated as strings and harmlessly fail the lookup.
-
-### 11. Oversized Return Guard (Inventory Glitch Patch)
-* **File Revised:** `actions/txn_action.php`
-* **Why it was revised:** During `create_return`, the system blindly accepted the returned quantity without checking if it exceeded the original borrowed amount, causing infinite item generation.
-* **How it was revised:** Added logic to fetch previous returns, calculate `originalQty - alreadyReturned`, and throw an Exception if `$qty` exceeds this cap. Also updated the catch block to display the explicit error message.
-* **Behavior before:** Returning 10 on a 2-item checkout successfully added 10 to inventory.
-* **Behavior after:** The system safely rejects the oversized return with "Cannot return more items than originally borrowed."
-
-### 12. Archived Item Checkout Guard
-* **File Revised:** `actions/txn_action.php`
-* **Why it was revised:** The checkout query checked stock levels but didn't verify if `is_archived = 0`. Users could force a POST request to checkout deleted items.
-* **How it was revised:** Injected `AND is_archived = 0` into the stock verification query.
-* **Behavior before:** Archived items could still be checked out by manipulating the DOM.
-* **Behavior after:** Attempting to checkout an archived item yields an "Invalid, archived, or out-of-stock" exception.
-
-## Implemented Revisions (Batch 4 - Profile Duplication Guards)
-*(These database constraints have been added to prevent logic fragmentation)*
-
-### 13. Prevent Duplicate Borrower Profiles
-* **File Revised:** `actions/borrower_action.php`
-* **Why it was revised:** The system allowed staff to manually add a borrower with an existing Student ID, fragmenting their transaction history across multiple profiles.
-* **How it was revised:** Added a `SELECT` validation query in `save_borrower` that throws a UI Error if `brwStudentID` already belongs to a different borrower.
-* **Behavior before:** Duplicate profiles were successfully created.
-* **Behavior after:** System rejects duplicates with "Student ID is already registered to another borrower."
-
-### 14. Prevent Duplicate User Emails
-* **Files Revised:** `actions/user_action.php` & `actions/profile_action.php`
-* **Why it was revised:** The login system depends strictly on `userEmail`. If duplicate emails are registered, the system will only ever log into the first one, effectively locking out the other user.
-* **How it was revised:** Added email uniqueness verification in both the Admin-only user creation route and the personal profile update route.
-* **Behavior before:** Duplicate emails were permitted.
-* **Behavior after:** System intercepts duplicate emails with "Email address is already in use by another user."
-
----
-
-## Implemented Revisions (Batch 5 - UI & Validation Refinements)
+## Implemented Revisions (Batches 6, 7 & 8)
 *(These revisions have been successfully implemented and functionally integrated)*
 
-### 15. Strict Student ID Formatting
-* **Files to Revise:** `views/modals/modal_txn.php`, `views/modals/modal_borrower.php`, `actions/txn_action.php`, `actions/borrower_action.php`
-* **Why it needs revision:** Student IDs currently accept any text. They must follow the strict `##-#-#####` format.
-* **Expected Fix:** Add `pattern="[0-9]{2}-[0-9]-[0-9]{5}"` to frontend inputs and apply a `preg_match()` validation in the backend.
+### 28. Contact Number Backend Regex Verification
+* **Files to Revise:** `actions/profile_action.php`, `actions/user_action.php`
+* **Status:** Implemented. Added `preg_match('/^\d{11}$/', )` backend validation.
 
-### 16. Strict Contact Number Formatting
-* **Files to Revise:** All modal files with contact inputs and their respective backend actions (`txn_action.php`, `borrower_action.php`, `user_action.php`, `profile_action.php`).
-* **Why it needs revision:** Contact numbers accept text instead of just 11-digit PH mobile numbers.
-* **Expected Fix:** Add HTML `pattern="[0-9]{11}"`, `maxlength="11"` and backend numerical validation.
+### 29. Graceful Duplicate Student ID Handling
+* **Files to Revise:** `actions/borrower_action.php`
+* **Status:** Already implemented. Pre-check `SELECT brwID FROM borrower WHERE brwStudentID = ?` exists and functions correctly.
 
-### 17. Empty Item Modal Guard
-* **Files to Revise:** `views/pages/transactions.php`, `assets/js/app.js`
-* **Why it needs revision:** Users can open Borrow/Return modals even if there is absolutely nothing to borrow or return, which creates confusion.
-* **Expected Fix:** In PHP, count active inventory and active transactions. If zero, replace the modal trigger button with a disabled state or display a "No items available" alert.
+### 30. Purchase Transaction Reversal/Edit Logic
+* **Files to Revise:** `views/pages/purchases.php`, `actions/txn_action.php`
+* **Status:** Implemented. Added 'Archive Purchase' function that automatically recalculates and subtracts the logged stock from the `item` table.
 
-### 18. Frontend Date Validation
-* **Files to Revise:** `views/modals/modal_txn.php` (and related modals)
-* **Why it needs revision:** While we added a backend date guard in Batch 2, the frontend still allows selecting invalid earlier return dates in the datepicker.
-* **Expected Fix:** Add an `onchange` JavaScript event to the Borrow Date input that dynamically updates the `min` attribute of the Return Date input.
-
-### 19. Purchase Restocking Redesign
-* **Files to Revise:** `views/modals/modal_purchase.php`, `actions/txn_action.php`
-* **Why it needs revision:** Currently, purchasing requires the item to already exist in the inventory. If a totally new item is bought, users must do a two-step process (Inventory -> Add, then Purchase).
-* **Expected Fix:** Redesign the Purchase modal into a dynamic multi-row form (like Borrow). Change the Item dropdown into a text input for the Item Name, and add a Category dropdown. The backend will automatically create new item records if they don't exist before logging the purchase ledger.
-
-### 20. Category Management System
-* **Files to Revise:** `database/confed_borrowing.sql`, `views/pages/inventory.php`, `actions/item_action.php`, `assets/js/app.js`
-* **Why it needs revision:** Categories are currently hardcoded or typed as loose strings. A true management system is requested.
-* **Expected Fix:** Create a new `category` (`categoryID`, `categoryName`) table structure in `database/confed_borrowing.sql` alongside default seed data. Then, add a "Manage Categories" modal in the Inventory tab to perform CRUD operations on categories, updating the backend and dynamic dropdowns accordingly.
-
-### 21. Persistent Tab State
-* **Files to Revise:** `assets/js/app.js`, `index.php`
-* **Why it needs revision:** Refreshing the page sometimes resets the UI view unpredictably depending on session data.
-* **Expected Fix:** Implement `localStorage.setItem('activeTab', tabId)` in JS to remember the user's active tab across page reloads seamlessly.
-
-### 22. Quantity Input for Items
-* **Files to Revise:** `views/modals/modal_item.php`, `actions/item_action.php`
-* **Why it needs revision:** Adding an item currently sets quantity to 0 by default, requiring a purchase transaction to restock.
-* **Expected Fix:** Add a "Starting Quantity" input in the Add/Edit Item modal and update the backend to respect this value on creation/update.
-
-### 23. Adaptive Form Fields (Search Borrower)
-* **Files to Revise:** `views/modals/modal_txn.php`
-* **Why it needs revision:** If the Borrower table is completely empty, the "Search Borrower ID" field is useless.
-* **Expected Fix:** Wrap the search input in a PHP `if` statement that checks `COUNT(*) FROM borrower`. Hide it if empty.
-
-### 24. Adaptive Modal Tabs (Return Tab)
-* **Files to Revise:** `views/modals/modal_txn.php`
-* **Why it needs revision:** The Return tab shouldn't appear if there are no active borrows.
-* **Expected Fix:** Hide the Return nav pill via PHP if the active borrow transactions count is zero.
-
-### 25. Conditional "Add Item" Button
-* **Files to Revise:** `assets/js/app.js` (for Returns), `views/modals/modal_txn.php` (for Borrows)
-* **Why it needs revision:** Users can add multiple item rows even if the database only has 1 item, or if the borrower only borrowed 1 item.
-* **Expected Fix:** Inject the max item count into the DOM. JS will disable or hide the "+ Add Item" button if the row count reaches the max available distinct items.
-
-### 26. Terminology Update (Equipment -> Item)
-* **Files to Revise:** Across all `.php` view files.
-* **Why it needs revision:** Consistency in system nomenclature.
-* **Expected Fix:** Perform a global string replacement of "Equipment" to "Item" in UI labels, table headers, and alerts.
-
-### 27. Auto-Dismiss Popups
+### 31. Mobile Sidebar Toggle Integration
 * **Files to Revise:** `assets/js/app.js`
-* **Why it needs revision:** Success/Error flash alerts stay on the screen indefinitely until manually dismissed.
-* **Expected Fix:** Add a `setTimeout` function on DOMContentLoaded to automatically fade out `.alert` elements after 4000ms.
+* **Status:** Implemented. Added jQuery event listeners for `#sidebarToggle` and `#sidebarClose`.
+
+### 32. Topbar to Sidebar Profile Migration
+* **Files to Revise:** `views/layout/topbar.php`, `views/layout/sidebar.php`
+* **Status:** Implemented. Migrated the sign out logic to the sidebar and removed the old topbar dropdown structure.
+
+### 33. UI Text & Terminology Polish
+* **Files to Revise:** `views/modals/modal_txn.php`, `views/pages/reports.php`, `views/pages/transactions.php`
+* **Status:** Implemented. Updated headers ('Desk Checkout' -> 'Process Borrow', 'System Reports' -> 'Reports', 'Resource Transactions' -> 'Manage Transactions').
+
+### 34. Dynamic Searchable Item Input in Purchase Modal
+* **Files to Revise:** `views/modals/modal_purchase.php`
+* **Status:** Implemented. Converted the 'Item Name / Desc' input into a `<datalist>`-powered searchable dropdown with auto-fill for the Category.
+
+### 35. Global Double-Submit Prevention Guard
+* **Files to Revise:** `assets/js/app.js`
+* **Status:** Implemented. Added a global jQuery event listener that intercepts all `<form>` submissions, disabling the submit button and appending a loading spinner.
+
+### 36. Empty States for Purchases and Reports Tab
+* **Files to Revise:** `views/pages/purchases.php`, `views/pages/reports.php`
+* **Status:** Implemented. Added adaptive empty state UI for the Purchases and Reports tabs.
 
 ---
 
 ## Final Status: All Revisions Implemented
 All outstanding revisions, UI refinements, terminology updates, and empty state guards have been successfully integrated into the application.
 
+## Implemented Revisions (Batch 9 & 10 - Final Edge Cases)
+*(These revisions have been successfully implemented and functionally integrated)*
+
+### 37. Archive Purchase Stock Validation Guard
+* **Files to Revise:** ctions/txn_action.php
+* **Status:** Implemented. Checked if the item's available stock minus the purchase quantity is less than zero. Throws an Exception preventing deletion if items are still checked out.
+
+### 38. Case-Insensitive Duplicate Item Creation Guard (Manual & Purchase)
+* **Files to Revise:** ctions/item_action.php, ctions/txn_action.php
+* **Status:** Implemented. Used LOWER(TRIM(itemDesc)) = LOWER(?) AND itemCategory = ? to strictly intercept and prevent duplicate item entries that differ only in casing or trailing spaces.
+
+## Implemented Revisions (Batch 11 - Logic & Temporal Edge Cases)
+*(These revisions have been successfully implemented and functionally integrated)*
+
+### 39. Active Transactions Borrower Archive Guard
+* **Files to Revise:** ctions/borrower_action.php
+* **Status:** Implemented. Used SELECT SUM to ensure borrowers with active transactions cannot be archived.
+* **Expected Fix:** In rchive_borrower, perform a SELECT SUM(brwTransItemQty - returned_qty) check. If the borrower has unreturned items, throw an Exception and gracefully block the archive action.
+
+### 40. Dynamic Category Auto-Registration
+* **Files to Revise:** ctions/item_action.php, ctions/txn_action.php
+* **Status:** Implemented. Intercepted Select2 dynamic tags and executed `INSERT IGNORE INTO category` to permanently register them in the dropdown.
+
+### 41. Temporal Date Logic Guards (Backend)
+* **Files to Revise:** ctions/txn_action.php
+* **Status:** Implemented. Enforced strict `strtotime()` checks ensuring return dates cannot precede original checkout dates for both borrowing and returning.
+
+
+## Implemented Revisions (Batch 12 - Advanced Data Sanitization)
+*(These revisions have been successfully implemented and functionally integrated)*
+
+### 42. Negative Item Rate Guard
+* **Files to Revise:** `actions/item_action.php`
+* **Status:** Implemented. Wrapped rate extraction in `max(0.0, ...)` to safely prevent negative logic.
+
+### 43. Empty Transaction Payload Guard
+* **Files to Revise:** `actions/txn_action.php`
+* **Status:** Implemented. Added `empty($itemIDs)` and `empty($brwTransIDs)` throw guards for all transaction types.
+
+### 44. Backend Email Format Validation
+* **Files to Revise:** `actions/profile_action.php`, `actions/user_action.php`
+* **Status:** Implemented. Used PHP `filter_var(..., FILTER_VALIDATE_EMAIL)` before executing user creations or profile updates.

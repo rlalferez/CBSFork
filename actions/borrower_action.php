@@ -65,8 +65,18 @@ if ($action === 'search_borrower') {
     exit;
 } elseif ($action === 'archive_borrower') {
     $id = trim($_POST['brwID'] ?? '');
-    $db->prepare("UPDATE borrower SET is_archived = 1 WHERE brwID = ?")->execute([$id]);
-    $_SESSION['alert'] = ['type' => 'success', 'message' => 'Borrower archived.'];
+    
+    // 39. Active Transactions Borrower Archive Guard
+    $check = $db->prepare("SELECT SUM(brwTransItemQty - COALESCE((SELECT SUM(brwTransQty) FROM return_transaction r WHERE r.brwTransID = b.brwTransID), 0)) as unreturned FROM borrow_transaction b WHERE b.brwID = ?");
+    $check->execute([$id]);
+    $activeItems = $check->fetch()['unreturned'] ?? 0;
+    
+    if ($activeItems > 0) {
+        $_SESSION['alert'] = ['type' => 'danger', 'message' => "Cannot archive borrower: they have $activeItems unreturned item(s)."];
+    } else {
+        $db->prepare("UPDATE borrower SET is_archived = 1 WHERE brwID = ?")->execute([$id]);
+        $_SESSION['alert'] = ['type' => 'success', 'message' => 'Borrower archived.'];
+    }
     
     $_SESSION['active_tab'] = 'tab-borrowers';
     header('Location: ../index.php');

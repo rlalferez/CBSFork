@@ -14,17 +14,34 @@ if ($action === 'save_item') {
         $desc = trim($_POST['itemDesc'] ?? '');
         $category = trim($_POST['itemCategory'] ?? 'Audio & Visual');
         $qty = max(0, (int)($_POST['itemTotalQty'] ?? 0));
-        $rate = (float)($_POST['itemRate'] ?? 0);
+        $rate = max(0.0, (float)($_POST['itemRate'] ?? 0)); // 42. Negative Item Rate Guard
+        
+        // 40. Dynamic Category Auto-Registration
+        if (!empty($category)) {
+            $db->prepare("INSERT IGNORE INTO category (categoryName) VALUES (?)")->execute([$category]);
+        }
 
         if (!empty($id) && $id !== 'NEW') {
-            $stmt = $db->prepare("UPDATE item SET itemDesc = ?, itemCategory = ?, itemRate = ? WHERE itemID = ?");
-            $stmt->execute([$desc, $category, $rate, $id]);
-            $_SESSION['alert'] = ['type' => 'success', 'message' => "Item updated."];
+            $stmt = $db->prepare("SELECT itemID FROM item WHERE LOWER(TRIM(itemDesc)) = LOWER(?) AND itemCategory = ? AND itemID != ? AND is_archived = 0");
+            $stmt->execute([$desc, $category, $id]);
+            if ($stmt->fetch()) {
+                $_SESSION['alert'] = ['type' => 'danger', 'message' => "An item with this description already exists in this category."];
+            } else {
+                $stmt = $db->prepare("UPDATE item SET itemDesc = ?, itemCategory = ?, itemRate = ? WHERE itemID = ?");
+                $stmt->execute([$desc, $category, $rate, $id]);
+                $_SESSION['alert'] = ['type' => 'success', 'message' => "Item updated."];
+            }
         } else {
-            $newId = generate_id($db, 'item', 'itemID', 'ITM-');
-            $stmt = $db->prepare("INSERT INTO item (itemID, itemDesc, itemCategory, itemTotalQty, itemAvailableQty, itemRate) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$newId, $desc, $category, $qty, $qty, $rate]);
-            $_SESSION['alert'] = ['type' => 'success', 'message' => "New item added."];
+            $stmt = $db->prepare("SELECT itemID FROM item WHERE LOWER(TRIM(itemDesc)) = LOWER(?) AND itemCategory = ? AND is_archived = 0");
+            $stmt->execute([$desc, $category]);
+            if ($stmt->fetch()) {
+                $_SESSION['alert'] = ['type' => 'danger', 'message' => "Cannot create: An item with this description already exists in this category."];
+            } else {
+                $newId = generate_id($db, 'item', 'itemID', 'ITM-');
+                $stmt = $db->prepare("INSERT INTO item (itemID, itemDesc, itemCategory, itemTotalQty, itemAvailableQty, itemRate) VALUES (?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$newId, $desc, $category, $qty, $qty, $rate]);
+                $_SESSION['alert'] = ['type' => 'success', 'message' => "New item added."];
+            }
         }
     }
     $_SESSION['active_tab'] = 'tab-inventory';

@@ -40,6 +40,10 @@ if ($action === 'search_transaction') {
         $purDate = trim($_POST['purDate'] ?? date('Y-m-d'));
         
         try {
+            if (empty($itemDescs)) { // 43. Empty Transaction Payload Guard
+                throw new Exception("No items provided for purchase.");
+            }
+            
             $db->beginTransaction();
             $count = 0;
             
@@ -49,8 +53,11 @@ if ($action === 'search_transaction') {
                 $qty = max(1, (int)$qtys[$i]);
                 if (empty($desc)) continue;
                 
+                // 40. Dynamic Category Auto-Registration
+                $db->prepare("INSERT IGNORE INTO category (categoryName) VALUES (?)")->execute([$cat]);
+                
                 // Find if item already exists
-                $stmt = $db->prepare("SELECT itemID FROM item WHERE itemDesc = ? AND itemCategory = ? LIMIT 1");
+                $stmt = $db->prepare("SELECT itemID FROM item WHERE LOWER(TRIM(itemDesc)) = LOWER(?) AND itemCategory = ? AND is_archived = 0 LIMIT 1");
                 $stmt->execute([$desc, $cat]);
                 $existing = $stmt->fetch();
                 
@@ -184,6 +191,10 @@ if ($action === 'search_transaction') {
     
     $db->beginTransaction();
     try {
+        if (empty($brwTransIDs)) { // 43. Empty Transaction Payload Guard
+            throw new Exception("No items selected for return.");
+        }
+        
         $count = 0;
         for($i = 0; $i < count($brwTransIDs); $i++) {
             $brwTransID = $brwTransIDs[$i];
@@ -191,14 +202,19 @@ if ($action === 'search_transaction') {
             
             if(empty($brwTransID)) continue;
             
-            // Get original transaction details to find itemID
-            $origTxn = $db->prepare("SELECT itemID, brwTransItemQty FROM borrow_transaction WHERE brwTransID = ?");
+            // Get original transaction details to find itemID and checkout date
+            $origTxn = $db->prepare("SELECT itemID, brwTransItemQty, brwTransBorrowOnDate FROM borrow_transaction WHERE brwTransID = ?");
             $origTxn->execute([$brwTransID]);
             $txnData = $origTxn->fetch();
             
             if($txnData) {
                 $itemID = $txnData['itemID'];
                 $originalQty = $txnData['brwTransItemQty'];
+                
+                // 41. Temporal Date Logic Guard
+                if (strtotime($retDate) < strtotime($txnData['brwTransBorrowOnDate'])) {
+                    throw new Exception("Return date cannot be earlier than the original checkout date.");
+                }
                 
                 // 11. Oversized Return Guard
                 $sumStmt = $db->prepare("SELECT SUM(brwTransQty) as total_returned FROM return_transaction WHERE brwTransID = ?");
@@ -236,4 +252,52 @@ if ($action === 'search_transaction') {
     $_SESSION['active_tab'] = 'tab-transactions';
     header('Location: ../index.php');
     exit;
+} elseif ($action === 'archive_purchase') {
+    if (!$isAdmin) {
+        $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Permission Denied.'];
+    } else {
+        $purID = trim($_POST['purTransID'] ?? '');
+        try {
+            $db->beginTransaction();
+            
+            // Get purchase details to subtract qty
+            $stmt = $db->prepare("SELECT itemID, purQty FROM purchase_transaction WHERE purTransID = ?");
+            $stmt->execute([$purID]);
+            $pur = $stmt->fetch();
+            
+            if ($pur) {
+                // Deduct from item table
+                $qty = $pur['purQty'];
+                $itemID = $pur['itemID'];
+                
+                // Get current available stock to ensure we don't drop below zero
+                $stockCheck = $db->prepare("SELECT itemAvailableQty FROM item WHERE itemID = ?");
+                $stockCheck->execute([$itemID]);
+                $itemStock = $stockCheck->fetch();
+                
+                if ($itemStock && ($itemStock['itemAvailableQty'] - $qty) < 0) {
+                    throw new Exception("Cannot reverse this purchase. The items have already been checked out. You must return them before archiving this purchase.");
+                }
+                
+                $db->prepare("UPDATE item SET itemTotalQty = itemTotalQty - ?, itemAvailableQty = itemAvailableQty - ? WHERE itemID = ?")
+                   ->execute([$qty, $qty, $itemID]);
+                   
+                // Delete purchase transaction
+                $db->prepare("DELETE FROM purchase_transaction WHERE purTransID = ?")->execute([$purID]);
+                
+                $db->commit();
+                $_SESSION['alert'] = ['type' => 'success', 'message' => 'Purchase record deleted and stock deducted.'];
+            } else {
+                throw new Exception("Purchase record not found.");
+            }
+        } catch (Exception $e) {
+            $db->rollBack();
+            $_SESSION['alert'] = ['type' => 'danger', 'message' => $e->getMessage()];
+        }
+    }
+    
+    $_SESSION['active_tab'] = 'tab-purchases';
+    header('Location: ../index.php');
+    exit;
 }
+
