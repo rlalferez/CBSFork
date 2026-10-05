@@ -63,9 +63,7 @@ if ($currentUser) { header('Location: index.php'); exit; }
   <div class="row g-0 vh-100">
     <!-- Left Panel: Brand & Animation -->
     <div class="col-md-6 position-relative d-flex align-items-center justify-content-center overflow-hidden login-left-panel" style="background-color: #1d4ed8;">
-      <!-- === START OF ANTIGRAVITY ANIMATION HTML (REMOVE IF NOT WANTED) === -->
-      <canvas id="particlesCanvas" class="position-absolute top-0 start-0 w-100 h-100" style="z-index: 0; pointer-events: none;"></canvas>
-      <!-- === END OF ANTIGRAVITY ANIMATION HTML === -->
+      
       
       <div class="text-white text-start p-5 position-relative w-100 ms-md-4 login-text-container" style="z-index: 1; max-width: 650px;">
         <!-- Logos (Replace src with actual image paths) -->
@@ -114,6 +112,7 @@ if ($currentUser) { header('Location: index.php'); exit; }
               <input type="password" id="loginPassword" name="password" class="form-control" placeholder="••••••••" required>
             </div>
 
+            <!-- DELETE BEFORE DEPLOYMENT -->
             <!-- Quick Sign-In Buttons (Testing Purposes) -->
             <div class="bg-light p-3 rounded border text-center mb-4 small">
               <span class="text-muted d-block mb-2">Quick Sign-In (Testing):</span>
@@ -127,6 +126,7 @@ if ($currentUser) { header('Location: index.php'); exit; }
                 </button>
               </div>
             </div>
+            <!-- /DELETE BEFORE DEPLOYMENT -->
 
             <button type="submit" class="btn btn-primary w-100 py-2">Sign In</button>
           </form>
@@ -135,100 +135,7 @@ if ($currentUser) { header('Location: index.php'); exit; }
     </div>
   </div>
 
-  <!-- === START OF ANTIGRAVITY ANIMATION SCRIPT (REMOVE IF NOT WANTED) === -->
-  <script>
-    // Antigravity-style Particle Animation for Left Panel
-    const canvas = document.getElementById('particlesCanvas');
-    if(canvas) {
-        const ctx = canvas.getContext('2d');
-        let width, height;
-        let particles = [];
-        const mouse = { x: -1000, y: -1000 };
-        
-        function resize() {
-            width = canvas.width = canvas.parentElement.clientWidth;
-            height = canvas.height = canvas.parentElement.clientHeight;
-        }
-        window.addEventListener('resize', resize);
-        
-        // Track mouse movement over the left panel
-        canvas.parentElement.addEventListener('mousemove', e => {
-            const rect = canvas.getBoundingClientRect();
-            mouse.x = e.clientX - rect.left;
-            mouse.y = e.clientY - rect.top;
-        });
-        canvas.parentElement.addEventListener('mouseleave', () => {
-            mouse.x = -1000;
-            mouse.y = -1000;
-        });
-        
-        // Simple Particle class
-        class Particle {
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 1;
-                this.vy = (Math.random() - 0.5) * 1;
-            }
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                if(this.x < 0 || this.x > width) this.vx *= -1;
-                if(this.y < 0 || this.y > height) this.vy *= -1;
-            }
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(220, 220, 220, 0.4)';
-                ctx.fill();
-            }
-        }
-        
-        function init() {
-            resize();
-            particles = [];
-            for(let i=0; i<60; i++) particles.push(new Particle());
-            animate();
-        }
-        
-        function animate() {
-            ctx.clearRect(0, 0, width, height);
-            for(let i=0; i<particles.length; i++) {
-                particles[i].update();
-                particles[i].draw();
-                
-                // Draw connecting lines between particles
-                for(let j=i+1; j<particles.length; j++) {
-                    const dx = particles[i].x - particles[j].x;
-                    const dy = particles[i].y - particles[j].y;
-                    const dist = Math.sqrt(dx*dx + dy*dy);
-                    if(dist < 100) {
-                        ctx.beginPath();
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.strokeStyle = `rgba(220, 220, 220, ${0.3 - (dist/100)*0.3})`;
-                        ctx.stroke();
-                    }
-                }
-                
-                // Draw line from particle to cursor
-                const dx = particles[i].x - mouse.x;
-                const dy = particles[i].y - mouse.y;
-                const dist = Math.sqrt(dx*dx + dy*dy);
-                if(dist < 150) {
-                    ctx.beginPath();
-                    ctx.moveTo(particles[i].x, particles[i].y);
-                    ctx.lineTo(mouse.x, mouse.y);
-                    ctx.strokeStyle = `rgba(220, 220, 220, ${0.5 - (dist/150)*0.5})`;
-                    ctx.stroke();
-                }
-            }
-            requestAnimationFrame(animate);
-        }
-        init();
-    }
-  </script>
-  <!-- === END OF ANTIGRAVITY ANIMATION SCRIPT === -->
+  
 
 </body>
 </html>

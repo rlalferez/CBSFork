@@ -62,7 +62,7 @@ $items = $iStmt->fetchAll();
     <div class="text-center border-bottom pb-4 mb-4">
       <div class="text-uppercase small fw-bold text-primary tracking-wide">Confederates Student Council (CSC)</div>
       <h3 class="fw-bold mb-1">Official Resource Gate Pass & Custody Slip</h3>
-      <p class="text-muted small mb-2">Student Council Headquarters &bull; Equipment Custody Desk &bull; Room 204</p>
+      <p class="text-muted small mb-2">Student Council Headquarters &bull; Item Custody Desk &bull; Room 204</p>
       <div class="d-inline-block bg-dark text-white font-monospace px-3 py-1 rounded small">
         <?= htmlspecialchars($booking['booking_code']) ?>
       </div>
@@ -101,14 +101,14 @@ $items = $iStmt->fetchAll();
       </div>
     </div>
 
-    <!-- Authorized Equipment Items -->
+    <!-- Authorized Item Items -->
     <div class="mb-4">
-      <h6 class="fw-bold small text-uppercase text-muted mb-2">Authorized Equipment Manifest</h6>
+      <h6 class="fw-bold small text-uppercase text-muted mb-2">Authorized Item Manifest</h6>
       <table class="table table-bordered table-sm small align-middle mb-0">
         <thead class="table-light">
           <tr>
             <th>Resource Code</th>
-            <th>Equipment Name & Model</th>
+            <th>Item Name & Model</th>
             <th class="text-center">Qty</th>
             <th>Storage Location</th>
           </tr>
@@ -131,7 +131,7 @@ $items = $iStmt->fetchAll();
 
     <!-- Terms Undertaking -->
     <div class="border-top pt-3 text-muted small mb-5" style="font-size: 11px; line-height: 1.5;">
-      <strong>BORROWER UNDERTAKING:</strong> The borrower agrees to take full custody of the equipment listed above in clean and operable condition. In accordance with the Confederates Student Council Policy, any damages, losses, or overdue returns are subject to replacement liability or fine.
+      <strong>BORROWER UNDERTAKING:</strong> The borrower agrees to take full custody of the items listed above in clean and operable condition. In accordance with the Confederates Student Council Policy, any damages, losses, or overdue returns are subject to replacement liability or fine.
     </div>
 
     <!-- Signatures -->

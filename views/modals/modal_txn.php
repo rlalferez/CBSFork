@@ -14,9 +14,11 @@
               <li class="nav-item" role="presentation">
                 <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#modal-tab-checkout" type="button" role="tab">Desk Checkout</button>
               </li>
+              <?php if(count($borrows) > 0): ?>
               <li class="nav-item" role="presentation">
                 <button class="nav-link" data-bs-toggle="pill" data-bs-target="#modal-tab-return" type="button" role="tab">Process Return</button>
               </li>
+              <?php endif; ?>
             </ul>
         </div>
 
@@ -26,6 +28,7 @@
                 <form action="actions/txn_action.php" method="POST" class="bg-white rounded-bottom rounded-end border shadow-sm">
                   <input type="hidden" name="action" value="create_borrow">
                   <div class="modal-body p-4">
+                    <?php if (count($borrowers) > 0): ?>
                     <div class="mb-3">
                       <label class="form-label fw-bold">Search Borrower (Student ID)</label>
                       <div class="position-relative">
@@ -39,6 +42,10 @@
                     <div class="d-flex justify-content-end mb-3">
                         <button type="button" class="btn btn-sm btn-outline-primary" id="btnAddNewBorrower" onclick="enableNewBorrower()">+ Add New Borrower</button>
                     </div>
+                    <?php else: ?>
+                        <!-- Hidden ID (empty if new borrower) -->
+                        <input type="hidden" name="brwID" id="selectedBrwID">
+                    <?php endif; ?>
 
                     <div class="bg-light p-3 mb-4 rounded border">
                         <h6 class="fw-bold mb-3 text-muted" style="font-size:0.85rem; text-transform:uppercase;">Borrower Details</h6>
@@ -64,13 +71,13 @@
                         </div>
                     </div>
                     
-                    <h6 class="fw-bold mb-3 text-muted" style="font-size:0.85rem; text-transform:uppercase;">Equipment to Borrow</h6>
+                    <h6 class="fw-bold mb-3 text-muted" style="font-size:0.85rem; text-transform:uppercase;">Items to Borrow</h6>
                     <div id="borrowItemsContainer">
                         <div class="row borrow-item-row mb-2">
                           <div class="col-md-8">
                             <select name="itemID[]" class="form-select form-select-sm" required>
                               <option value="">Select Item...</option>
-                              <?php foreach($items as $i): if($i['itemAvailableQty']>0): ?>
+                              <?php $availableItemsCount = 0; foreach($items as $i): if($i['itemAvailableQty']>0): $availableItemsCount++; ?>
                                 <option value="<?= $i['itemID'] ?>"><?= htmlspecialchars($i['itemDesc']) ?> (Stock: <?= $i['itemAvailableQty'] ?>)</option>
                               <?php endif; endforeach; ?>
                             </select>
@@ -80,11 +87,11 @@
                           </div>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-sm btn-outline-secondary mb-4" onclick="addBorrowItemRow()">+ Add Item</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary mb-4" id="btnAddNewBorrowItem" onclick="addBorrowItemRow()" <?= $availableItemsCount <= 1 ? 'style="display:none;"' : '' ?>>+ Add Item</button>
 
                     <div class="row">
-                      <div class="col-md-6 mb-3"><label class="form-label fw-bold">Borrow Date</label><input type="date" name="brwTransBorrowOnDate" class="form-control" value="<?= date('Y-m-d') ?>" required></div>
-                      <div class="col-md-6 mb-3"><label class="form-label fw-bold">Return By Date</label><input type="date" name="brwTransReturnByDate" class="form-control" value="<?= date('Y-m-d') ?>" required></div>
+                      <div class="col-md-6 mb-3"><label class="form-label fw-bold">Borrow Date</label><input type="date" name="brwTransBorrowOnDate" id="borrowOnDate" class="form-control" value="<?= date('Y-m-d') ?>" required></div>
+                      <div class="col-md-6 mb-3"><label class="form-label fw-bold">Return By Date</label><input type="date" name="brwTransReturnByDate" id="returnByDate" class="form-control" value="<?= date('Y-m-d') ?>" required></div>
                     </div>
                   </div>
                   <div class="modal-footer bg-light border-0 rounded-bottom"><button type="submit" class="btn btn-primary-action py-2 px-4">Process Checkout</button></div>
@@ -139,7 +146,7 @@
                           </div>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-sm btn-outline-secondary mb-4" onclick="addReturnItemRow()">+ Add Item</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary mb-4" id="btnAddNewReturnItem" onclick="addReturnItemRow()" style="display:none;">+ Add Item</button>
 
                     <div class="row">
                       <div class="col-md-12 mb-3">
@@ -177,35 +184,58 @@
     `;
 
     function addBorrowItemRow() {
-        document.getElementById('borrowItemsContainer').insertAdjacentHTML('beforeend', borrowRowTemplate);
+        const maxItems = <?= $availableItemsCount ?>;
+        const currentRows = document.querySelectorAll('.borrow-item-row').length;
+        if (currentRows < maxItems) {
+            document.getElementById('borrowItemsContainer').insertAdjacentHTML('beforeend', borrowRowTemplate);
+            if (currentRows + 1 >= maxItems) {
+                document.getElementById('btnAddNewBorrowItem').style.display = 'none';
+            }
+        }
     }
     
+    document.getElementById('borrowItemsContainer').addEventListener('click', function(e) {
+        if (e.target.closest('.btn-danger')) {
+            e.target.closest('.borrow-item-row').remove();
+            document.getElementById('btnAddNewBorrowItem').style.display = 'inline-block';
+        }
+    });
+    
     function addReturnItemRow() {
-        // Clone the first row to preserve options if populated
-        const firstRow = document.querySelector('.return-item-row');
-        if (firstRow) {
-            const clone = firstRow.cloneNode(true);
-            // Add a remove button
-            const col3 = clone.querySelector('.col-md-3');
-            col3.classList.replace('col-md-3', 'col-md-3');
-            col3.classList.add('d-flex', 'gap-2');
-            
-            // clear values
-            clone.querySelector('.active-borrows-select').value = '';
-            clone.querySelector('.return-borrow-date').value = '';
-            clone.querySelector('.return-qty').value = '1';
-            clone.querySelector('.return-qty').max = '';
-            
-            if(!clone.querySelector('.btn-danger')) {
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = 'btn btn-sm btn-danger px-2';
-                btn.innerHTML = '&times;';
-                btn.onclick = function() { this.closest('.return-item-row').remove(); };
-                col3.appendChild(btn);
+        const maxItems = window.maxReturnItems || 1;
+        const currentRows = document.querySelectorAll('.return-item-row').length;
+        
+        if (currentRows < maxItems) {
+            const firstRow = document.querySelector('.return-item-row');
+            if (firstRow) {
+                const clone = firstRow.cloneNode(true);
+                const col3 = clone.querySelector('.col-md-3');
+                col3.classList.replace('col-md-3', 'col-md-3');
+                col3.classList.add('d-flex', 'gap-2');
+                
+                clone.querySelector('.active-borrows-select').value = '';
+                clone.querySelector('.return-borrow-date').value = '';
+                clone.querySelector('.return-qty').value = '1';
+                clone.querySelector('.return-qty').max = '';
+                
+                if(!clone.querySelector('.btn-danger')) {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'btn btn-sm btn-danger px-2';
+                    btn.innerHTML = '&times;';
+                    btn.onclick = function() { 
+                        this.closest('.return-item-row').remove(); 
+                        document.getElementById('btnAddNewReturnItem').style.display = 'inline-block';
+                    };
+                    col3.appendChild(btn);
+                }
+                
+                document.getElementById('returnItemsContainer').appendChild(clone);
+                
+                if (currentRows + 1 >= maxItems) {
+                    document.getElementById('btnAddNewReturnItem').style.display = 'none';
+                }
             }
-            
-            document.getElementById('returnItemsContainer').appendChild(clone);
         }
     }
     

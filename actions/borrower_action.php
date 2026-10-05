@@ -23,6 +23,33 @@ if ($action === 'search_borrower') {
     $org = trim($_POST['brwOrg'] ?? '');
     $contact = trim($_POST['brwContactNo'] ?? '');
 
+    // Revisions 15 & 16: Strict Formatting Validation
+    if (!empty($studentId) && !preg_match('/^\d{2}-\d-\d{5}$/', $studentId)) {
+        $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Invalid Student ID format. Use ##-#-#####.'];
+        $_SESSION['active_tab'] = 'tab-borrowers';
+        header('Location: ../index.php');
+        exit;
+    }
+    
+    if (!empty($contact) && !preg_match('/^\d{11}$/', $contact)) {
+        $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Contact number must be exactly 11 digits.'];
+        $_SESSION['active_tab'] = 'tab-borrowers';
+        header('Location: ../index.php');
+        exit;
+    }
+
+    if (!empty($studentId)) {
+        $checkStmt = $db->prepare("SELECT brwID FROM borrower WHERE brwStudentID = ?");
+        $checkStmt->execute([$studentId]);
+        $existing = $checkStmt->fetch();
+        if ($existing && $existing['brwID'] !== $id) {
+            $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Error: Student ID is already registered to another borrower.'];
+            $_SESSION['active_tab'] = 'tab-borrowers';
+            header('Location: ../index.php');
+            exit;
+        }
+    }
+
     if (!empty($id) && $id !== 'NEW') {
         $db->prepare("UPDATE borrower SET brwStudentID=?, brwFName=?, brwLName=?, brwCollege=?, brwOrg=?, brwContactNo=? WHERE brwID=?")
            ->execute([$studentId, $fName, $lName, $college, $org, $contact, $id]);

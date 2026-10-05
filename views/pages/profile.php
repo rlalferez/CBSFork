@@ -24,7 +24,7 @@
                   </div>
                   <div class="mb-3">
                     <label class="form-label fw-bold small">Contact No</label>
-                    <input type="text" class="form-control" name="userContactNo" value="<?= htmlspecialchars($profileUser['userContactNo']) ?>" required>
+                    <input type="text" class="form-control" name="userContactNo" value="<?= htmlspecialchars($profileUser['userContactNo']) ?>" pattern="[0-9]{11}" maxlength="11" title="11-digit mobile number" required>
                   </div>
                   <div class="mb-4">
                     <label class="form-label fw-bold small">New Password</label>

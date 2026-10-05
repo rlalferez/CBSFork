@@ -33,21 +33,45 @@ if ($action === 'search_transaction') {
     if (!$isAdmin) {
         $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Permission Denied.'];
     } else {
-        $itemID = trim($_POST['itemID'] ?? '');
+        $itemDescs = $_POST['purItemDesc'] ?? [];
+        $categories = $_POST['purCategory'] ?? [];
+        $qtys = $_POST['purQty'] ?? [];
         $orNo = trim($_POST['purORNo'] ?? '');
-        $qty = max(1, (int)($_POST['purQty'] ?? 1));
         $purDate = trim($_POST['purDate'] ?? date('Y-m-d'));
         
-        $purTransID = generate_id($db, 'purchase_transaction', 'purTransID', 'PUR-');
-        
-        // Insert Ledger Entry
-        $stmt = $db->prepare("INSERT INTO purchase_transaction (purTransID, itemID, userID, purORNo, purQty, purDate) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$purTransID, $itemID, $currentUser['userID'], $orNo, $qty, $purDate]);
-        
-        // Increment total inventory safely
-        $db->prepare("UPDATE item SET itemTotalQty = itemTotalQty + ?, itemAvailableQty = itemAvailableQty + ? WHERE itemID = ?")->execute([$qty, $qty, $itemID]);
-        
-        $_SESSION['alert'] = ['type' => 'success', 'message' => 'Purchase logged and inventory restocked.'];
+        try {
+            $db->beginTransaction();
+            $count = 0;
+            
+            for ($i = 0; $i < count($itemDescs); $i++) {
+                $desc = trim($itemDescs[$i]);
+                $cat = trim($categories[$i]);
+                $qty = max(1, (int)$qtys[$i]);
+                if (empty($desc)) continue;
+                
+                // Find if item already exists
+                $stmt = $db->prepare("SELECT itemID FROM item WHERE itemDesc = ? AND itemCategory = ? LIMIT 1");
+                $stmt->execute([$desc, $cat]);
+                $existing = $stmt->fetch();
+                
+                if ($existing) {
+                    $itemID = $existing['itemID'];
+                    $db->prepare("UPDATE item SET itemTotalQty = itemTotalQty + ?, itemAvailableQty = itemAvailableQty + ? WHERE itemID = ?")->execute([$qty, $qty, $itemID]);
+                } else {
+                    $itemID = generate_id($db, 'item', 'itemID', 'ITM-');
+                    $db->prepare("INSERT INTO item (itemID, itemDesc, itemCategory, itemTotalQty, itemAvailableQty) VALUES (?, ?, ?, ?, ?)")->execute([$itemID, $desc, $cat, $qty, $qty]);
+                }
+                
+                $purTransID = generate_id($db, 'purchase_transaction', 'purTransID', 'PUR-');
+                $db->prepare("INSERT INTO purchase_transaction (purTransID, itemID, userID, purORNo, purQty, purDate) VALUES (?, ?, ?, ?, ?, ?)")->execute([$purTransID, $itemID, $currentUser['userID'], $orNo, $qty, $purDate]);
+                $count++;
+            }
+            $db->commit();
+            $_SESSION['alert'] = ['type' => 'success', 'message' => "Logged $count purchase(s) and restocked inventory."];
+        } catch(Exception $e) {
+            $db->rollBack();
+            $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Error processing purchase.'];
+        }
     }
     $_SESSION['active_tab'] = 'tab-purchases';
     header('Location: ../index.php');
@@ -57,17 +81,43 @@ if ($action === 'search_transaction') {
     
     // Create new borrower if brwID is empty but details are provided
     if (empty($brwID) && !empty($_POST['brwStudentID'])) {
-        $brwID = generate_id($db, 'borrower', 'brwID', 'BRW-');
-        $stmt = $db->prepare("INSERT INTO borrower (brwID, brwStudentID, brwFName, brwLName, brwContactNo, brwCollege, brwOrg) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([
-            $brwID, 
-            $_POST['brwStudentID'], 
-            $_POST['brwFName'], 
-            $_POST['brwLName'], 
-            $_POST['brwContact'], 
-            $_POST['brwCollege'], 
-            $_POST['brwDept']
-        ]);
+        $studentId = trim($_POST['brwStudentID']);
+        $contactNo = trim($_POST['brwContact'] ?? '');
+        
+        // Revisions 15 & 16: Strict Formatting Validation
+        if (!preg_match('/^\d{2}-\d-\d{5}$/', $studentId)) {
+            $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Invalid Student ID format. Use ##-#-#####.'];
+            $_SESSION['active_tab'] = 'tab-transactions';
+            header('Location: ../index.php');
+            exit;
+        }
+        if (!empty($contactNo) && !preg_match('/^\d{11}$/', $contactNo)) {
+            $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Contact number must be exactly 11 digits.'];
+            $_SESSION['active_tab'] = 'tab-transactions';
+            header('Location: ../index.php');
+            exit;
+        }
+        
+        // Check if student ID already exists
+        $checkStmt = $db->prepare("SELECT brwID FROM borrower WHERE brwStudentID = ? LIMIT 1");
+        $checkStmt->execute([$studentId]);
+        $existingBorrower = $checkStmt->fetch();
+        
+        if ($existingBorrower) {
+            $brwID = $existingBorrower['brwID'];
+        } else {
+            $brwID = generate_id($db, 'borrower', 'brwID', 'BRW-');
+            $stmt = $db->prepare("INSERT INTO borrower (brwID, brwStudentID, brwFName, brwLName, brwContactNo, brwCollege, brwOrg) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([
+                $brwID, 
+                $studentId, 
+                $_POST['brwFName'], 
+                $_POST['brwLName'], 
+                $_POST['brwContact'], 
+                $_POST['brwCollege'], 
+                $_POST['brwDept']
+            ]);
+        }
     }
     
     $itemIDs = $_POST['itemID'] ?? [];
@@ -76,6 +126,20 @@ if ($action === 'search_transaction') {
     $returnByDate = trim($_POST['brwTransReturnByDate'] ?? date('Y-m-d'));
     $payStat = trim($_POST['brwTransPayStat'] ?? 'Free');
 
+    // 7. Empty Checkout Guard
+    if (empty($itemIDs)) {
+        $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Error: No items selected for checkout.'];
+        header('Location: ../index.php');
+        exit;
+    }
+
+    // 8. Date Logic Validation Guard
+    if (strtotime($returnByDate) < strtotime($borrowOnDate)) {
+        $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Error: Return date cannot be earlier than borrow date.'];
+        header('Location: ../index.php');
+        exit;
+    }
+
     $db->beginTransaction();
     try {
         $transIDs = [];
@@ -83,9 +147,13 @@ if ($action === 'search_transaction') {
             $itemID = $itemIDs[$i];
             $qty = max(1, (int)$qtys[$i]);
             
-            $item = $db->query("SELECT itemRate, itemAvailableQty FROM item WHERE itemID = '$itemID'")->fetch();
-            if ($item['itemAvailableQty'] < $qty) {
-                throw new Exception("Not enough stock for item ID: $itemID");
+            // 10 & 12. SQL Injection Guard and Archived Item Guard
+            $itemStmt = $db->prepare("SELECT itemRate, itemAvailableQty FROM item WHERE itemID = ? AND is_archived = 0");
+            $itemStmt->execute([$itemID]);
+            $item = $itemStmt->fetch();
+            
+            if (!$item || $item['itemAvailableQty'] < $qty) {
+                throw new Exception("Invalid, archived, or out-of-stock item ID: " . htmlspecialchars($itemID));
             }
             
             $transID = generate_id($db, 'borrow_transaction', 'brwTransID', 'TXN-');
@@ -99,6 +167,7 @@ if ($action === 'search_transaction') {
         }
         $db->commit();
         $_SESSION['alert'] = ['type' => 'success', 'message' => "Checkout successful. Created " . count($transIDs) . " transaction(s)."];
+        $_SESSION['print_receipt'] = $transIDs;
     } catch (Exception $e) {
         $db->rollBack();
         $_SESSION['alert'] = ['type' => 'danger', 'message' => $e->getMessage()];
@@ -123,19 +192,37 @@ if ($action === 'search_transaction') {
             if(empty($brwTransID)) continue;
             
             // Get original transaction details to find itemID
-            $origTxn = $db->prepare("SELECT itemID FROM borrow_transaction WHERE brwTransID = ?");
+            $origTxn = $db->prepare("SELECT itemID, brwTransItemQty FROM borrow_transaction WHERE brwTransID = ?");
             $origTxn->execute([$brwTransID]);
             $txnData = $origTxn->fetch();
             
             if($txnData) {
                 $itemID = $txnData['itemID'];
+                $originalQty = $txnData['brwTransItemQty'];
+                
+                // 11. Oversized Return Guard
+                $sumStmt = $db->prepare("SELECT SUM(brwTransQty) as total_returned FROM return_transaction WHERE brwTransID = ?");
+                $sumStmt->execute([$brwTransID]);
+                $sumData = $sumStmt->fetch();
+                $alreadyReturned = $sumData['total_returned'] ?? 0;
+                
+                if ($qty > ($originalQty - $alreadyReturned)) {
+                    throw new Exception("Cannot return more items than originally borrowed.");
+                }
+                
                 $retTransID = generate_id($db, 'return_transaction', 'retTransID', 'RET-');
                 
                 $stmt = $db->prepare("INSERT INTO return_transaction (retTransID, brwTransID, itemID, userID, brwID, brwTransQty, retReturnedOnDate) VALUES (?, ?, ?, ?, ?, ?, ?)");
                 $stmt->execute([$retTransID, $brwTransID, $itemID, $currentUser['userID'], $brwID, $qty, $retDate]);
                 
                 $db->prepare("UPDATE item SET itemAvailableQty = itemAvailableQty + ? WHERE itemID = ?")->execute([$qty, $itemID]);
-                $db->prepare("UPDATE borrow_transaction SET brwTransStatus = 'Returned' WHERE brwTransID = ?")->execute([$brwTransID]);
+                
+                // 9. Partial Return Status Bug Fix
+                // Only mark as Returned if the sum of returned quantities meets or exceeds the originally borrowed quantity
+                if (($alreadyReturned + $qty) >= $originalQty) {
+                    $db->prepare("UPDATE borrow_transaction SET brwTransStatus = 'Returned' WHERE brwTransID = ?")->execute([$brwTransID]);
+                }
+                
                 $count++;
             }
         }
@@ -143,7 +230,7 @@ if ($action === 'search_transaction') {
         $_SESSION['alert'] = ['type' => 'success', 'message' => "Returned $count item(s) successfully."];
     } catch (Exception $e) {
         $db->rollBack();
-        $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Error processing return.'];
+        $_SESSION['alert'] = ['type' => 'danger', 'message' => $e->getMessage()];
     }
     
     $_SESSION['active_tab'] = 'tab-transactions';

@@ -8,6 +8,7 @@
                 <div class="d-flex align-items-center gap-3">
                   <input type="text" class="form-control form-control-sm table-search" data-target="#inventoryTable" placeholder="Search items..." style="max-width: 250px;">
                   <?php if($isAdmin): ?>
+                    <button class="btn btn-outline-secondary btn-sm text-nowrap" data-bs-toggle="modal" data-bs-target="#modalCategory">Manage Categories</button>
                     <button class="btn btn-primary-action btn-sm text-nowrap" data-bs-toggle="modal" data-bs-target="#modalItem">Add Item</button>
                   <?php endif; ?>
                 </div>
@@ -22,7 +23,7 @@
                         <td><?= $i['itemTotalQty'] ?></td><td><?= $i['itemAvailableQty'] ?></td><td><?= $i['itemRate'] ?></td>
                         <td>
                           <?php if($isAdmin): ?>
-                          <button class="btn btn-sm btn-outline-primary py-0 px-2 me-1" style="font-size:12px;" onclick="editItem('<?= $i['itemID'] ?>', '<?= addslashes(htmlspecialchars($i['itemDesc'])) ?>', '<?= addslashes(htmlspecialchars($i['itemCategory'])) ?>', <?= $i['itemRate'] ?>)">Edit</button>
+                          <button class="btn btn-sm btn-outline-primary py-0 px-2 me-1" style="font-size:12px;" onclick="editItem('<?= $i['itemID'] ?>', '<?= addslashes(htmlspecialchars($i['itemDesc'])) ?>', '<?= addslashes(htmlspecialchars($i['itemCategory'])) ?>', <?= $i['itemTotalQty'] ?>, <?= $i['itemRate'] ?>)">Edit</button>
                           <form action="actions/item_action.php" method="POST" class="d-inline" onsubmit="return confirm('Archive item?');">
                             <input type="hidden" name="action" value="archive_item"><input type="hidden" name="itemID" value="<?= $i['itemID'] ?>">
                             <button class="btn btn-sm btn-outline-danger py-0 px-2" style="font-size:12px;">Archive</button>

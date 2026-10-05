@@ -20,9 +20,15 @@ unset($_SESSION['active_tab']);
 $alert = $_SESSION['alert'] ?? ['type' => '', 'message' => ''];
 unset($_SESSION['alert']);
 
+// Trigger Receipt Print
+$printReceipt = $_SESSION['print_receipt'] ?? null;
+unset($_SESSION['print_receipt']);
+
+
 // 2. DATA QUERIES FOR DISPLAY
 // ==========================================================
 $items = $db->query("SELECT * FROM item WHERE is_archived = 0 ORDER BY itemCategory ASC, itemDesc ASC")->fetchAll();
+$categories = $db->query("SELECT * FROM category ORDER BY categoryName ASC")->fetchAll();
 $borrowers = $db->query("SELECT * FROM borrower WHERE is_archived = 0 ORDER BY brwFName ASC")->fetchAll();
 $users = $isAdmin ? $db->query("SELECT * FROM user WHERE is_archived = 0 ORDER BY userRole ASC, userFName ASC")->fetchAll() : [];
 $profileUser = $db->query("SELECT * FROM user WHERE userID = " . $db->quote($currentUser['userID']))->fetch();
@@ -141,9 +147,19 @@ require_once 'views/layout/header.php';
 require_once 'views/modals/modal_txn.php';
 require_once 'views/modals/modal_item.php';
 require_once 'views/modals/modal_borrower.php';
-if ($isAdmin) { require_once 'views/modals/modal_user.php'; }
+if ($isAdmin) { require_once 'views/modals/modal_user.php'; require_once 'views/modals/modal_category.php'; }
 require_once 'views/modals/modal_purchase.php';
 
 // Include Footer & JS
 require_once 'views/layout/footer.php'; 
 ?>
+
+<?php if ($printReceipt): ?>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ids = <?= json_encode($printReceipt) ?>;
+        const url = 'print_receipt.php?ids=' + encodeURIComponent(JSON.stringify(ids));
+        window.open(url, 'ReceiptWindow', 'width=800,height=600');
+    });
+</script>
+<?php endif; ?>

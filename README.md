@@ -7,33 +7,47 @@ A clean, modern, student-friendly **Internal Clerk & Property Custodian Web Appl
 
 ---
 
-## 📁 Simple Project Structure (Only 5 Essential Files)
+## 📁 Project Structure (Modular Architecture)
 
-Everything is kept clean and straightforward in the root directory:
+The codebase has been refactored into a clean, maintainable modular structure separating logic (actions), presentation (views), and configuration:
 
 ```
 Confed Borrowing System/
 │
-├── index.php         # MASTER APP: Desk Officer Login + Internal Workspace + Bookings + Inventory + Reports
-├── db.php            # DATABASE CONNECTOR: 1-file SQLite auto-setup & switchable MySQL configuration
+├── index.php         # MASTER APP: Main router combining layouts, views, and modals
+├── login.php         # LOGIN PORTAL: Independent auth portal restricting public access
 ├── receipt.php       # PRINTABLE GATE PASS: Official printable equipment slip with signatures
-├── style.css         # STYLESHEET: Modern responsive styling complementing Bootstrap 5
-├── script.js         # JAVASCRIPT: Search filtering, tab navigation, and modal pre-fill helpers
-│
 ├── database.sqlite   # Auto-generated database file (created automatically on first launch)
-└── README.md         # This defense & presentation guide
+├── README.md         # This defense & presentation guide
+│
+├── actions/          # BACKEND LOGIC CONTROLLERS: Form handlers and SQL operations
+│   ├── auth_action.php       # Handles login/logout logic and session checks
+│   ├── borrower_action.php   # Handles adding, editing, and searching student/org borrowers
+│   ├── item_action.php       # Handles adding, editing, and archiving equipment items
+│   ├── profile_action.php    # Handles personal account and password updates
+│   ├── txn_action.php        # Handles checking out, returning, and tracking item statuses
+│   └── user_action.php       # Admin-exclusive user creation and role management
+│
+├── config/           # CONFIGURATION: Global utilities and connections
+│   ├── db.php                # Database connector (PDO) supporting both SQLite and MySQL
+│   ├── helpers.php           # Helper functions (e.g., ID generation)
+│   └── session.php           # Global session initialization, validation, and role extraction
+│
+├── views/            # UI PRESENTATION TEMPLATES: Reusable HTML components
+│   ├── layout/               # Shell layout components (header.php, sidebar.php, footer.php)
+│   ├── modals/               # Popup modals for forms (modal_txn.php, modal_item.php, etc.)
+│   └── pages/                # Individual dashboard tabs (transactions, borrowers, inventory, etc.)
+│
+├── assets/           # STATIC ASSETS
+│   ├── css/style.css         # Modern responsive styling and print constraints
+│   └── js/app.js             # Client-side interactivity (AJAX search, highlighting, modal prep)
+│
+└── database/         # SQL SEEDS
+    ├── confed_borrowing.sql            # Empty schema for fresh setup
+    └── confed_borrowing_mock_data.sql  # Optional test data
 ```
 
 *(All old, fragmented files from initial drafting have been cleanly archived in `_legacy_archive/` so your working directory remains 100% clean).*
-
-**UPDATE: New Modular Architecture**
-The codebase has been refactored for better maintainability:
-- `index.php`: Now acts as a lightweight router/assembler.
-- `actions/`: Contains isolated backend logic (e.g., `auth_action.php`, `txn_action.php`).
-- `views/`: Contains UI templates split into `layout/`, `pages/`, and `modals/`.
-- `config/`: Contains `db.php`, `session.php`, and `helpers.php`.
-- `assets/`: Contains `css/style.css` and `js/app.js`.
-- `database/`: Contains SQL schema files.
 
 ---
 
@@ -41,34 +55,27 @@ The codebase has been refactored for better maintainability:
 
 | Project Requirement from Guidelines | Status | How It Is Implemented (Clerk Workflow) | Where to Show in Code |
 | :--- | :---: | :--- | :--- |
-| **Two (2) Types of Users with Login** | ✅ **Passed** | `Admin` (full rights) and `Staff` (operational rights) with secure password hashing (`password_verify`). **Zero public view** &mdash; only authorized officers can access. | Top of `index.php` (Auth controller) |
-| **All Functionalities have CRUD** | ✅ **Passed** | Complete **C**reate, **R**ead, **U**pdate, and **D**elete for Resources, Bookings, Clients, and Staff accounts. | Action handlers in `index.php` |
-| **Resource Management (Speakers, Sports, etc.)** | ✅ **Passed** | Catalogs JBL/Yamaha speakers, sports equipment (balls, nets), event gear (tents, tables), cables, etc., with ID, Name, Model, Availability, Fees. | Resources Tab in `index.php` |
-| **Search & Book Resource by Schedule** | ✅ **Passed** | Clerk searches items and checks live availability schedules via **"+ Desk Checkout"** modal when a student arrives. | `index.php` Modal `#newBookingModal` |
-| **Change Resource or Booking Date** | ✅ **Passed** | 1-Click **Reschedule Modal** to alter dates, venue, or event details anytime. | Modal `#rescheduleModal` |
-| **Cancellation Options** | ✅ **Passed** | 1-Click **Cancel Booking Modal** with mandatory cancellation reason logging and stock auto-restoration. | Modal `#cancelModal` |
-| **Set Payment Status & Details** | ✅ **Passed** | 1-Click **Payment Modal** (`Free`, `Deposit Paid`, `Paid`, `Refunded`, etc.) with amount and receipt tracking. | Modal `#paymentModal` |
-| **Manage Client Records (CRUD)** | ✅ **Passed** | Add, edit, view, and delete student borrowers and campus organizations. | Clients Tab in `index.php` |
-| **Manage Staff Records (CRUD)** | ✅ **Passed** | Admin-exclusive tab to add new staff, change roles, edit details, or remove staff. | Staff Accounts Tab in `index.php` |
-| **Manage Personal Accounts** | ✅ **Passed** | Online self-registration for staff and profile update modal (name, email, password). | Profile Tab / Modal in `index.php` |
-| **Generate Booking Reports** | ✅ **Passed** | Three report modes: **Periodic** (by date range), **Per Resource**, and **Per Client** with instant print. | Reports Tab in `index.php` |
-| **Bootstrap Integration (Bonus Points)** | ✅ **Passed** | Uses **Bootstrap 5.3.3** for clean modals, badges, cards, and responsive navigation. | Header of `index.php` & `receipt.php` |
+| **Two (2) Types of Users with Login** | ✅ **Passed** | `Admin` (full rights) and `Committee` (operational rights) with secure password hashing (`password_verify`). **Zero public view** &mdash; only authorized officers can access. | `actions/auth_action.php` |
+| **All Functionalities have CRUD** | ✅ **Passed** | Complete **C**reate, **R**ead, **U**pdate, and **D**elete (via soft-archiving) for Items, Transactions, Borrowers, and Users. | Action handlers in `actions/` |
+| **Resource Management (Speakers, Sports, etc.)** | ✅ **Passed** | Catalogs JBL/Yamaha speakers, sports equipment, event gear, etc., with ID, Name, Category, Availability, and Fees. | **Items Tab** (`views/pages/inventory.php`) |
+| **Search & Book Resource by Schedule** | ✅ **Passed** | Clerk searches items and checks live availability via **"Process Borrowing"** modal when a student arrives. | Modal `#modalTxn` |
+| **Status Tracking & Returns** | ✅ **Passed** | 1-Click action buttons to update a transaction from `Released` to `Returned` (with partial/full quantity processing). | **Transactions Tab** (`views/pages/transactions.php`) |
+| **Manage Client Records (CRUD)** | ✅ **Passed** | Add, edit, view, and search student borrowers and campus organizations. | **Borrower Directory** (`views/pages/borrowers.php`) |
+| **Manage Staff Records (CRUD)** | ✅ **Passed** | Admin-exclusive tab to add new council/committee members, change roles, and edit access. | **User Management** (`views/pages/users.php`) |
+| **Manage Personal Accounts** | ✅ **Passed** | Profile update tab (name, email, password) for the currently logged-in user. | **Profile Tab** (`views/pages/profile.php`) |
+| **Generate Booking Reports** | ✅ **Passed** | Five report modes: **Unified View**, **Borrows**, **Returns**, **Purchases**, and **Items**, with dynamic date filtering and instant print. | **Reports Tab** (`views/pages/reports.php`) |
+| **Bootstrap Integration (Bonus Points)** | ✅ **Passed** | Uses **Bootstrap 5.3.3** for clean modals, badges, cards, tabs, and responsive navigation. | Layouts in `views/layout/` |
 
 ---
 
 ## 🔑 Login Accounts for Demo
 
-| Role | Username | Password | Features Accessible |
+| Role | Email | Password | Features Accessible |
 | :--- | :--- | :--- | :--- |
-| **Administrator** | `admin` | `admin123` | **Full access**: All CRUD (including Adding/Editing/Deleting Equipment Resources), Staff Management, Reports, Rescheduling, Cancellations, Payments. |
-| **Staff Member** | `staff1` | `staff123` | **Operational desk access**: Desk Checkouts, View Inventory (Read-only; Staff is **not** allowed to add, edit, or delete equipment), Clients CRUD, Reschedule, Cancel, Set Payments, Reports, Personal Profile. |
+| **Administrator** | `admin@csc.edu.ph` | `admin123` | **Full access**: All CRUD (including Adding/Editing Items and Logging Purchases), User Management, Reports, and overriding transactions. |
+| **Committee Member** | `staff@csc.edu.ph` | `staff123` | **Operational desk access**: Process Borrows, Process Returns, View Items (Read-only), Borrower Directory, Reports, Personal Profile. |
 
-*Tip for Defense: On the login screen, you can click **"👤 Fill Admin"** or **"👔 Fill Staff"** for 1-click automatic credential filling! You can also click **"Register Staff Account"** to demonstrate creating a new clerk account.*
-
-**UPDATE: Revised Login Credentials**
-- **Administrator:** Email: `admin@csc.edu.ph` | Password: `admin123`
-- **Committee/Staff:** Email: `staff@csc.edu.ph` | Password: `staff123`
-The login form now features 1-click auto-fill buttons for these accounts for easy testing.
+*Tip for Defense: On the login screen, you can click **"Admin Login"** or **"Staff Login"** for 1-click automatic credential filling!*
 
 ---
 
@@ -77,58 +84,40 @@ The login form now features 1-click auto-fill buttons for these accounts for eas
 1. Start **Apache** and **MySQL** in your **XAMPP Control Panel**.
 2. Open your browser and go to: **[http://localhost/phpmyadmin/index.php](http://localhost/phpmyadmin/index.php)**.
 3. Click the **"SQL"** tab in the top navigation bar.
-4. Copy the entire contents of **`confed_borrowing.sql`** (or copy from the SQL code block provided in this guide), paste it into the box, and click **"Go"** at the bottom right.
-5. That's it! It creates the database `confed_borrowing` and all 5 tables completely empty (zero seed data for resources/bookings, so you and your group have full control to input your own equipment and transactions).
+4. Copy the entire contents of **`database/confed_borrowing.sql`**, paste it into the box, and click **"Go"** at the bottom right.
+5. That's it! It creates the database `confed_borrowing` and all tables completely empty (zero seed data, allowing your group to input your own equipment and transactions).
 
 ---
 
 ## 🚀 How to Run the Project in XAMPP
 
-1. Place or copy the `Confed Borrowing System` folder into your XAMPP `htdocs` directory (e.g. `C:\xampp\htdocs\Confed Borrowing System`).
+1. Place or copy the `CBSFork` folder into your XAMPP `htdocs` directory (e.g. `C:\xampp\htdocs\CBSFork`).
 2. Open your browser and navigate to:
-   - **[http://localhost/Confed%20Borrowing%20System/](http://localhost/Confed%20Borrowing%20System/)**
-3. Log in with the initial Administrator account:
-   - **Username:** `admin`
+   - **[http://localhost/CBSFork/](http://localhost/CBSFork/)**
+3. Log in with the Administrator account:
+   - **Email:** `admin@csc.edu.ph`
    - **Password:** `admin123`
-4. Start by going to **Resources** &rarr; click **"+ Add Resource"** to input your council's equipment (speakers, sports gear, etc.).
-5. When students arrive at the desk, click **"+ Desk Checkout"** to list down who borrowed what!
-
-**UPDATE: Run Instructions**
-- The project folder is now `CBSFork`. Navigate to `http://localhost/CBSFork/`.
-- Use the updated email-based login credentials listed above.
+4. Start by going to **Items** &rarr; click **"Add Item"** to input your council's equipment (speakers, sports gear, etc.).
+5. When students arrive at the desk, click **"Process Borrowing"** in the Transactions tab to list down who borrowed what!
 
 ---
 
 ## 🎓 Defense Guide: How to Explain the Code to Your Professor
 
 ### 1. "Why is there no public catalog view?"
-> *"Sir/Ma'am, this system is modeled as a Council Property Desk Terminal &mdash; like a clerk or bank teller workstation. In actual university operations, students come to the student council desk in person to borrow equipment. Only authorized council officers (Admin and Staff) log into this terminal to process the checkout, verify student IDs, check equipment conditions, and print the official Gate Pass."*
+> *"Sir/Ma'am, this system is modeled as a Council Property Desk Terminal &mdash; like a clerk or bank teller workstation. In actual university operations, students come to the student council desk in person to borrow equipment. Only authorized council officers (Admin and Committee) log into this terminal to process the checkout, verify student IDs, and update return statuses."*
 
 ### 2. "How does the database connect and initialize?"
-> *"In `db.php`, we connect to MySQL in phpMyAdmin via PHP Data Objects (PDO) inside `get_db()`. We configured it with `utf8mb4` charset and prepared statements to prevent SQL injections. As required, we kept the inventory and bookings tables completely clean without artificial seed data, allowing our Admin and Staff to manually input the council's actual resources and list down transactions as students arrive at the desk."*
-
-**UPDATE: Database Config Location**
-> *The `db.php` file has been moved inside the `config/` directory to adhere to modular design principles.*
+> *"In `config/db.php`, we connect to MySQL in phpMyAdmin via PHP Data Objects (PDO) inside `get_db()`. We configured it with `utf8mb4` charset and prepared statements to prevent SQL injections. As required, we kept the inventory and bookings tables completely clean without artificial seed data, allowing our Admin and Staff to manually input the council's actual resources."*
 
 ### 3. "Where does authentication and user roles happen?"
-> *"In `index.php` (around lines 25–90), we handle `action=login` and verify passwords using PHP's native `password_verify()`. If not logged in, the system displays only the secure Officer Sign In screen. Once authenticated, `$_SESSION['role']` determines permissions: `admin` gets full custody control (only Admins can add, edit, or delete equipment resources and manage staff accounts), while `staff` is strictly restricted to operational borrowing desk duties (checking out equipment, logging returns, rescheduling, and issuing gate passes)."*
-
-**UPDATE: Authentication Refactoring**
-> *Authentication logic has been moved from `index.php` to `actions/auth_action.php` for a cleaner separation of concerns. Session management is handled globally in `config/session.php`.*
+> *"In `actions/auth_action.php`, we handle `action=login` and verify passwords using PHP's native `password_verify()`. If not logged in, the system displays only the secure Officer Sign In screen (`login.php`). Once authenticated, global session logic in `config/session.php` establishes `$_SESSION['userRole']` which determines permissions: Admins get full custody control (only Admins can add/edit items, log purchases, and manage staff accounts), while Committee members are strictly restricted to operational borrowing desk duties."*
 
 ### 4. "Show me the Desk Checkout process."
-> *"When an officer is logged in, clicking the **'+ Desk Checkout'** button opens `#newBookingModal`. The officer selects the equipment (showing live stock availability), enters the borrower's Student ID, Name, Organization, dates, and purpose. Clicking submit automatically decrements stock, records the client, creates the booking, and generates a printable Custody Slip/Gate Pass via `receipt.php`."*
+> *"When an officer is logged in, clicking the **'Process Borrowing'** button opens the `#modalTxn`. The officer enters the borrower's Student ID (which dynamically searches the Borrower Directory via AJAX in `assets/js/app.js`), selects the equipment (showing live stock availability), and submits. Clicking submit routes to `actions/txn_action.php`, which automatically decrements item stock, creates the borrower profile if they are new, and creates the transaction ledger."*
 
-### 5. "Show me Rescheduling, Cancellations, and Payments."
-> *"In the **Bookings tab**, each reservation has dedicated action buttons:
-> - **Date (Reschedule):** Updates start/end dates and venue location.
-> - **Cancel:** Records the reason for cancellation and restores the equipment stock back to inventory.
-> - **Pay:** Sets payment/deposit status (`Free`, `Deposit Paid`, `Paid`, `Refunded`) and logs receipt details.
-> - **Approve &rarr; Release &rarr; Return:** Moves the loan through its physical lifecycle."*
+### 5. "Show me Returns and Statuses."
+> *"In the **Transactions tab**, each reservation has action buttons based on its state. If an item is `Released`, an officer can click **Process Return**. This opens a modal where they can specify the exact quantity returned, which then dynamically routes back to `actions/txn_action.php` to restore the `itemAvailableQty` in the `item` table and update the transaction status badge."*
 
-### 6. "How do your Booking Reports work?"
-> *"Under the **Reports tab**, officers can generate the 3 reports required by the syllabus:
-> 1. **Periodic Report:** Filter bookings between a Start Date and End Date.
-> 2. **Per Resource Report:** Total borrowings and quantity used for each item (e.g. Speakers vs Volleyballs).
-> 3. **Per Client Report:** Borrowing history per student and student organization.
-> There is also a **Print Report** button for hard-copy submission."*
+### 6. "How do your Reports work?"
+> *"Under the **Reports tab**, officers can view an aggregated, live feed of all operations split into multiple categories: Unified View, Borrows, Returns, Purchases, and Items. The data is fetched in `index.php` and dynamically displayed. Officers can use the dynamic **Start Date** and **End Date** filters, which automatically pass PHP `$_GET` parameters to query the exact timeframe, and then click **Print Report** for a cleanly formatted, hard-copy submission."*

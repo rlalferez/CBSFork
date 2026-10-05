@@ -12,7 +12,7 @@
               <div class="col-md-6 mb-3"><label class="form-label fw-bold">Last Name</label><input type="text" name="userLName" class="form-control" required></div>
             </div>
             <div class="mb-3"><label class="form-label fw-bold">Email</label><input type="email" name="userEmail" class="form-control" required></div>
-            <div class="mb-3"><label class="form-label fw-bold">Contact No.</label><input type="text" name="userContactNo" class="form-control"></div>
+            <div class="mb-3"><label class="form-label fw-bold">Contact No.</label><input type="text" name="userContactNo" class="form-control" pattern="[0-9]{11}" maxlength="11" title="11-digit mobile number"></div>
             <div class="mb-3">
               <label class="form-label fw-bold">Role</label>
               <select name="userRole" class="form-select">

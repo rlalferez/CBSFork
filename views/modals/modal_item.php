@@ -11,14 +11,15 @@
             <div class="mb-3">
                 <label class="form-label fw-bold">Category</label>
                 <select name="itemCategory" class="form-select" required>
-                    <option value="Audio & Visual">Audio & Visual</option>
-                    <option value="Furniture">Furniture</option>
-                    <option value="Electronics">Electronics</option>
-                    <option value="Event Supplies">Event Supplies</option>
-                    <option value="Others">Others</option>
+                    <?php foreach($categories as $c): ?>
+                      <option value="<?= htmlspecialchars($c['categoryName']) ?>"><?= htmlspecialchars($c['categoryName']) ?></option>
+                    <?php endforeach; ?>
                 </select>
             </div>
-            <div class="mb-3"><label class="form-label fw-bold">Rate (Fee)</label><input type="number" step="0.01" name="itemRate" class="form-control" value="0" required></div>
+            <div class="row">
+              <div class="col-md-6 mb-3"><label class="form-label fw-bold">Starting Qty</label><input type="number" name="itemTotalQty" class="form-control" value="0" min="0" required></div>
+              <div class="col-md-6 mb-3"><label class="form-label fw-bold">Rate (Fee)</label><input type="number" step="0.01" name="itemRate" class="form-control" value="0" required></div>
+            </div>
           </div>
           <div class="modal-footer"><button type="submit" class="btn btn-primary-action py-2 px-4" id="itemModalBtn">Save Item</button></div>
         </form>

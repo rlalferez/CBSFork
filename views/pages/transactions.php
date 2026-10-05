@@ -9,10 +9,21 @@
                   <p class="text-muted small mb-0">View borrows, returns, and process checkout operations.</p>
                 </div>
                 <div class="d-flex gap-2">
-                  <button class="btn btn-primary-action btn-sm shadow-sm" data-bs-toggle="modal" data-bs-target="#modalTransaction">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="me-1"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                    <span>New Transaction</span>
-                  </button>
+                  <?php 
+                  $availableItemsCount = 0;
+                  foreach($items as $i) { if($i['itemAvailableQty'] > 0) $availableItemsCount++; }
+                  if ($availableItemsCount == 0 && count($borrows) == 0): 
+                  ?>
+                    <button class="btn btn-secondary btn-sm shadow-sm" disabled title="No items available to borrow and no active borrows to return.">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="me-1"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                      <span>New Transaction</span>
+                    </button>
+                  <?php else: ?>
+                    <button class="btn btn-primary-action btn-sm shadow-sm" data-bs-toggle="modal" data-bs-target="#modalTransaction">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="me-1"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                      <span>New Transaction</span>
+                    </button>
+                  <?php endif; ?>
                 </div>
               </div>
               

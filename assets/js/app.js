@@ -1,4 +1,22 @@
     $(document).ready(function() {
+        // Revision 27: Auto-Dismiss Popups
+        setTimeout(function() {
+            $('.alert').fadeOut('slow', function() {
+                $(this).remove();
+            });
+        }, 4000);
+
+        // Revision 21: Persistent Tab State
+        let activeTab = localStorage.getItem('activeTab');
+        if (activeTab) {
+            let tabBtn = document.querySelector(`[data-bs-target="${activeTab}"]`);
+            if (tabBtn) new bootstrap.Tab(tabBtn).show();
+        }
+        $('button[data-bs-toggle="pill"]').on('shown.bs.tab', function (e) {
+            let target = $(e.target).attr("data-bs-target");
+            localStorage.setItem('activeTab', target);
+        });
+
         // AJAX Search for Borrower Auto-population (Checkout)
         let searchTimeout;
         $('#borrowerSearch').on('input', function() {
@@ -65,6 +83,32 @@
                 dropdownParent: $('#modalItem')
             });
         }
+        
+        // Revision 19: Dynamic Purchase Rows
+        $('#add-pur-item-btn').on('click', function() {
+            const firstRow = document.querySelector('.purchase-item-row');
+            if (firstRow) {
+                const clone = firstRow.cloneNode(true);
+                clone.querySelector('input[name="purItemDesc[]"]').value = '';
+                clone.querySelector('input[name="purQty[]"]').value = '1';
+                document.getElementById('purchase-item-list').appendChild(clone);
+            }
+        });
+        
+        $(document).on('click', '.remove-pur-item-btn', function() {
+            if ($('.purchase-item-row').length > 1) {
+                $(this).closest('.purchase-item-row').remove();
+            }
+        });
+        
+        // Revision 18: Frontend Date Validation
+        $('#borrowOnDate').on('change', function() {
+            $('#returnByDate').attr('min', $(this).val());
+            if ($('#returnByDate').val() < $(this).val()) {
+                $('#returnByDate').val($(this).val());
+            }
+        });
+        
     });
 
     // Helper function to handle checkout borrower selection
@@ -100,6 +144,14 @@
             });
             // Update all active-borrows-select in case there are multiple
             $('.active-borrows-select').html(options);
+            
+            // Revision 25: Conditional "Add Item" Button
+            window.maxReturnItems = data.length;
+            if (data.length <= 1) {
+                $('#btnAddNewReturnItem').hide();
+            } else {
+                $('#btnAddNewReturnItem').show();
+            }
         });
     }
     
@@ -181,10 +233,12 @@
     });
 
     // Item Edit Helper
-    function editItem(id, desc, category, rate) {
+    function editItem(id, desc, category, qty, rate) {
         document.querySelector('#modalItem input[name="itemID"]').value = id;
         document.querySelector('#modalItem input[name="itemDesc"]').value = desc;
         document.querySelector('#modalItem select[name="itemCategory"]').value = category;
+        document.querySelector('#modalItem input[name="itemTotalQty"]').value = qty;
+        document.querySelector('#modalItem input[name="itemTotalQty"]').readOnly = true; // Prevent editing qty directly on edit (should use purchase to restock)
         document.querySelector('#modalItem input[name="itemRate"]').value = rate;
         
         document.getElementById('itemModalTitle').textContent = 'Edit Item';
@@ -198,6 +252,7 @@
     document.getElementById('modalItem')?.addEventListener('hidden.bs.modal', function () {
         this.querySelector('form').reset();
         this.querySelector('input[name="itemID"]').value = 'NEW';
+        this.querySelector('input[name="itemTotalQty"]').readOnly = false;
         document.getElementById('itemModalTitle').textContent = 'Add Item';
         document.getElementById('itemModalBtn').textContent = 'Save Item';
     });

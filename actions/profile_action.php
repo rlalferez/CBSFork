@@ -16,6 +16,19 @@ if ($action === 'update_profile') {
     
     // Ensure user can only update their own profile, unless Admin
     if ($uid === $currentUser['userID'] || $isAdmin) {
+        
+        if (!empty($email)) {
+            $checkStmt = $db->prepare("SELECT userID FROM user WHERE userEmail = ? AND is_archived = 0");
+            $checkStmt->execute([$email]);
+            $existing = $checkStmt->fetch();
+            if ($existing && $existing['userID'] !== $uid) {
+                $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Error: Email address is already in use by another user.'];
+                $_SESSION['active_tab'] = 'tab-profile';
+                header('Location: ../index.php');
+                exit;
+            }
+        }
+
         if (!empty($pass)) {
             $hash = password_hash($pass, PASSWORD_DEFAULT);
             $db->prepare("UPDATE user SET userFName=?, userLName=?, userEmail=?, userContactNo=?, userPassword=? WHERE userID=?")

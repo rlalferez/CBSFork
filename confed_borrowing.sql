@@ -35,18 +35,6 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------------------------------------
--- 1.5. CATEGORY TABLE (Dynamic Item Categories)
--- ----------------------------------------------------------
-DROP TABLE IF EXISTS `category`;
-CREATE TABLE `category` (
-  `categoryID` INT AUTO_INCREMENT PRIMARY KEY,
-  `categoryName` VARCHAR(100) NOT NULL UNIQUE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-INSERT INTO `category` (`categoryName`) VALUES 
-('Electronics'), ('Sports'), ('Office Supplies'), ('Event Materials');
-
--- ----------------------------------------------------------
 -- 2. ITEM TABLE (Equipment Inventory)
 -- ----------------------------------------------------------
 DROP TABLE IF EXISTS `item`;
@@ -97,7 +85,6 @@ CREATE TABLE `borrow_transaction` (
   `brwTransReturnByDate` DATE NOT NULL, -- Deadline to return
   `brwTransPayStat` VARCHAR(20) DEFAULT 'Free',
   `brwTransTotal` DOUBLE DEFAULT 0.00,
-  `brwTransStatus` VARCHAR(20) NOT NULL DEFAULT 'Released',
   
   -- COMPOSITE PRIMARY KEY: Allows same transaction ID to have multiple different items
   PRIMARY KEY (`brwTransID`, `itemID`),

@@ -13,6 +13,7 @@ if ($action === 'save_item') {
         $id = trim($_POST['itemID'] ?? '');
         $desc = trim($_POST['itemDesc'] ?? '');
         $category = trim($_POST['itemCategory'] ?? 'Audio & Visual');
+        $qty = max(0, (int)($_POST['itemTotalQty'] ?? 0));
         $rate = (float)($_POST['itemRate'] ?? 0);
 
         if (!empty($id) && $id !== 'NEW') {
@@ -21,9 +22,37 @@ if ($action === 'save_item') {
             $_SESSION['alert'] = ['type' => 'success', 'message' => "Item updated."];
         } else {
             $newId = generate_id($db, 'item', 'itemID', 'ITM-');
-            $stmt = $db->prepare("INSERT INTO item (itemID, itemDesc, itemCategory, itemTotalQty, itemAvailableQty, itemRate) VALUES (?, ?, ?, 0, 0, ?)");
-            $stmt->execute([$newId, $desc, $category, $rate]);
+            $stmt = $db->prepare("INSERT INTO item (itemID, itemDesc, itemCategory, itemTotalQty, itemAvailableQty, itemRate) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$newId, $desc, $category, $qty, $qty, $rate]);
             $_SESSION['alert'] = ['type' => 'success', 'message' => "New item added."];
+        }
+    }
+    $_SESSION['active_tab'] = 'tab-inventory';
+    header('Location: ../index.php');
+    exit;
+
+} elseif ($action === 'add_category') {
+    if ($isAdmin) {
+        $catName = trim($_POST['categoryName'] ?? '');
+        if (!empty($catName)) {
+            try {
+                $db->prepare("INSERT INTO category (categoryName) VALUES (?)")->execute([$catName]);
+                $_SESSION['alert'] = ['type' => 'success', 'message' => 'Category added successfully.'];
+            } catch (Exception $e) {
+                $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Category already exists or invalid.'];
+            }
+        }
+    }
+    $_SESSION['active_tab'] = 'tab-inventory';
+    header('Location: ../index.php');
+    exit;
+
+} elseif ($action === 'delete_category') {
+    if ($isAdmin) {
+        $catID = $_POST['categoryID'] ?? '';
+        if (!empty($catID)) {
+            $db->prepare("DELETE FROM category WHERE categoryID = ?")->execute([$catID]);
+            $_SESSION['alert'] = ['type' => 'success', 'message' => 'Category deleted.'];
         }
     }
     $_SESSION['active_tab'] = 'tab-inventory';

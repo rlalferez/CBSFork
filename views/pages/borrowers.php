@@ -17,11 +17,11 @@
                     <?php foreach($borrowers as $b): ?>
                       <tr id="row-brw-<?= $b['brwID'] ?>">
                         <td>
-                          <a href="?period=all&brw_val=<?= urlencode($b['brwID']) ?>" class="text-decoration-none fw-bold"><?= $b['brwID'] ?></a>
+                          <span class="fw-bold"><?= $b['brwID'] ?></span>
                         </td>
                         <td><?= htmlspecialchars($b['brwStudentID']) ?></td>
                         <td>
-                          <a href="?period=all&brw_val=<?= urlencode($b['brwID']) ?>" class="text-decoration-none fw-bold"><?= htmlspecialchars($b['brwFName'].' '.$b['brwLName']) ?></a>
+                          <span class="fw-bold"><?= htmlspecialchars($b['brwFName'].' '.$b['brwLName']) ?></span>
                         </td>
                         <td><?= htmlspecialchars($b['brwCollege']) ?></td><td><?= htmlspecialchars($b['brwOrg']) ?></td><td><?= htmlspecialchars($b['brwContactNo']) ?></td>
                         <td>

@@ -15,6 +15,18 @@ if ($action === 'save_user' && $isAdmin) {
     $role = trim($_POST['userRole'] ?? 'Committee');
     $pass = trim($_POST['password'] ?? '');
 
+    if (!empty($email)) {
+        $checkStmt = $db->prepare("SELECT userID FROM user WHERE userEmail = ? AND is_archived = 0");
+        $checkStmt->execute([$email]);
+        $existing = $checkStmt->fetch();
+        if ($existing && $existing['userID'] !== $id) {
+            $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Error: Email address is already in use by another user.'];
+            $_SESSION['active_tab'] = 'tab-users';
+            header('Location: ../index.php');
+            exit;
+        }
+    }
+
     if (!empty($id) && $id !== 'NEW') {
         if (!empty($pass)) {
             $hash = password_hash($pass, PASSWORD_DEFAULT);
