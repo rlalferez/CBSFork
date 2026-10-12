@@ -14,50 +14,46 @@ if ($action === 'update_profile') {
     $contact = trim($_POST['userContactNo'] ?? '');
     $pass = trim($_POST['password'] ?? '');
     
-    if (!empty($contact) && !preg_match('/^\d{11}$/', $contact)) {
-        $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Error: Contact number must be exactly 11 digits.'];
-        $_SESSION['active_tab'] = 'tab-profile';
-        header('Location: ../index.php');
-        exit;
+    // Ensure user can only update their own profile, unless Admin
+    if ($uid !== $currentUser['userID'] && !$isAdmin) {
+        redirect_with_alert('tab-profile', 'danger', 'Permission Denied: You can only update your own profile.');
     }
     
-    // Ensure user can only update their own profile, unless Admin
-    if ($uid === $currentUser['userID'] || $isAdmin) {
-        
-        if (!empty($email)) {
-            // 44. Backend Email Format Validation
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Error: Invalid email format.'];
-                $_SESSION['active_tab'] = 'tab-profile';
-                header('Location: ../index.php');
-                exit;
-            }
-            
-            $checkStmt = $db->prepare("SELECT userID FROM user WHERE userEmail = ? AND is_archived = 0");
-            $checkStmt->execute([$email]);
-            $existing = $checkStmt->fetch();
-            if ($existing && $existing['userID'] !== $uid) {
-                $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Error: Email address is already in use by another user.'];
-                $_SESSION['active_tab'] = 'tab-profile';
-                header('Location: ../index.php');
-                exit;
-            }
+    if (!empty($contact)) {
+        $cleanContact = validate_ph_contact($contact);
+        if (!$cleanContact) {
+            redirect_with_alert('tab-profile', 'danger', 'Invalid Contact Number. Must be a valid 11-digit Philippine mobile number starting with 09 (e.g. 09123456789).');
         }
-
-        if (!empty($pass)) {
-            $hash = password_hash($pass, PASSWORD_DEFAULT);
-            $db->prepare("UPDATE user SET userFName=?, userLName=?, userEmail=?, userContactNo=?, userPassword=? WHERE userID=?")
-               ->execute([$fName, $lName, $email, $contact, $hash, $uid]);
-        } else {
-            $db->prepare("UPDATE user SET userFName=?, userLName=?, userEmail=?, userContactNo=? WHERE userID=?")
-               ->execute([$fName, $lName, $email, $contact, $uid]);
-        }
-        if ($uid === $currentUser['userID']) {
-            $_SESSION['full_name'] = $fName . ' ' . $lName;
-        }
-        $_SESSION['alert'] = ['type' => 'success', 'message' => 'Profile updated successfully.'];
+        $contact = $cleanContact;
     }
-    $_SESSION['active_tab'] = 'tab-profile';
-    header('Location: ../index.php');
-    exit;
+    
+    if (!empty($email)) {
+        if (!validate_email_format($email)) {
+            redirect_with_alert('tab-profile', 'danger', 'Error: Invalid email format.');
+        }
+        
+        $checkStmt = $db->prepare("SELECT userID FROM user WHERE userEmail = ? AND is_archived = 0");
+        $checkStmt->execute([$email]);
+        $existing = $checkStmt->fetch();
+        if ($existing && $existing['userID'] !== $uid) {
+            redirect_with_alert('tab-profile', 'danger', 'Error: Email address is already in use by another user.');
+        }
+    }
+
+    if (!empty($pass)) {
+        $hash = password_hash($pass, PASSWORD_DEFAULT);
+        $db->prepare("UPDATE user SET userFName=?, userLName=?, userEmail=?, userContactNo=?, userPassword=? WHERE userID=?")
+           ->execute([$fName, $lName, $email, $contact, $hash, $uid]);
+    } else {
+        $db->prepare("UPDATE user SET userFName=?, userLName=?, userEmail=?, userContactNo=? WHERE userID=?")
+           ->execute([$fName, $lName, $email, $contact, $uid]);
+    }
+    if ($uid === $currentUser['userID']) {
+        $_SESSION['full_name'] = $fName . ' ' . $lName;
+        $_SESSION['email'] = $email;
+        $_SESSION['contact_number'] = $contact;
+    }
+    redirect_with_alert('tab-profile', 'success', 'Profile updated successfully.');
 }
+
+redirect_with_alert('tab-profile', 'warning', 'Invalid profile action.');

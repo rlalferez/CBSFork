@@ -6,7 +6,11 @@ require_once '../config/helpers.php';
 $db = get_db();
 $action = $_POST['action'] ?? '';
 
-if ($action === 'save_user' && $isAdmin) {
+if (!$isAdmin) {
+    redirect_with_alert('tab-transactions', 'danger', 'Access denied. Administrator privileges required.');
+}
+
+if ($action === 'save_user') {
     $id = trim($_POST['userID'] ?? '');
     $fName = trim($_POST['userFName'] ?? '');
     $lName = trim($_POST['userLName'] ?? '');
@@ -15,30 +19,24 @@ if ($action === 'save_user' && $isAdmin) {
     $role = trim($_POST['userRole'] ?? 'Committee');
     $pass = trim($_POST['password'] ?? '');
 
-    if (!empty($contact) && !preg_match('/^\d{11}$/', $contact)) {
-        $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Error: Contact number must be exactly 11 digits.'];
-        $_SESSION['active_tab'] = 'tab-users';
-        header('Location: ../index.php');
-        exit;
+    if (!empty($contact)) {
+        $cleanContact = validate_ph_contact($contact);
+        if (!$cleanContact) {
+            redirect_with_alert('tab-users', 'danger', 'Invalid Contact Number. Must be a valid 11-digit Philippine mobile number starting with 09 (e.g. 09123456789).');
+        }
+        $contact = $cleanContact;
     }
 
     if (!empty($email)) {
-        // 44. Backend Email Format Validation
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Error: Invalid email format.'];
-            $_SESSION['active_tab'] = 'tab-users';
-            header('Location: ../index.php');
-            exit;
+        if (!validate_email_format($email)) {
+            redirect_with_alert('tab-users', 'danger', 'Error: Invalid email format.');
         }
         
         $checkStmt = $db->prepare("SELECT userID FROM user WHERE userEmail = ? AND is_archived = 0");
         $checkStmt->execute([$email]);
         $existing = $checkStmt->fetch();
         if ($existing && $existing['userID'] !== $id) {
-            $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Error: Email address is already in use by another user.'];
-            $_SESSION['active_tab'] = 'tab-users';
-            header('Location: ../index.php');
-            exit;
+            redirect_with_alert('tab-users', 'danger', 'Error: Email address is already in use by another user.');
         }
     }
 
@@ -51,28 +49,23 @@ if ($action === 'save_user' && $isAdmin) {
             $db->prepare("UPDATE user SET userFName=?, userLName=?, userEmail=?, userContactNo=?, userRole=? WHERE userID=?")
                ->execute([$fName, $lName, $email, $contact, $role, $id]);
         }
-        $_SESSION['alert'] = ['type' => 'success', 'message' => 'User updated.'];
+        redirect_with_alert('tab-users', 'success', 'User updated.');
     } else {
         $newId = generate_id($db, 'user', 'userID', 'USR-');
         $hash = password_hash($pass, PASSWORD_DEFAULT);
         $db->prepare("INSERT INTO user (userID, userFName, userLName, userEmail, userContactNo, userRole, userPassword) VALUES (?, ?, ?, ?, ?, ?, ?)")
            ->execute([$newId, $fName, $lName, $email, $contact, $role, $hash]);
-        $_SESSION['alert'] = ['type' => 'success', 'message' => 'User created.'];
+        redirect_with_alert('tab-users', 'success', 'User created.');
     }
-    $_SESSION['active_tab'] = 'tab-users';
-    header('Location: ../index.php');
-    exit;
 
-} elseif ($action === 'archive_user' && $isAdmin) {
+} elseif ($action === 'archive_user') {
     $id = trim($_POST['userID'] ?? '');
     if ($id === $currentUser['userID']) {
-        $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Cannot archive yourself.'];
+        redirect_with_alert('tab-users', 'danger', 'Cannot archive yourself.');
     } else {
-        // Soft delete
         $db->prepare("UPDATE user SET is_archived = 1 WHERE userID = ?")->execute([$id]);
-        $_SESSION['alert'] = ['type' => 'success', 'message' => 'User archived.'];
+        redirect_with_alert('tab-users', 'success', 'User archived.');
     }
-    $_SESSION['active_tab'] = 'tab-users';
-    header('Location: ../index.php');
-    exit;
 }
+
+redirect_with_alert('tab-users', 'warning', 'Invalid user action.');

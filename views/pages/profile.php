@@ -1,11 +1,13 @@
-          <div class="tab-pane fade" id="tab-profile">
+          <div class="tab-pane fade <?= ($activeTab ?? '') === 'tab-profile' ? 'show active' : '' ?>" id="tab-profile">
             <div class="content-card">
               <div class="content-card-header">
-                <h5 class="fw-bold mb-1 text-dark">Profile Management</h5>
-                <p class="text-muted small mb-0">Update your personal account details.</p>
+                <div class="card-title-group">
+                  <h5 class="card-title">Profile Management</h5>
+                  <p class="card-subtitle">Update your personal account details.</p>
+                </div>
               </div>
-              <div class="p-4 bg-white" style="border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
-                <form action="actions/profile_action.php" method="POST" style="max-width: 600px;">
+              <div class="card-form-container">
+                <form action="actions/profile_action.php" method="POST" class="profile-form">
                   <input type="hidden" name="action" value="update_profile">
                   <input type="hidden" name="userID" value="<?= htmlspecialchars($profileUser['userID']) ?>">
                   <div class="row g-3 mb-3">
@@ -24,7 +26,7 @@
                   </div>
                   <div class="mb-3">
                     <label class="form-label fw-bold small">Contact No</label>
-                    <input type="text" class="form-control" name="userContactNo" value="<?= htmlspecialchars($profileUser['userContactNo']) ?>" pattern="[0-9]{11}" maxlength="11" title="11-digit mobile number" required>
+                    <input type="text" class="form-control" name="userContactNo" value="<?= htmlspecialchars($profileUser['userContactNo']) ?>" pattern="09[0-9]{9}" maxlength="11" placeholder="09XXXXXXXXX" title="11-digit Philippine mobile number starting with 09 (e.g. 09123456789)" required>
                   </div>
                   <div class="mb-4">
                     <label class="form-label fw-bold small">New Password</label>

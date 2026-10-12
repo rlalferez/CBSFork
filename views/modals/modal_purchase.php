@@ -29,17 +29,22 @@
                   <input type="number" name="purQty[]" class="form-control" value="1" min="1" required>
                 </div>
                 <div class="col-md-1">
-                  <button type="button" class="btn btn-danger remove-pur-item-btn"><i class="fas fa-trash"></i></button>
+                  <button type="button" class="btn btn-danger remove-pur-item-btn" title="Remove row">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                  </button>
                 </div>
               </div>
             </div>
             <datalist id="purchaseItemsDatalist">
               <?php foreach($items as $i): ?>
-                  <option value="<?= htmlspecialchars($i['itemDesc']) ?>" data-category="<?= htmlspecialchars($i['categoryName']) ?>"></option>
+                  <option value="<?= htmlspecialchars($i['itemDesc'], ENT_QUOTES, 'UTF-8') ?>" data-category="<?= htmlspecialchars($i['itemCategory'] ?? '', ENT_QUOTES, 'UTF-8') ?>"></option>
               <?php endforeach; ?>
             </datalist>
             
-            <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="add-pur-item-btn"><i class="fas fa-plus"></i> Add Item</button>
+            <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="add-pur-item-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              <span>Add Item</span>
+            </button>
           </div>
           <div class="modal-footer"><button type="submit" class="btn btn-success py-2 px-4">Log Purchase</button></div>
         </form>

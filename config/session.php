@@ -8,6 +8,8 @@ $isAdmin = ($currentUser && $currentUser['role'] === 'Council');
 
 $current_file = basename($_SERVER['PHP_SELF']);
 if (!$currentUser && $current_file !== 'login.php' && $current_file !== 'auth_action.php') {
-    header('Location: login.php');
+    $redirectUrl = (strpos($_SERVER['PHP_SELF'], '/actions/') !== false) ? '../login.php' : 'login.php';
+    header("Location: $redirectUrl");
     exit;
 }
+

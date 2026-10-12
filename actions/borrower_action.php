@@ -23,19 +23,18 @@ if ($action === 'search_borrower') {
     $org = trim($_POST['brwOrg'] ?? '');
     $contact = trim($_POST['brwContactNo'] ?? '');
 
-    // Revisions 15 & 16: Strict Formatting Validation
-    if (!empty($studentId) && !preg_match('/^\d{2}-\d-\d{5}$/', $studentId)) {
-        $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Invalid Student ID format. Use ##-#-#####.'];
-        $_SESSION['active_tab'] = 'tab-borrowers';
-        header('Location: ../index.php');
-        exit;
+    if (empty($studentId) || !validate_student_id($studentId)) {
+        redirect_with_alert('tab-borrowers', 'danger', 'Invalid Student ID format. Use ##-#-##### (e.g. 23-1-12345).');
     }
     
-    if (!empty($contact) && !preg_match('/^\d{11}$/', $contact)) {
-        $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Contact number must be exactly 11 digits.'];
-        $_SESSION['active_tab'] = 'tab-borrowers';
-        header('Location: ../index.php');
-        exit;
+    $cleanContact = validate_ph_contact($contact);
+    if (!$cleanContact) {
+        redirect_with_alert('tab-borrowers', 'danger', 'Invalid Contact Number. Must be a valid 11-digit Philippine mobile number starting with 09 (e.g. 09123456789).');
+    }
+    $contact = $cleanContact;
+
+    if (empty($fName) || empty($lName) || empty($college)) {
+        redirect_with_alert('tab-borrowers', 'danger', 'Please fill in all required borrower information.');
     }
 
     if (!empty($studentId)) {
@@ -43,26 +42,21 @@ if ($action === 'search_borrower') {
         $checkStmt->execute([$studentId]);
         $existing = $checkStmt->fetch();
         if ($existing && $existing['brwID'] !== $id) {
-            $_SESSION['alert'] = ['type' => 'danger', 'message' => 'Error: Student ID is already registered to another borrower.'];
-            $_SESSION['active_tab'] = 'tab-borrowers';
-            header('Location: ../index.php');
-            exit;
+            redirect_with_alert('tab-borrowers', 'danger', 'Error: Student ID is already registered to another borrower.');
         }
     }
 
     if (!empty($id) && $id !== 'NEW') {
         $db->prepare("UPDATE borrower SET brwStudentID=?, brwFName=?, brwLName=?, brwCollege=?, brwOrg=?, brwContactNo=? WHERE brwID=?")
            ->execute([$studentId, $fName, $lName, $college, $org, $contact, $id]);
-        $_SESSION['alert'] = ['type' => 'success', 'message' => 'Borrower updated.'];
+        redirect_with_alert('tab-borrowers', 'success', 'Borrower updated.');
     } else {
         $newId = generate_id($db, 'borrower', 'brwID', 'BRW-');
         $db->prepare("INSERT INTO borrower (brwID, brwStudentID, brwFName, brwLName, brwCollege, brwOrg, brwContactNo) VALUES (?, ?, ?, ?, ?, ?, ?)")
            ->execute([$newId, $studentId, $fName, $lName, $college, $org, $contact]);
-        $_SESSION['alert'] = ['type' => 'success', 'message' => 'Borrower added.'];
+        redirect_with_alert('tab-borrowers', 'success', 'Borrower added.');
     }
-    $_SESSION['active_tab'] = 'tab-borrowers';
-    header('Location: ../index.php');
-    exit;
+
 } elseif ($action === 'archive_borrower') {
     $id = trim($_POST['brwID'] ?? '');
     
@@ -72,13 +66,11 @@ if ($action === 'search_borrower') {
     $activeItems = $check->fetch()['unreturned'] ?? 0;
     
     if ($activeItems > 0) {
-        $_SESSION['alert'] = ['type' => 'danger', 'message' => "Cannot archive borrower: they have $activeItems unreturned item(s)."];
+        redirect_with_alert('tab-borrowers', 'danger', "Cannot archive borrower: they have $activeItems unreturned item(s).");
     } else {
         $db->prepare("UPDATE borrower SET is_archived = 1 WHERE brwID = ?")->execute([$id]);
-        $_SESSION['alert'] = ['type' => 'success', 'message' => 'Borrower archived.'];
+        redirect_with_alert('tab-borrowers', 'success', 'Borrower archived.');
     }
-    
-    $_SESSION['active_tab'] = 'tab-borrowers';
-    header('Location: ../index.php');
-    exit;
 }
+
+redirect_with_alert('tab-borrowers', 'warning', 'Invalid borrower action.');

@@ -150,12 +150,12 @@ $totalAmount = 0;
                 <?php $totalAmount += $t['brwTransTotal']; ?>
                 <tr>
                     <td>
-                        <?= htmlspecialchars($t['itemDesc']) ?><br>
-                        <small>ID: <?= $t['brwTransID'] ?></small>
+                        <?= htmlspecialchars($t['itemDesc'], ENT_QUOTES, 'UTF-8') ?><br>
+                        <small>ID: <?= htmlspecialchars($t['brwTransID'], ENT_QUOTES, 'UTF-8') ?></small>
                     </td>
-                    <td><?= $t['brwTransItemQty'] ?></td>
-                    <td><?= number_format($t['itemRate'], 2) ?></td>
-                    <td><?= number_format($t['brwTransTotal'], 2) ?></td>
+                    <td><?= (int)$t['brwTransItemQty'] ?></td>
+                    <td><?= number_format((float)$t['itemRate'], 2) ?></td>
+                    <td><?= number_format((float)$t['brwTransTotal'], 2) ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
