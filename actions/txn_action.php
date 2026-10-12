@@ -217,7 +217,6 @@ if ($action === 'search_active_borrows') {
         }
         
         $db->commit();
-        $_SESSION['print_receipt'] = $transIDs;
         $successMsg = $isReservation
             ? ("Reservation placed successfully for " . count($transIDs) . " item(s) from " . date('M j, Y', strtotime($borrowOnDate)) . " to " . date('M j, Y', strtotime($returnByDate)) . ".")
             : ("Checkout successful. Created " . count($transIDs) . " transaction(s).");

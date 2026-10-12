@@ -176,7 +176,7 @@ Transactions represent the core operational purpose of the Council: checking out
   2. In the **Process Borrow** subtab, officer searches an existing borrower by Student ID or clicks **+ Add New Borrower** to enter them directly into the form.
   3. Officer selects items from dynamic rows, enters quantities, and specifies borrow and return dates.
   4. Real-time AJAX checks availability for requested date ranges (`check_item_availability_for_dates`).
-  5. On submit, `actions/txn_action.php` validates the payload, creates an auto-incrementing `TXN-###` ID using `generate_id()`, inserts the record into `borrow_transaction`, decrements `itemAvailableQty` in the `item` table, and sets `$_SESSION['print_receipt']` to trigger the receipt pop-up.
+  5. On submit, `actions/txn_action.php` validates the payload, creates an auto-incrementing `TXN-###` ID using `generate_id()`, inserts the record into `borrow_transaction`, decrements `itemAvailableQty` in the `item` table, and redirects back to the transactions tab with a confirmation alert.
 * **Key Code Responsible:**
   - `check_item_availability_for_dates()` in [`config/helpers.php`](file:///c:/xampp/htdocs/CBSFork/config/helpers.php#L44-L164)
   - `action === 'create_borrow'` in [`actions/txn_action.php`](file:///c:/xampp/htdocs/CBSFork/actions/txn_action.php#L119-L229)
@@ -240,12 +240,12 @@ Transactions represent the core operational purpose of the Council: checking out
   - `action === 'create_return'` in [`actions/txn_action.php`](file:///c:/xampp/htdocs/CBSFork/actions/txn_action.php#L230-L297)
   - Client-side handler `selectRetBorrower()` in [`assets/js/app.js`](file:///c:/xampp/htdocs/CBSFork/assets/js/app.js#L231-L256).
 
-### 4.6. Print Receipt / Gate Pass
+### 4.6. Print Receipt / Gate Pass (Reports Tab)
 * **What it does:** Renders a clean, formatted receipt / gate pass for security checkpoint clearance at campus gates.
 * **How it works:**
-  - After a checkout or release, `$_SESSION['print_receipt']` stores transaction IDs.
-  - An inline script at the bottom of [`index.php`](file:///c:/xampp/htdocs/CBSFork/index.php#L228-L236) automatically triggers `window.open('print_receipt.php?ids=...', 'ReceiptWindow')`.
-  - Alternatively, each transaction row has a manual **Receipt** button.
+  - Accessible exclusively via the **Reports** tab (`#tab-reports`).
+  - Officers can click the **Receipt** button on any transaction entry in the Unified Transactions (`#rep-unified`) or Borrows (`#rep-borrow`) tables.
+  - Clicking triggers `window.open('print_receipt.php?ids=...', 'ReceiptWindow', 'width=800,height=600')`.
   - [`print_receipt.php`](file:///c:/xampp/htdocs/CBSFork/print_receipt.php) loads borrower details, item descriptions, rental fees, and staff officer name, and runs `window.print()` automatically upon load.
 
 ### 4.7. Sub-Tabs & Instant Search Filtering
@@ -565,7 +565,7 @@ The following matrix provides a complete reference of all 7 Council Operations, 
 
 | Operation Name | UI Page File | Modal View File | Backend Action File | Key Backend Action(s) | Primary JS Handlers (`app.js`) | Database Tables Affected | Primary Guard / Security Mechanism |
 |---|---|---|---|---|---|---|---|
-| **1. Transactions** | [`views/pages/transactions.php`](file:///c:/xampp/htdocs/CBSFork/views/pages/transactions.php) | [`views/modals/modal_txn.php`](file:///c:/xampp/htdocs/CBSFork/views/modals/modal_txn.php) | [`actions/txn_action.php`](file:///c:/xampp/htdocs/CBSFork/actions/txn_action.php) | `create_borrow`<br>`create_return`<br>`release_reservation`<br>`cancel_reservation`<br>`search_active_borrows`<br>`check_availability` | `checkRowAvailability()`<br>`handleBorrowSubmit()`<br>`selectBorrower()`<br>`selectRetBorrower()`<br>`updateReturnRow()` | `borrow_transaction`<br>`return_transaction`<br>`item`<br>`borrower` | - Overbooking date collision engine<br>- Return date $\ge$ borrow date<br>- Cannot return more than borrowed<br>- Auto-receipt generation |
+| **1. Transactions** | [`views/pages/transactions.php`](file:///c:/xampp/htdocs/CBSFork/views/pages/transactions.php) | [`views/modals/modal_txn.php`](file:///c:/xampp/htdocs/CBSFork/views/modals/modal_txn.php) | [`actions/txn_action.php`](file:///c:/xampp/htdocs/CBSFork/actions/txn_action.php) | `create_borrow`<br>`create_return`<br>`release_reservation`<br>`cancel_reservation`<br>`search_active_borrows`<br>`check_availability` | `checkRowAvailability()`<br>`handleBorrowSubmit()`<br>`selectBorrower()`<br>`selectRetBorrower()`<br>`updateReturnRow()` | `borrow_transaction`<br>`return_transaction`<br>`item`<br>`borrower` | - Overbooking date collision engine<br>- Return date $\ge$ borrow date<br>- Cannot return more than borrowed<br>- Receipt generation via Reports tab |
 | **2. Purchases** | [`views/pages/purchases.php`](file:///c:/xampp/htdocs/CBSFork/views/pages/purchases.php) | [`views/modals/modal_purchase.php`](file:///c:/xampp/htdocs/CBSFork/views/modals/modal_purchase.php) | [`actions/txn_action.php`](file:///c:/xampp/htdocs/CBSFork/actions/txn_action.php) | `purchase_item`<br>`archive_purchase` | `autoFillCategory()`<br>`#add-pur-item-btn` click | `purchase_transaction`<br>`item`<br>`category` | - Admin role required (`$isAdmin`)<br>- Existing item category lock<br>- Cannot reverse purchase if items checked out |
 | **3. Items (Inventory)** | [`views/pages/inventory.php`](file:///c:/xampp/htdocs/CBSFork/views/pages/inventory.php) | [`views/modals/modal_item.php`](file:///c:/xampp/htdocs/CBSFork/views/modals/modal_item.php)<br>[`views/modals/modal_category.php`](file:///c:/xampp/htdocs/CBSFork/views/modals/modal_category.php) | [`actions/item_action.php`](file:///c:/xampp/htdocs/CBSFork/actions/item_action.php) | `save_item`<br>`add_category`<br>`delete_category`<br>`archive_item` | `editItem()`<br>Table search filter | `item`<br>`category` | - Admin role required<br>- Description uniqueness<br>- Cannot reduce stock below checked-out units<br>- Cannot archive item with active borrows |
 | **4. Borrower Management** | [`views/pages/borrowers.php`](file:///c:/xampp/htdocs/CBSFork/views/pages/borrowers.php) | [`views/modals/modal_borrower.php`](file:///c:/xampp/htdocs/CBSFork/views/modals/modal_borrower.php) | [`actions/borrower_action.php`](file:///c:/xampp/htdocs/CBSFork/actions/borrower_action.php) | `save_borrower`<br>`archive_borrower`<br>`search_borrower`<br>`check_student_id` | `editBorrower()`<br>`setupBorrowerSearch()` | `borrower` | - Student ID regex (`##-#-#####`)<br>- PH contact normalization (`09...`)<br>- Cannot archive borrower with unreturned equipment |

@@ -86,10 +86,6 @@
                                       <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-2" style="font-size:11px;" title="Cancel Reservation">Cancel</button>
                                     </form>
                                   </div>
-                                <?php elseif(in_array(strtolower($t['brwTransStatus']), ['released', 'returned'])): ?>
-                                  <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" style="font-size:11px;" title="Print Receipt" onclick="window.open('print_receipt.php?ids=<?= urlencode(json_encode([$t['brwTransID']])) ?>', 'ReceiptWindow', 'width=800,height=600')">
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Receipt
-                                  </button>
                                 <?php else: ?>
                                   <span class="text-muted small">-</span>
                                 <?php endif; ?>
@@ -149,7 +145,7 @@
                 <div class="tab-pane fade" id="txn-released">
                   <div class="table-responsive">
                     <table class="table-custom" id="txnReleasedTable">
-                      <thead><tr><th>Status</th><th>TXN ID</th><th>Item</th><th class="col-number">Qty</th><th>Borrower</th><th>Borrow Date</th><th>Due Date</th><th class="col-number">Fee</th><th>Action</th></tr></thead>
+                      <thead><tr><th>Status</th><th>TXN ID</th><th>Item</th><th class="col-number">Qty</th><th>Borrower</th><th>Borrow Date</th><th>Due Date</th><th class="col-number">Fee</th></tr></thead>
                       <tbody>
                         <?php 
                         $hasReleased = false;
@@ -166,15 +162,11 @@
                             <td><a href="#" onclick="switchTabAndHighlight('#tab-borrowers', 'row-brw-<?= htmlspecialchars($b['brwID'], ENT_QUOTES, 'UTF-8') ?>'); return false;" class="text-decoration-none fw-bold"><?= htmlspecialchars($b['brwFName'].' '.$b['brwLName'], ENT_QUOTES, 'UTF-8') ?></a></td>
                             <td><?= htmlspecialchars($b['brwTransBorrowOnDate'], ENT_QUOTES, 'UTF-8') ?></td>
                             <td><?= htmlspecialchars($b['brwTransReturnByDate'], ENT_QUOTES, 'UTF-8') ?></td>
-                            <td>
-                              <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" style="font-size:11px;" title="Print Receipt" onclick="window.open('print_receipt.php?ids=<?= urlencode(json_encode([$b['brwTransID']])) ?>', 'ReceiptWindow', 'width=800,height=600')">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Receipt
-                              </button>
-                            </td>
+                            <td class="col-number"><?= number_format((float)$b['brwTransTotal'], 2) ?></td>
                           </tr>
                         <?php endforeach; ?>
                         <?php if(!$hasReleased): ?>
-                          <tr><td colspan="9" class="text-center text-muted py-4">No released transactions found.</td></tr>
+                          <tr><td colspan="8" class="text-center text-muted py-4">No released transactions found.</td></tr>
                         <?php endif; ?>
                       </tbody>
                     </table>

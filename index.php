@@ -12,8 +12,6 @@ $activeTab = $sessionTab ?? 'tab-transactions';
 $alert = $_SESSION['alert'] ?? ['type' => '', 'message' => ''];
 unset($_SESSION['alert']);
 
-$printReceipt = $_SESSION['print_receipt'] ?? null;
-unset($_SESSION['print_receipt']);
 
 $items = $db->query("SELECT * FROM item WHERE is_archived = 0 ORDER BY itemCategory ASC, itemDesc ASC")->fetchAll();
 $categories = $db->query("SELECT * FROM category ORDER BY categoryName ASC")->fetchAll();
@@ -184,13 +182,6 @@ require_once 'views/layout/header.php';
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
                     <div>
                         <?= htmlspecialchars($alert['message']) ?>
-                        <?php if (!empty($printReceipt)): ?>
-                            <div class="mt-2">
-                                <a href="print_receipt.php?ids=<?= urlencode(json_encode($printReceipt)) ?>" target="_blank" class="btn btn-sm btn-dark text-white">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Click here to print receipt if pop-up was blocked
-                                </a>
-                            </div>
-                        <?php endif; ?>
                     </div>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
@@ -225,12 +216,3 @@ require_once 'views/modals/modal_purchase.php';
 require_once 'views/layout/footer.php'; 
 ?>
 
-<?php if ($printReceipt): ?>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const ids = <?= json_encode($printReceipt) ?>;
-        const url = 'print_receipt.php?ids=' + encodeURIComponent(JSON.stringify(ids));
-        window.open(url, 'ReceiptWindow', 'width=800,height=600');
-    });
-</script>
-<?php endif; ?>
