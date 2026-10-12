@@ -40,6 +40,7 @@
                 <a href="#" onclick="openSubtab('#tab-transactions', '#txn-reserved'); return false;">Reserved</a>
                 <a href="#" onclick="openSubtab('#tab-transactions', '#txn-released'); return false;">Released</a>
                 <a href="#" onclick="openSubtab('#tab-transactions', '#txn-return'); return false;">Returns</a>
+                <a href="#" onclick="openSubtab('#tab-transactions', '#txn-cancelled'); return false;">Cancelled</a>
               </div>
             </div>
 

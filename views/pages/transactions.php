@@ -26,6 +26,7 @@
                   <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#txn-reserved">Reserved</button></li>
                   <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#txn-released">Released</button></li>
                   <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#txn-return">Returned</button></li>
+                  <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#txn-cancelled">Cancelled</button></li>
                 </ul>
                 <div class="card-tabs-search">
                   <input type="text" class="form-control form-control-sm table-search" id="txnGlobalSearch" placeholder="Search transactions..." style="max-width: 250px;">
@@ -198,7 +199,39 @@
                         <?php endif; ?>
                       </tbody>
                     </table>
-                  </div>                </div>
+                  </div>
+                </div>
+
+                <!-- CANCELLED TAB -->
+                <div class="tab-pane fade" id="txn-cancelled">
+                  <div class="table-responsive">
+                    <table class="table-custom" id="txnCancelledTable">
+                      <thead><tr><th>Status</th><th>TXN ID</th><th>Item</th><th>Qty</th><th>Borrower</th><th>Reserve Date</th><th>Due Date</th><th>Fee</th></tr></thead>
+                      <tbody>
+                        <?php 
+                        $hasCancelled = false;
+                        foreach($borrows as $b): 
+                          if(strcasecmp($b['brwTransStatus'] ?? '', 'Cancelled') !== 0) continue;
+                          $hasCancelled = true;
+                        ?>
+                          <tr id="row-txn-<?= htmlspecialchars($b['brwTransID'], ENT_QUOTES, 'UTF-8') ?>">
+                            <td><span class="badge bg-secondary">Cancelled</span></td>
+                            <td><?= htmlspecialchars($b['brwTransID'], ENT_QUOTES, 'UTF-8') ?></td>
+                            <td><a href="#" onclick="switchTabAndHighlight('#tab-inventory', 'row-item-<?= htmlspecialchars($b['itemID'], ENT_QUOTES, 'UTF-8') ?>'); return false;" class="text-decoration-none fw-bold"><?= htmlspecialchars($b['itemDesc'], ENT_QUOTES, 'UTF-8') ?></a></td>
+                            <td><?= (int)$b['brwTransItemQty'] ?></td>
+                            <td><a href="#" onclick="switchTabAndHighlight('#tab-borrowers', 'row-brw-<?= htmlspecialchars($b['brwID'], ENT_QUOTES, 'UTF-8') ?>'); return false;" class="text-decoration-none fw-bold"><?= htmlspecialchars($b['brwFName'].' '.$b['brwLName'], ENT_QUOTES, 'UTF-8') ?></a></td>
+                            <td><?= htmlspecialchars($b['brwTransBorrowOnDate'], ENT_QUOTES, 'UTF-8') ?></td>
+                            <td><?= htmlspecialchars($b['brwTransReturnByDate'], ENT_QUOTES, 'UTF-8') ?></td>
+                            <td><?= number_format((float)$b['brwTransTotal'], 2) ?></td>
+                          </tr>
+                        <?php endforeach; ?>
+                        <?php if(!$hasCancelled): ?>
+                          <tr><td colspan="8" class="text-center text-muted py-4">No cancelled transactions found.</td></tr>
+                        <?php endif; ?>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

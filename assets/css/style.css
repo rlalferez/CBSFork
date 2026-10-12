@@ -14,7 +14,7 @@
    9. MODALS & FORMS (.modal-content, .borrow-item-row, .borrow-item-feedback)
    10. REPORT PERIOD FILTER PILLS (.period-filter-group, .period-display-badge)
    11. PRINT MEDIA STYLES (@media print)
-   12. LOGIN PAGE RESPONSIVE LAYOUT
+   12. LOGIN PAGE STYLES (.login-wrapper, .login-brand-panel, .login-card)
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
@@ -1136,57 +1136,254 @@ body {
 }
 
 /* ==========================================================================
-   12. LOGIN PAGE RESPONSIVE LAYOUT
+   12. LOGIN PAGE STYLES (.login-wrapper, .login-brand-panel, .login-card)
    ========================================================================== */
+.login-wrapper {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Left Brand Panel */
+.login-brand-panel {
+  flex: 1;
+  background-color: var(--csc-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-brand-content {
+  width: 100%;
+  max-width: 620px;
+  color: #ffffff;
+}
+
+.login-logos {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.login-logo-badge {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 4px;
+  flex-shrink: 0;
+}
+
+.login-logo-text {
+  color: var(--csc-primary);
+  font-weight: 700;
+  text-align: center;
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.login-logo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.login-brand-headings {
+  display: block;
+}
+
+.login-brand-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  margin: 0;
+  color: #ffffff;
+}
+
+.login-brand-title-sub {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  margin: 0 0 1.25rem 0;
+  color: #ffffff;
+}
+
+.login-brand-subtitle {
+  font-size: 1.2rem;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+}
+
+/* Right Form Panel */
+.login-form-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--csc-light);
+  padding: 2rem;
+}
+
+.login-form-container {
+  width: 100%;
+  max-width: 420px;
+}
+
+.login-alert {
+  border-radius: 1rem;
+  padding: 1rem 1.25rem;
+  box-shadow: var(--csc-shadow-sm);
+  margin-bottom: 1.5rem;
+}
+
+.login-alert-text {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.login-card {
+  background: var(--csc-card-bg);
+  border-radius: 1.25rem;
+  padding: 2.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--csc-border-subtle);
+}
+
+.login-card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--csc-dark);
+  text-align: center;
+  margin-bottom: 1.75rem;
+}
+
+.login-form {
+  display: block;
+}
+
+.login-form-group {
+  margin-bottom: 1.25rem;
+}
+
+.login-form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--csc-slate);
+  margin-bottom: 0.4rem;
+}
+
+.login-quick-signin {
+  background-color: var(--csc-light);
+  border: 1px solid var(--csc-border);
+  border-radius: 0.5rem;
+  padding: 0.85rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.login-quick-signin-label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--csc-muted);
+  margin-bottom: 0.5rem;
+}
+
+.login-quick-signin-buttons {
+  display: flex;
+  width: 100%;
+  border-radius: 0.375rem;
+  overflow: hidden;
+}
+
+.login-quick-btn {
+  flex: 1;
+  font-size: 0.85rem;
+  border-radius: 0;
+}
+
+.login-quick-signin-buttons .login-quick-btn:first-child {
+  border-top-left-radius: 0.375rem;
+  border-bottom-left-radius: 0.375rem;
+}
+
+.login-quick-signin-buttons .login-quick-btn:last-child {
+  border-top-right-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
+}
+
+.login-submit-btn {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+}
+
+/* Mobile & Tablet Responsive */
 @media (max-width: 767.98px) {
-  .login-left-panel {
-    height: auto !important;
-    padding: 1.25rem 1rem !important;
+  .login-wrapper {
+    flex-direction: column;
   }
 
-  .login-logo {
-    width: 40px !important;
-    height: 40px !important;
+  .login-brand-panel {
+    padding: 1.5rem 1rem;
+    flex: none;
   }
 
-  .login-logo span {
-    font-size: 7px !important;
-    line-height: 1 !important;
+  .login-logos {
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
   }
 
-  .login-title-1 {
-    font-size: 1.2rem !important;
+  .login-logo-badge {
+    width: 44px;
+    height: 44px;
+  }
+
+  .login-logo-text {
+    font-size: 8px;
+  }
+
+  .login-brand-title,
+  .login-brand-title-sub {
+    font-size: 1.25rem;
     display: inline-block;
-    margin: 0 !important;
-    margin-right: 0.3rem !important;
+    margin: 0;
   }
 
-  .login-title-2 {
-    font-size: 1.2rem !important;
-    display: inline-block;
-    margin: 0 !important;
+  .login-brand-title {
+    margin-right: 0.35rem;
   }
 
-  .login-subtitle {
-    font-size: 0.7rem !important;
-    letter-spacing: 0.5px !important;
-    margin-top: 0.3rem !important;
+  .login-brand-subtitle {
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    margin-top: 0.25rem;
   }
 
-  .login-logo-gap {
-    gap: 0.75rem !important;
-    margin-bottom: 0.75rem !important;
+  .login-form-panel {
+    flex: 1;
+    padding: 1.5rem 1rem;
+    justify-content: flex-start;
   }
 
-  .login-text-container {
-    padding: 0 !important;
-    max-width: 100% !important;
-    margin-left: 0 !important;
-  }
-
-  .login-right-panel {
-    height: calc(100vh - 120px) !important;
-    justify-content: flex-start !important;
-    padding-top: 2rem !important;
+  .login-card {
+    padding: 1.5rem;
   }
 }
