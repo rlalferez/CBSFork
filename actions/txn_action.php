@@ -9,7 +9,6 @@ $action = $_POST['action'] ?? '';
 if ($action === 'search_active_borrows') {
     header('Content-Type: application/json');
     $brwID = trim($_POST['brwID'] ?? '');
-    // Get all borrow transactions for this borrower that haven't been fully returned
     $stmt = $db->prepare("
         SELECT b.brwTransID, b.itemID, i.itemDesc, b.brwTransItemQty, b.brwTransBorrowOnDate,
                COALESCE((SELECT SUM(brwTransQty) FROM return_transaction r WHERE r.brwTransID = b.brwTransID), 0) as returned_qty
@@ -90,10 +89,8 @@ if ($action === 'search_active_borrows') {
             $qty = max(1, (int)$qtys[$i]);
             if (empty($desc)) continue;
             
-            // Dynamic Category Auto-Registration
             $db->prepare("INSERT IGNORE INTO category (categoryName) VALUES (?)")->execute([$cat]);
             
-            // Find if item already exists in inventory
             $stmt = $db->prepare("SELECT itemID, itemCategory FROM item WHERE LOWER(TRIM(itemDesc)) = LOWER(?) AND is_archived = 0 LIMIT 1");
             $stmt->execute([$desc]);
             $existing = $stmt->fetch();
@@ -121,7 +118,6 @@ if ($action === 'search_active_borrows') {
 } elseif ($action === 'create_borrow') {
     $brwID = trim($_POST['brwID'] ?? '');
     
-    // Create new borrower if brwID is empty but details are provided
     if (empty($brwID) && !empty($_POST['brwStudentID'])) {
         $studentId = trim($_POST['brwStudentID']);
         $contactNo = trim($_POST['brwContact'] ?? '');
@@ -144,7 +140,6 @@ if ($action === 'search_active_borrows') {
             redirect_with_alert('tab-transactions', 'danger', 'Please fill in all borrower details (Name, College).');
         }
         
-        // 47. Check if student ID already exists (both active and archived)
         $checkStmt = $db->prepare("SELECT brwID, brwStudentID, brwFName, brwLName, is_archived FROM borrower WHERE brwStudentID = ? LIMIT 1");
         $checkStmt->execute([$studentId]);
         $existingBorrower = $checkStmt->fetch();
@@ -198,7 +193,6 @@ if ($action === 'search_active_borrows') {
             if (empty($itemID)) continue;
             $qty = max(1, (int)($qtys[$i] ?? 1));
             
-            // Availability & Date Conflict Check
             $availCheck = check_item_availability_for_dates($db, $itemID, $qty, $borrowOnDate, $returnByDate);
             if (!$availCheck['success']) {
                 $itemDesc = !empty($availCheck['item']['itemDesc']) ? "'" . $availCheck['item']['itemDesc'] . "': " : "";
@@ -252,7 +246,6 @@ if ($action === 'search_active_borrows') {
             
             if(empty($brwTransID)) continue;
             
-            // Get original transaction details to find itemID and checkout date
             $origTxn = $db->prepare("SELECT itemID, brwTransItemQty, brwTransBorrowOnDate FROM borrow_transaction WHERE brwTransID = ?");
             $origTxn->execute([$brwTransID]);
             $txnData = $origTxn->fetch();
@@ -337,4 +330,3 @@ if ($action === 'search_active_borrows') {
 }
 
 redirect_with_alert('tab-transactions', 'warning', 'Invalid transaction action.');
-

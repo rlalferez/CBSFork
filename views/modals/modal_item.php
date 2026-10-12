@@ -1,4 +1,3 @@
-  <!-- Modal: Add/Edit Item -->
   <div class="modal fade" id="modalItem" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">

@@ -1,12 +1,10 @@
     $(document).ready(function() {
-        // Revision 27: Auto-Dismiss Popups
         setTimeout(function() {
             $('.alert').fadeOut('slow', function() {
                 $(this).remove();
             });
         }, 4000);
 
-        // Sidebar Mobile Toggle
         $('#sidebarToggle').on('click', function() {
             $('#sidebarMenu').addClass('show-sidebar');
         });
@@ -14,7 +12,6 @@
             $('#sidebarMenu').removeClass('show-sidebar');
         });
         
-        // Global Double-Submit Prevention Guard
         $('form').on('submit', function(e) {
             if (e.isDefaultPrevented()) {
                 return;
@@ -37,7 +34,6 @@
             }
         });
 
-        // Persistent Tab State with Server Override Support
         let serverTab = $('main.app-main').attr('data-server-tab');
         if (serverTab) {
             let serverTarget = serverTab.startsWith('#') ? serverTab : '#' + serverTab;
@@ -56,7 +52,6 @@
             localStorage.setItem('activeTab', target);
         });
 
-        // Setup Reusable Borrower Autocomplete Searches
         setupBorrowerSearch('#borrowerSearch', '#borrowerResults', 'borrower-search-item', function(b) {
             selectBorrower(b.brwID, b.brwStudentID, b.brwFName, b.brwLName, b.brwCollege, b.brwOrg, b.brwContactNo);
         });
@@ -65,7 +60,6 @@
             selectRetBorrower(b.brwID, b.brwStudentID, b.brwFName, b.brwLName);
         });
         
-        // Setup Table Search Filter
         $('.table-search').on('keyup', function() {
             let value = $(this).val().toLowerCase();
             let targetTable = $(this).data('target');
@@ -76,7 +70,6 @@
             }
         });
 
-        // Setup Global Transaction Search (filters active subtab in Manage Transactions)
         $('#txnGlobalSearch').on('keyup', function() {
             let value = $(this).val().toLowerCase();
             let activePane = $('#tab-transactions .tab-content .tab-pane.active');
@@ -86,7 +79,6 @@
             });
         });
 
-        // When switching transaction tabs, apply existing search term to new tab
         $('#txnTabs button[data-bs-toggle="tab"]').on('shown.bs.tab', function() {
             let value = $('#txnGlobalSearch').val().toLowerCase();
             let targetPane = $($(this).data('bs-target'));
@@ -100,7 +92,6 @@
             }
         });
 
-        // Dynamic Purchase Rows
         $('#add-pur-item-btn').on('click', function() {
             const firstRow = document.querySelector('.purchase-item-row');
             if (firstRow) {
@@ -126,7 +117,6 @@
             }
         });
 
-        // Reset modalPurchase when hidden
         document.getElementById('modalPurchase')?.addEventListener('hidden.bs.modal', function () {
             this.querySelector('form').reset();
             const rows = this.querySelectorAll('.purchase-item-row');
@@ -143,7 +133,6 @@
             if (lockMsg) lockMsg.style.display = 'none';
         });
         
-        // Date Validation & Availability Trigger
         $('#borrowOnDate').on('change', function() {
             $('#returnByDate').attr('min', $(this).val());
             if ($('#returnByDate').val() < $(this).val()) {
@@ -160,7 +149,6 @@
             }
         });
 
-        // Edit item delegate
         $(document).on('click', '.edit-item-btn', function() {
             const id = $(this).data('id');
             const desc = $(this).data('desc');
@@ -170,7 +158,6 @@
             editItem(id, desc, category, qty, rate);
         });
 
-        // Edit user delegate
         $(document).on('click', '.edit-user-btn', function() {
             const id = $(this).data('id');
             const fname = $(this).data('fname');
@@ -181,7 +168,6 @@
             editUser(id, fname, lname, email, contact, role);
         });
 
-        // Edit borrower delegate
         $(document).on('click', '.edit-borrower-btn', function() {
             const id = $(this).data('id');
             const studentId = $(this).data('studentid');
@@ -194,7 +180,6 @@
         });
     });
 
-    // Helper function to setup borrower AJAX search
     function setupBorrowerSearch(inputId, resultsId, itemClass, onSelect) {
         let searchTimeout;
         $(inputId).on('input', function() {
@@ -231,7 +216,6 @@
         });
     }
 
-    // Helper function to handle checkout borrower selection
     function selectBorrower(id, studentId, fname, lname, college, dept, contact) {
         $('#selectedBrwID').val(id);
         $('#borrowerSearch').val(studentId);
@@ -244,7 +228,6 @@
         $('#borrowerResults').hide();
     }
     
-    // Helper function to handle return borrower selection
     function selectRetBorrower(id, studentId, fname, lname) {
         $('#retSelectedBrwID').val(id);
         $('#retBorrowerSearch').val(studentId);
@@ -253,7 +236,6 @@
         $('#retBorrowerPreview').show();
         $('#retBorrowerResults').hide();
         
-        // Fetch active borrows
         $.post('actions/txn_action.php', { action: 'search_active_borrows', brwID: id }, function(data) {
             let options = '<option value="">Select borrowed item...</option>';
             data.forEach(function(item) {
@@ -273,7 +255,6 @@
         });
     }
     
-    // Table Filter by Pill
     function filterTableByPill(tableId, filterText, colIndex) {
         if(filterText === 'All') {
             $(tableId + ' tbody tr').show();
@@ -285,7 +266,6 @@
         }
     }
 
-    // Open Subtab from Sidebar
     function openSubtab(parentTabId, subTabId) {
         if (subTabId === '#txn-borrow') subTabId = '#txn-released';
         const parentBtn = document.querySelector(`[data-bs-target="${parentTabId}"]`);
@@ -300,7 +280,6 @@
         }, 50);
     }
     
-    // Reusable Table Row Highlighting
     function highlightTableRow(rowId, delay = 150) {
         setTimeout(() => {
             const row = document.getElementById(rowId);
@@ -312,7 +291,6 @@
         }, delay);
     }
 
-    // Cross-tab link highlighting
     function switchTabAndHighlight(tabId, rowId) {
         const tabBtn = document.querySelector(`[data-bs-target="${tabId}"]`);
         if (tabBtn) new bootstrap.Tab(tabBtn).show();
@@ -325,7 +303,6 @@
         highlightTableRow(rowId, 200);
     }
 
-    // User Edit Helper
     function editUser(id, fname, lname, email, contact, role) {
         document.querySelector('#modalUser input[name="userID"]').value = id;
         document.querySelector('#modalUser input[name="userFName"]').value = fname;
@@ -346,7 +323,6 @@
         modal.show();
     }
     
-    // Reset modalUser when hidden
     document.getElementById('modalUser')?.addEventListener('hidden.bs.modal', function () {
         this.querySelector('form').reset();
         this.querySelector('input[name="userID"]').value = "NEW";
@@ -358,7 +334,6 @@
         if (btn) btn.textContent = 'Save User';
     });
 
-    // Item Edit Helper
     function editItem(id, desc, category, qty, rate) {
         document.querySelector('#modalItem input[name="itemID"]').value = id;
         document.querySelector('#modalItem input[name="itemDesc"]').value = desc;
@@ -374,7 +349,6 @@
         modal.show();
     }
 
-    // Reset modalItem when hidden
     document.getElementById('modalItem')?.addEventListener('hidden.bs.modal', function () {
         this.querySelector('form').reset();
         this.querySelector('input[name="itemID"]').value = 'NEW';
@@ -383,7 +357,6 @@
         document.getElementById('itemModalBtn').textContent = 'Save Item';
     });
 
-    // Borrower Edit Helper
     function editBorrower(id, studentId, fname, lname, college, org, contact) {
         document.querySelector('#modalBorrower input[name="brwID"]').value = id;
         document.querySelector('#modalBorrower input[name="brwStudentID"]').value = studentId;
@@ -402,7 +375,6 @@
         modal.show();
     }
 
-    // Reset modalBorrower when hidden
     document.getElementById('modalBorrower')?.addEventListener('hidden.bs.modal', function () {
         this.querySelector('form').reset();
         this.querySelector('input[name="brwID"]').value = 'NEW';
@@ -412,9 +384,6 @@
         if (btn) btn.textContent = 'Save Borrower';
     });
 
-    // ==========================================================
-    // Report Period Filter Handlers
-    // ==========================================================
     window.applyPeriod = function(period) {
         localStorage.setItem('activeTab', '#tab-reports');
         let hash = window.location.hash || '';
@@ -456,4 +425,3 @@
             window.location.href = 'index.php?period=year&year=' + encodeURIComponent(el.value) + hash;
         }
     };
-

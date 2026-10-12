@@ -1,14 +1,11 @@
-
       <aside class="app-sidebar no-print" id="sidebarMenu">
         <div class="sidebar-panel">
           
-          <!-- Mobile Sidebar Header -->
           <div class="sidebar-mobile-header">
               <span class="sidebar-mobile-title">Menu</span>
               <button class="btn-close" id="sidebarClose"></button>
           </div>
           
-          <!-- User Profile Card -->
           <div class="sidebar-profile">
             <div class="sidebar-avatar">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/></svg>
@@ -21,13 +18,10 @@
             </div>
           </div>
 
-          <!-- Section Title -->
           <div class="sidebar-section-title">Council Operations</div>
           
-          <!-- Main Navigation Links -->
           <div class="sidebar-nav" id="v-pills-tab" role="tablist">
             
-            <!-- Transactions Menu with Submenu -->
             <div class="sidebar-dropdown">
               <button class="sidebar-link <?= ($activeTab ?? '') === 'tab-transactions' ? 'active' : '' ?>" data-bs-toggle="pill" data-bs-target="#tab-transactions">
                 <div class="sidebar-link-content">
@@ -44,7 +38,6 @@
               </div>
             </div>
 
-            <!-- Purchases Tab -->
             <button class="sidebar-link <?= ($activeTab ?? '') === 'tab-purchases' ? 'active' : '' ?>" data-bs-toggle="pill" data-bs-target="#tab-purchases">
               <div class="sidebar-link-content">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
@@ -52,7 +45,6 @@
               </div>
             </button>
 
-            <!-- Items / Inventory Tab -->
             <button class="sidebar-link <?= ($activeTab ?? '') === 'tab-inventory' ? 'active' : '' ?>" data-bs-toggle="pill" data-bs-target="#tab-inventory">
               <div class="sidebar-link-content">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
@@ -60,7 +52,6 @@
               </div>
             </button>
 
-            <!-- Borrowers Tab -->
             <button class="sidebar-link <?= ($activeTab ?? '') === 'tab-borrowers' ? 'active' : '' ?>" data-bs-toggle="pill" data-bs-target="#tab-borrowers">
               <div class="sidebar-link-content">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>
@@ -68,7 +59,6 @@
               </div>
             </button>
 
-            <!-- User Management Tab (Admin only) -->
             <?php if ($isAdmin): ?>
               <button class="sidebar-link <?= ($activeTab ?? '') === 'tab-users' ? 'active' : '' ?>" data-bs-toggle="pill" data-bs-target="#tab-users">
                 <div class="sidebar-link-content">
@@ -78,7 +68,6 @@
               </button>
             <?php endif; ?>
 
-            <!-- Reports Menu with Submenu -->
             <div class="sidebar-dropdown">
               <button class="sidebar-link <?= ($activeTab ?? '') === 'tab-reports' ? 'active' : '' ?>" data-bs-toggle="pill" data-bs-target="#tab-reports">
                 <div class="sidebar-link-content">
@@ -96,7 +85,6 @@
               </div>
             </div>
 
-            <!-- Profile Tab -->
             <button class="sidebar-link <?= ($activeTab ?? '') === 'tab-profile' ? 'active' : '' ?>" data-bs-toggle="pill" data-bs-target="#tab-profile">
               <div class="sidebar-link-content">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -104,7 +92,6 @@
               </div>
             </button>
 
-            <!-- Sign Out Form -->
             <form action="actions/auth_action.php" method="POST" class="sidebar-logout-form">
               <input type="hidden" name="action" value="logout">
               <button type="submit" class="sidebar-link sidebar-logout-btn">

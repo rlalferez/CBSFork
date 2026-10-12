@@ -1,29 +1,7 @@
-/* ==========================================================================
-   CONFEDERATES STUDENT COUNCIL - ITEM LENDING & MANAGEMENT SYSTEM
-   Main Stylesheet (assets/css/style.css)
-   ==========================================================================
-   TABLE OF CONTENTS:
-   1. DESIGN TOKENS & CSS VARIABLES
-   2. BASE & TYPOGRAPHY
-   3. APP SHELL & RESPONSIVE LAYOUT (.app-shell, .app-layout, .app-main)
-   4. TOPBAR NAVIGATION & BRANDING (.app-navbar, .brand-logo)
-   5. SIDEBAR NAVIGATION & USER PROFILE (.sidebar-panel, .sidebar-profile, .sidebar-link)
-   6. CARD CONTAINERS & TABS (.content-card, .card-tabs)
-   7. BUTTONS & UI ACTIONS (.btn-brand, .btn-primary-action)
-   8. DATA TABLES, SEARCH & HIGHLIGHTS (.table-custom, .table-search, .row-highlight)
-   9. MODALS & FORMS (.modal-content, .borrow-item-row, .borrow-item-feedback)
-   10. REPORT PERIOD FILTER PILLS (.period-filter-group, .period-display-badge)
-   11. PRINT MEDIA STYLES (@media print)
-   12. LOGIN PAGE STYLES (.login-wrapper, .login-brand-panel, .login-card)
-   ========================================================================== */
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
-/* ==========================================================================
-   1. DESIGN TOKENS & CSS VARIABLES
-   ========================================================================== */
 :root {
-  /* Brand Color Palette */
+  
   --csc-primary: #1d4ed8;
   --csc-primary-hover: #1e40af;
   --csc-primary-light: #eff6ff;
@@ -38,7 +16,7 @@
   --csc-border: #e2e8f0;
   --csc-border-subtle: #f1f5f9;
 
-  /* Semantic Status Colors */
+  
   --csc-success: #059669;
   --csc-success-bg: #ecfdf5;
   --csc-success-border: #a7f3d0;
@@ -59,23 +37,20 @@
   --csc-purple-bg: #f5f3ff;
   --csc-purple-border: #ddd6fe;
 
-  /* Shadows */
+  
   --csc-shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --csc-shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.08), 0 1px 2px -1px rgba(15, 23, 42, 0.08);
   --csc-shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
   --csc-shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
   --csc-shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
 
-  /* Border Radii */
+  
   --csc-radius-sm: 8px;
   --csc-radius-md: 12px;
   --csc-radius-lg: 16px;
   --csc-radius-xl: 20px;
 }
 
-/* ==========================================================================
-   2. BASE & TYPOGRAPHY
-   ========================================================================== */
 html {
   font-size: 15px;
   scroll-behavior: smooth;
@@ -91,14 +66,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Monospace font utility */
 .font-monospace {
   font-family: 'JetBrains Mono', SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
 }
 
-/* ==========================================================================
-   3. APP SHELL & RESPONSIVE LAYOUT
-   ========================================================================== */
 .app-shell {
   width: 100%;
   max-width: 1600px;
@@ -117,7 +88,6 @@ body {
   flex: 1;
 }
 
-/* Sticky Desktop Sidebar */
 .app-sidebar {
   width: 270px;
   min-width: 270px;
@@ -131,7 +101,6 @@ body {
   transition: transform 0.3s ease;
 }
 
-/* Main Content Area */
 .app-main {
   flex: 1;
   min-width: 0;
@@ -159,7 +128,7 @@ body {
     gap: 1.25rem;
   }
 
-  /* Sidebar Mobile Drawer */
+  
   .app-sidebar {
     position: fixed;
     top: 0;
@@ -177,9 +146,6 @@ body {
   }
 }
 
-/* ==========================================================================
-   4. TOPBAR NAVIGATION & BRANDING
-   ========================================================================== */
 .app-navbar {
   background: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(20px);
@@ -261,9 +227,6 @@ body {
   letter-spacing: 0.3px;
 }
 
-/* ==========================================================================
-   5. SIDEBAR NAVIGATION & USER PROFILE
-   ========================================================================== */
 .sidebar-panel {
   background: rgba(255, 255, 255, 0.65);
   backdrop-filter: blur(16px);
@@ -278,7 +241,6 @@ body {
   flex-direction: column;
 }
 
-/* Mobile Header (Hidden on desktop) */
 .sidebar-mobile-header {
   display: none;
   justify-content: space-between;
@@ -300,7 +262,6 @@ body {
   color: #1e293b;
 }
 
-/* Sidebar Profile Card */
 .sidebar-profile {
   display: flex;
   align-items: center;
@@ -310,7 +271,6 @@ body {
   border-bottom: 1px solid var(--csc-border-subtle);
 }
 
-/* Sidebar Avatar */
 .sidebar-avatar {
   width: 44px;
   height: 44px;
@@ -329,7 +289,6 @@ body {
   transform: scale(1.04);
 }
 
-/* Sidebar User Info */
 .sidebar-user-info {
   overflow: hidden;
   display: flex;
@@ -367,7 +326,6 @@ body {
   color: #0e7490;
 }
 
-/* Section Header ("Council Operations") */
 .sidebar-section-title {
   font-size: 11px;
   font-weight: 700;
@@ -378,14 +336,12 @@ body {
   padding-left: 0.25rem;
 }
 
-/* Main Navigation Container */
 .sidebar-nav {
   display: flex;
   flex-direction: column;
   flex: 1;
 }
 
-/* Sidebar Nav Item Button */
 .sidebar-link {
   cursor: pointer;
   display: flex;
@@ -406,7 +362,6 @@ body {
   text-align: left;
 }
 
-/* Link content inside button */
 .sidebar-link .sidebar-link-content {
   display: flex;
   align-items: center;
@@ -441,7 +396,6 @@ body {
   color: #1d4ed8;
 }
 
-/* Dropdown Parent Group */
 .sidebar-dropdown {
   position: relative;
   display: flex;
@@ -460,7 +414,6 @@ body {
   transform: rotate(90deg);
 }
 
-/* Dropdown Submenus */
 .sidebar-submenu {
   display: none;
   flex-direction: column;
@@ -490,7 +443,6 @@ body {
   color: #1d4ed8;
 }
 
-/* Logout pinned to bottom */
 .sidebar-logout-form {
   margin-top: auto;
   padding-top: 1rem;
@@ -514,9 +466,6 @@ body {
   color: #b91c1c !important;
 }
 
-/* ==========================================================================
-   6. CARD CONTAINERS & TABS
-   ========================================================================== */
 .content-card {
   background: rgba(255, 255, 255, 0.65);
   backdrop-filter: blur(16px);
@@ -540,7 +489,6 @@ body {
   gap: 1rem;
 }
 
-/* Card Title & Subtitle */
 .card-title-group {
   display: flex;
   flex-direction: column;
@@ -565,7 +513,6 @@ body {
   gap: 0.75rem;
 }
 
-/* Folder / Card Tabs for Sub-views (.card-tabs, legacy: .folder-tabs) */
 .card-tabs,
 .folder-tabs {
   display: flex;
@@ -607,7 +554,6 @@ body {
   z-index: 2;
 }
 
-/* Card Tabs Bar Container */
 .card-tabs-bar {
   display: flex;
   justify-content: space-between;
@@ -626,7 +572,6 @@ body {
   margin-left: auto;
 }
 
-/* Card Tab Content Body */
 .card-tab-content {
   border-top: 1px solid var(--csc-border);
   background: #ffffff;
@@ -654,7 +599,6 @@ body {
   flex-wrap: wrap;
 }
 
-/* Reports Specific Filter Bar */
 .reports-filter-bar {
   padding: 0.85rem 1.5rem;
   background: #f8fafc;
@@ -676,7 +620,6 @@ body {
   gap: 0.75rem;
 }
 
-/* Empty State Box */
 .empty-state-box {
   text-align: center;
   padding: 3.5rem 1rem;
@@ -693,7 +636,6 @@ body {
   font-size: 1rem;
 }
 
-/* Application Alert Container */
 .app-alert-container {
   padding: 1.5rem 1.5rem 0;
 }
@@ -704,10 +646,6 @@ body {
   box-shadow: var(--csc-shadow-sm);
 }
 
-/* ==========================================================================
-   7. BUTTONS & UI ACTIONS
-   ========================================================================== */
-/* Primary Brand Gradient Action Button (.btn-brand, legacy: .btn-primary-action) */
 .btn-brand,
 .btn-primary-action {
   background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
@@ -732,9 +670,6 @@ body {
   box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
 }
 
-/* ==========================================================================
-   8. DATA TABLES, SEARCH & HIGHLIGHTS
-   ========================================================================== */
 .table-responsive {
   border-radius: 0;
   overflow-x: auto;
@@ -783,22 +718,17 @@ body {
   border-bottom: none;
 }
 
-/* Table Quick Filter Search Input (.table-search) */
 .table-search {
   max-width: 260px;
   border-radius: var(--csc-radius-md);
   font-size: 0.875rem;
 }
 
-/* Row Highlight Animation on Cross-Tab Navigation (.row-highlight) */
 .table-custom tr.row-highlight td {
   background-color: #fef08a !important;
   transition: background-color 0.3s ease;
 }
 
-/* ==========================================================================
-   9. MODALS & FORMS
-   ========================================================================== */
 .modal-content {
   border: 1px solid var(--csc-border) !important;
   border-radius: var(--csc-radius-xl) !important;
@@ -846,14 +776,12 @@ body {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
-/* Transaction Dynamic Rows (.borrow-item-row, .return-item-row, .purchase-item-row) */
 .borrow-item-row,
 .return-item-row,
 .purchase-item-row {
   transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
-/* Item Feedback Alert Container (.borrow-item-feedback) */
 .borrow-item-feedback-container {
   margin-top: 0.5rem;
 }
@@ -870,10 +798,6 @@ body {
   transition: all 0.2s ease;
 }
 
-/* ==========================================================================
-   10. REPORT PERIOD FILTER PILLS & FLOATING DATE DISPLAY
-   ========================================================================== */
-/* Container Pill Bar (.period-filter-group, legacy: .report-period-pill-group) */
 .period-filter-group,
 .report-period-pill-group {
   display: inline-flex;
@@ -886,7 +810,6 @@ body {
   align-items: center;
 }
 
-/* Individual Pill Button (.period-filter-btn, legacy: .report-period-btn) */
 .period-filter-btn,
 .report-period-btn {
   border: none;
@@ -915,7 +838,6 @@ body {
   box-shadow: 0 3px 8px rgba(37, 99, 235, 0.3);
 }
 
-/* Floating Date Display Badge & Interactive Picker Button (.period-display-badge) */
 .period-display-badge {
   background-color: #ffffff;
   color: var(--csc-primary) !important;
@@ -946,7 +868,6 @@ body {
   transform: translateY(0);
 }
 
-/* Date Picker Dropdown Popover (.period-picker-dropdown) */
 .period-picker-dropdown {
   border-radius: 14px;
   border: 1px solid rgba(0, 0, 0, 0.08);
@@ -957,9 +878,6 @@ body {
   z-index: 1060;
 }
 
-/* ==========================================================================
-   11. PRINT MEDIA STYLES
-   ========================================================================== */
 .print-only {
   display: none !important;
 }
@@ -1034,7 +952,7 @@ body {
     max-height: none !important;
   }
 
-  /* Formal Printable Report Header */
+  
   .report-print-header {
     padding: 0 0 1rem 0 !important;
     margin-bottom: 1.25rem !important;
@@ -1103,7 +1021,7 @@ body {
     color: #0f172a !important;
   }
 
-  /* Clean Printed Table Styling */
+  
   .table-custom {
     width: 100% !important;
     border-collapse: collapse !important;
@@ -1135,16 +1053,12 @@ body {
   }
 }
 
-/* ==========================================================================
-   12. LOGIN PAGE STYLES (.login-wrapper, .login-brand-panel, .login-card)
-   ========================================================================== */
 .login-wrapper {
   display: flex;
   min-height: 100vh;
   width: 100%;
 }
 
-/* Left Brand Panel */
 .login-brand-panel {
   flex: 1;
   background-color: var(--csc-primary);
@@ -1228,7 +1142,6 @@ body {
   margin: 0;
 }
 
-/* Right Form Panel */
 .login-form-panel {
   flex: 1;
   display: flex;
@@ -1335,7 +1248,6 @@ body {
   border-radius: 0.5rem;
 }
 
-/* Mobile & Tablet Responsive */
 @media (max-width: 767.98px) {
   .login-wrapper {
     flex-direction: column;
@@ -1388,17 +1300,12 @@ body {
   }
 }
 
-/* ==========================================================================
-   13. NUMERIC INPUTS & CONTAINER ALIGNMENT
-   Aligns numbers cleanly to the right with tabular figures
-   ========================================================================== */
 input[type="number"],
 .input-number-align {
   text-align: right !important;
   font-variant-numeric: tabular-nums;
 }
 
-/* Numeric container and table columns right-alignment */
 .col-number,
 .table-custom th.col-number,
 .table-custom td.col-number {

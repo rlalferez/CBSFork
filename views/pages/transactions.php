@@ -1,4 +1,3 @@
-          <!-- TRANSACTIONS TAB -->
           <div class="tab-pane fade <?= ($activeTab ?? '') === 'tab-transactions' ? 'show active' : '' ?>" id="tab-transactions">
             <div class="content-card">
               <div class="content-card-header">
@@ -103,7 +102,6 @@
                   </div>
                 </div>
 
-                <!-- RESERVED TAB -->
                 <div class="tab-pane fade" id="txn-reserved">
                   <div class="table-responsive">
                     <table class="table-custom" id="txnReservedTable">
@@ -148,7 +146,6 @@
                   </div>
                 </div>
 
-                <!-- RELEASED TAB -->
                 <div class="tab-pane fade" id="txn-released">
                   <div class="table-responsive">
                     <table class="table-custom" id="txnReleasedTable">
@@ -184,7 +181,6 @@
                   </div>
                 </div>
 
-                <!-- RETURNED TAB -->
                 <div class="tab-pane fade" id="txn-return">
                   <div class="table-responsive">
                     <table class="table-custom" id="txnReturnTable">
@@ -209,7 +205,6 @@
                   </div>
                 </div>
 
-                <!-- CANCELLED TAB -->
                 <div class="tab-pane fade" id="txn-cancelled">
                   <div class="table-responsive">
                     <table class="table-custom" id="txnCancelledTable">

@@ -1,4 +1,3 @@
-  <!-- Modal: Add User -->
   <div class="modal fade" id="modalUser" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">

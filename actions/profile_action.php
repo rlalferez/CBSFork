@@ -14,7 +14,6 @@ if ($action === 'update_profile') {
     $contact = trim($_POST['userContactNo'] ?? '');
     $pass = trim($_POST['password'] ?? '');
     
-    // Ensure user can only update their own profile, unless Admin
     if ($uid !== $currentUser['userID'] && !$isAdmin) {
         redirect_with_alert('tab-profile', 'danger', 'Permission Denied: You can only update your own profile.');
     }

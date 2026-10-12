@@ -1,6 +1,5 @@
 
 
-          <!-- PURCHASES TAB -->
           <div class="tab-pane fade <?= ($activeTab ?? '') === 'tab-purchases' ? 'show active' : '' ?>" id="tab-purchases">
             <div class="content-card">
               <div class="content-card-header">

@@ -1,5 +1,3 @@
-
-          <!-- REPORTS TAB -->
           <div class="tab-pane fade <?= ($activeTab ?? '') === 'tab-reports' ? 'show active' : '' ?>" id="tab-reports">
             <div class="content-card">
               <div class="content-card-header">
@@ -14,8 +12,6 @@
                   </button>
                 </div>
               </div>
-              
-              <!-- PRINTABLE REPORT HEADER (Visible only during printing) -->
               <div class="report-print-header print-only">
                 <div class="report-print-top">
                   <img src="assets/images/ccs_confederates_logo.png" alt="CCS Confederates Logo" class="report-print-logo" width="60" height="60">
@@ -48,7 +44,6 @@
               <div class="reports-filter-bar no-print">
                 <div class="reports-filter-container">
                   <div class="reports-filter-controls">
-                    <!-- Segmented Pill Filter (Day | Week | Month | Year) -->
                     <div class="period-filter-group report-period-pill-group" role="group" aria-label="Report Period Filter">
                       <button type="button" class="period-filter-btn report-period-btn <?= ($activePeriod ?? '') === 'day' ? 'active' : '' ?>" onclick="applyPeriod('day')" title="Filter by Current Day">Day</button>
                       <button type="button" class="period-filter-btn report-period-btn <?= ($activePeriod ?? '') === 'week' ? 'active' : '' ?>" onclick="applyPeriod('week')" title="Filter by Current Week">Week</button>
@@ -56,7 +51,6 @@
                       <button type="button" class="period-filter-btn report-period-btn <?= ($activePeriod ?? '') === 'year' ? 'active' : '' ?>" onclick="applyPeriod('year')" title="Filter by Current Year">Year</button>
                     </div>
 
-                    <!-- Floating Interactive Date Display Badge & Dropdown -->
                     <div class="dropdown d-inline-block">
                       <button type="button" class="btn period-display-badge" id="periodDisplayDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Click to change target date for <?= htmlspecialchars($activePeriod ?? '') ?>">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -101,7 +95,7 @@
                           </div>
                           <button type="button" class="btn btn-brand btn-primary-action btn-sm w-100 py-1" onclick="applySpecificYear()">Apply Year</button>
 
-                        <?php else: /* Default: Month */ ?>
+                        <?php else: ?>
                           <div class="mb-3">
                             <label class="form-label text-muted small mb-1">Select Target Month:</label>
                             <input type="month" class="form-control form-control-sm" id="repCustomMonth" value="<?= date('Y-m', strtotime($repStartDate ?? 'now')) ?>" onkeydown="if(event.key==='Enter') applySpecificMonth()">

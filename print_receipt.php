@@ -1,13 +1,9 @@
 <?php
-/**
- * Transaction Receipt
- */
 require_once 'config/db.php';
 require_once 'config/session.php';
 
 $db = get_db();
 
-// Verify user is logged in
 if (!$currentUser) {
     die("Unauthorized.");
 }
@@ -19,7 +15,6 @@ if (!is_array($transIDs) || empty($transIDs)) {
     die("Invalid transaction data.");
 }
 
-// Fetch the transaction details
 $inClause = implode(',', array_fill(0, count($transIDs), '?'));
 $stmt = $db->prepare("
     SELECT b.*, i.itemDesc, br.brwFName, br.brwLName, br.brwStudentID, br.brwCollege, u.userFName as staffFName, u.userLName as staffLName

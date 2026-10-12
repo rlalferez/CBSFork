@@ -1,21 +1,18 @@
 <?php
-//Start session if not already active
+date_default_timezone_set('Asia/Manila');
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-define('DB_TYPE', 'mysql'); //Set to 'mysql' for phpMyAdmin, or 'sqlite' for portable file
+define('DB_TYPE', 'mysql');
 
-//MySQL Credentials (Standard XAMPP Settings)
 define('MYSQL_HOST', 'localhost');
 define('MYSQL_PORT', '3306');
 define('MYSQL_DB',   'confed_borrowing');
 define('MYSQL_USER', 'root');
 define('MYSQL_PASS', '');
 
-/**
- * Get the PDO Database Instance
- */
 function get_db() {
     static $pdo = null;
     if ($pdo !== null) return $pdo;
@@ -27,6 +24,7 @@ function get_db() {
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES => false
         ]);
+        $pdo->exec("SET time_zone = '+08:00'");
         return $pdo;
     } catch (PDOException $e) {
         $errorMsg = $e->getMessage();

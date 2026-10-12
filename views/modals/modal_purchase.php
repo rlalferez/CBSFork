@@ -1,4 +1,3 @@
-  <!-- Modal: Add Purchase -->
   <div class="modal fade" id="modalPurchase" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">

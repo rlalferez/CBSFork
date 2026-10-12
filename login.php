@@ -16,27 +16,18 @@ unset($_SESSION['alert']);
 </head>
 <body>
 
-
-  <!-- ==========================================================
-       SPLIT-SCREEN LOGIN INTERFACE
-       ========================================================== -->
   <div class="login-wrapper">
-    <!-- Left Panel: Brand & Organization Info -->
     <div class="login-brand-panel">
       <div class="login-brand-content">
-        <!-- Logos -->
         <div class="login-logos">
-           <!-- SU CCS Logo Badge -->
            <div class="login-logo-badge">
               <img src="assets/images/imgCCS.png" alt="SU CCS Logo" class="login-logo-image">
            </div>
-           <!-- Confederates Student Council Logo Badge -->
            <div class="login-logo-badge">
               <img src="assets/images/ccs_confederates_logo.png" alt="Confederates Student Council" class="login-logo-image">
            </div>
         </div>
         
-        <!-- Brand Title & Subtitle -->
         <div class="login-brand-headings">
           <h1 class="login-brand-title">CONFEDERATES</h1>
           <h1 class="login-brand-title-sub">STUDENT COUNCIL</h1>
@@ -45,7 +36,6 @@ unset($_SESSION['alert']);
       </div>
     </div>
     
-    <!-- Right Panel: Authentication Form -->
     <div class="login-form-panel">
       <div class="login-form-container">
         <?php if (!empty($alert['message'])): ?>
@@ -71,12 +61,9 @@ unset($_SESSION['alert']);
               <input type="password" id="loginPassword" name="password" class="form-control" placeholder="••••••••" required>
             </div>
 
-            <!-- DELETE BEFORE DEPLOYMENT -->
-            <!-- Quick Sign-In Buttons (Testing Purposes) -->
             <div class="login-quick-signin">
               <span class="login-quick-signin-label">Quick Sign-In (Testing):</span>
               <div class="login-quick-signin-buttons">
-                <!-- Council role is effectively the admin/core -->
                 <button type="button" class="btn btn-outline-primary btn-sm login-quick-btn" onclick="document.getElementById('loginEmail').value='admin@csc.edu.ph'; document.getElementById('loginPassword').value='admin123';">
                   Council
                 </button>
@@ -85,7 +72,6 @@ unset($_SESSION['alert']);
                 </button>
               </div>
             </div>
-            <!-- /DELETE BEFORE DEPLOYMENT -->
 
             <button type="submit" class="btn btn-primary-action login-submit-btn">Sign In</button>
           </form>

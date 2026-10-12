@@ -15,7 +15,6 @@ if ($action === 'search_borrower') {
     echo json_encode($stmt->fetchAll());
     exit;
 } elseif ($action === 'check_student_id') {
-    // 47. Real-Time Student ID Existence & Archive Status Verification
     header('Content-Type: application/json');
     $studentId = trim($_POST['studentId'] ?? '');
     $stmt = $db->prepare("SELECT brwID, brwStudentID, brwFName, brwLName, brwCollege, brwOrg, brwContactNo, is_archived FROM borrower WHERE brwStudentID = ? LIMIT 1");
@@ -77,7 +76,6 @@ if ($action === 'search_borrower') {
 } elseif ($action === 'archive_borrower') {
     $id = trim($_POST['brwID'] ?? '');
     
-    // 39 & 45. Active Transactions Borrower Archive Guard (Only unreturned, physically released equipment blocks archiving)
     $check = $db->prepare("SELECT SUM(brwTransItemQty - COALESCE((SELECT SUM(brwTransQty) FROM return_transaction r WHERE r.brwTransID = b.brwTransID), 0)) as unreturned FROM borrow_transaction b WHERE b.brwID = ? AND b.brwTransStatus = 'Released'");
     $check->execute([$id]);
     $activeItems = $check->fetch()['unreturned'] ?? 0;

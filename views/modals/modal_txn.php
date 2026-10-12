@@ -2,12 +2,9 @@
   $totalItemsCount = 0; 
   foreach($items as $it) { if($it['itemTotalQty'] > 0) $totalItemsCount++; } 
   ?>
-  <!-- Modal: Add Transaction (Merged Borrow & Return) -->
   <div class="modal fade" id="modalTransaction" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content overflow-hidden border-0 shadow-lg bg-light">
-        
-        <!-- Segmented Control Subtabs Header -->
         <div class="pt-4 px-4 pb-0">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 class="modal-title fw-bold text-dark m-0">Add Transaction</h5>
@@ -27,7 +24,6 @@
         </div>
 
         <div class="tab-content px-4 pb-4">
-            <!-- Subtab: Checkout -->
             <div class="tab-pane fade show active" id="modal-tab-checkout" role="tabpanel">
                 <form action="actions/txn_action.php" method="POST" id="borrowForm" class="bg-white rounded-bottom rounded-end border shadow-sm" onsubmit="return handleBorrowSubmit(event, this)">
                   <input type="hidden" name="action" value="create_borrow">
@@ -40,7 +36,6 @@
                         <input type="text" id="borrowerSearch" name="searchStudentID" class="form-control" placeholder="Search Student ID..." autocomplete="off">
                         <div id="borrowerResults" class="list-group position-absolute w-100 shadow" style="z-index: 1000; display:none;"></div>
                       </div>
-                      <!-- Hidden ID (empty if new borrower) -->
                       <input type="hidden" name="brwID" id="selectedBrwID">
                     </div>
                     
@@ -48,7 +43,6 @@
                         <button type="button" class="btn btn-sm btn-outline-primary" id="btnAddNewBorrower" onclick="enableNewBorrower()">+ Add New Borrower</button>
                     </div>
                     <?php else: ?>
-                        <!-- Hidden ID (empty if new borrower) -->
                         <input type="hidden" name="brwID" id="selectedBrwID" value="">
                     <?php endif; ?>
 
@@ -132,7 +126,6 @@
                 </form>
             </div>
             
-            <!-- Subtab: Return -->
             <div class="tab-pane fade" id="modal-tab-return" role="tabpanel">
                 <form action="actions/txn_action.php" method="POST" class="bg-white rounded-bottom rounded-end border shadow-sm">
                   <input type="hidden" name="action" value="create_return">
@@ -157,7 +150,6 @@
 
                     <h6 class="fw-bold mb-3 text-muted" style="font-size:0.85rem; text-transform:uppercase;">Items to Return</h6>
                     
-                    <!-- Header Labels -->
                     <div class="row mb-1 px-1">
                       <div class="col-md-5"><label class="form-label small fw-bold text-muted mb-0">Item Borrowed</label></div>
                       <div class="col-md-4"><label class="form-label small fw-bold text-muted mb-0">Date Borrowed</label></div>
@@ -165,7 +157,6 @@
                     </div>
                     
                     <div id="returnItemsContainer">
-                        <!-- Cloned row goes here -->
                         <div class="row return-item-row mb-2">
                           <div class="col-md-5">
                             <select name="brwTransID[]" class="form-select form-select-sm active-borrows-select" onchange="updateReturnRow(this)" required>
@@ -198,7 +189,6 @@
     </div>
   </div>
 
-  <!-- Modal: Confirm Over-Stock Borrowing -->
   <div class="modal fade" id="modalStockConflictConfirm" tabindex="-1" aria-hidden="true" style="z-index: 1070;">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content overflow-hidden border-0 shadow-lg">
@@ -207,7 +197,6 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body p-4" id="modalStockConflictBody">
-          <!-- Populated dynamically -->
         </div>
         <div class="modal-footer bg-light border-0 py-3 px-4 d-flex justify-content-end gap-2" id="modalStockConflictFooter">
           <button type="button" class="btn btn-outline-secondary py-2 px-3" data-bs-dismiss="modal">Cancel</button>
@@ -218,7 +207,6 @@
   </div>
 
   <script>
-    // Templates for adding rows dynamically
     const borrowRowTemplate = `
         <div class="borrow-item-row p-3 mb-3 rounded border bg-light">
           <div class="row g-2 align-items-center">
@@ -603,7 +591,6 @@
         if (fNameInput) fNameInput.focus();
     }
 
-    // 47. Duplicate Student ID Check & Outright Rejection
     function checkBorrowerStudentID(studentId) {
         if (!studentId || !/^[0-9]{2}-[0-9]-[0-9]{5}$/.test(studentId)) {
             return;

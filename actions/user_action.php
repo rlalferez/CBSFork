@@ -51,7 +51,6 @@ if ($action === 'save_user') {
         }
         redirect_with_alert('tab-users', 'success', 'User updated.');
     } else {
-        // 50. Backend Password Enforcement for New User Accounts
         if (empty($pass)) {
             redirect_with_alert('tab-users', 'danger', 'Error: Password is required when creating a new user account.');
         }
