@@ -23,6 +23,9 @@
                   <select name="purCategory[]" class="form-select item-category-select" required>
                     <?php foreach($categories as $c): ?><option value="<?= htmlspecialchars($c['categoryName']) ?>"><?= htmlspecialchars($c['categoryName']) ?></option><?php endforeach; ?>
                   </select>
+                  <div class="category-lock-msg text-muted small mt-1" style="display:none; font-size:11px;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>Category locked to item
+                  </div>
                 </div>
                 <div class="col-md-2">
                   <label class="form-label fw-bold small">Qty</label>
@@ -54,16 +57,32 @@
 
   <script>
     function autoFillCategory(inputElement) {
-        let val = inputElement.value;
-        let opts = document.getElementById('purchaseItemsDatalist').childNodes;
+        let val = (inputElement.value || '').trim().toLowerCase();
+        let opts = document.getElementById('purchaseItemsDatalist').querySelectorAll('option');
+        let matchedCat = null;
         for (let i = 0; i < opts.length; i++) {
-            if (opts[i].value === val) {
-                let cat = opts[i].getAttribute('data-category');
-                if (cat) {
-                    let selectElement = inputElement.closest('.purchase-item-row').querySelector('.item-category-select');
-                    selectElement.value = cat;
-                }
+            if ((opts[i].value || '').trim().toLowerCase() === val) {
+                matchedCat = opts[i].getAttribute('data-category');
                 break;
+            }
+        }
+        let row = inputElement.closest('.purchase-item-row');
+        if (!row) return;
+        let selectElement = row.querySelector('.item-category-select');
+        let lockIndicator = row.querySelector('.category-lock-msg');
+        
+        if (selectElement) {
+            if (matchedCat) {
+                selectElement.value = matchedCat;
+                selectElement.style.pointerEvents = 'none';
+                selectElement.style.backgroundColor = '#e9ecef';
+                selectElement.setAttribute('tabindex', '-1');
+                if (lockIndicator) lockIndicator.style.display = 'block';
+            } else {
+                selectElement.style.pointerEvents = '';
+                selectElement.style.backgroundColor = '';
+                selectElement.removeAttribute('tabindex');
+                if (lockIndicator) lockIndicator.style.display = 'none';
             }
         }
     }

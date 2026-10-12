@@ -100,13 +100,22 @@
             }
         });
 
-        // Revision 19: Dynamic Purchase Rows
+        // Dynamic Purchase Rows
         $('#add-pur-item-btn').on('click', function() {
             const firstRow = document.querySelector('.purchase-item-row');
             if (firstRow) {
                 const clone = firstRow.cloneNode(true);
                 clone.querySelector('input[name="purItemDesc[]"]').value = '';
                 clone.querySelector('input[name="purQty[]"]').value = '1';
+                const catSelect = clone.querySelector('.item-category-select');
+                if (catSelect) {
+                    catSelect.selectedIndex = 0;
+                    catSelect.style.pointerEvents = '';
+                    catSelect.style.backgroundColor = '';
+                    catSelect.removeAttribute('tabindex');
+                }
+                const lockMsg = clone.querySelector('.category-lock-msg');
+                if (lockMsg) lockMsg.style.display = 'none';
                 document.getElementById('purchase-item-list').appendChild(clone);
             }
         });
@@ -115,6 +124,23 @@
             if ($('.purchase-item-row').length > 1) {
                 $(this).closest('.purchase-item-row').remove();
             }
+        });
+
+        // Reset modalPurchase when hidden
+        document.getElementById('modalPurchase')?.addEventListener('hidden.bs.modal', function () {
+            this.querySelector('form').reset();
+            const rows = this.querySelectorAll('.purchase-item-row');
+            for (let i = 1; i < rows.length; i++) {
+                rows[i].remove();
+            }
+            const firstSelect = this.querySelector('.item-category-select');
+            if (firstSelect) {
+                firstSelect.style.pointerEvents = '';
+                firstSelect.style.backgroundColor = '';
+                firstSelect.removeAttribute('tabindex');
+            }
+            const lockMsg = this.querySelector('.category-lock-msg');
+            if (lockMsg) lockMsg.style.display = 'none';
         });
         
         // Date Validation & Availability Trigger
@@ -338,7 +364,7 @@
         document.querySelector('#modalItem input[name="itemDesc"]').value = desc;
         document.querySelector('#modalItem select[name="itemCategory"]').value = category;
         document.querySelector('#modalItem input[name="itemTotalQty"]').value = qty;
-        document.querySelector('#modalItem input[name="itemTotalQty"]').readOnly = true; // Prevent editing qty directly on edit (should use purchase to restock)
+        document.querySelector('#modalItem input[name="itemTotalQty"]').readOnly = false;
         document.querySelector('#modalItem input[name="itemRate"]').value = rate;
         
         document.getElementById('itemModalTitle').textContent = 'Edit Item';

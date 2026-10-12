@@ -28,9 +28,29 @@ if ($action === 'save_item') {
         if ($stmt->fetch()) {
             redirect_with_alert('tab-inventory', 'danger', "An item with this description already exists in this category.");
         } else {
-            $stmt = $db->prepare("UPDATE item SET itemDesc = ?, itemCategory = ?, itemRate = ? WHERE itemID = ?");
-            $stmt->execute([$desc, $category, $rate, $id]);
-            redirect_with_alert('tab-inventory', 'success', "Item updated.");
+            // Fetch current item stock
+            $currStmt = $db->prepare("SELECT itemTotalQty, itemAvailableQty FROM item WHERE itemID = ?");
+            $currStmt->execute([$id]);
+            $currItem = $currStmt->fetch();
+            
+            // Check active unreturned checkout units
+            $check = $db->prepare("SELECT SUM(brwTransItemQty - COALESCE((SELECT SUM(brwTransQty) FROM return_transaction r WHERE r.brwTransID = b.brwTransID), 0)) as unreturned FROM borrow_transaction b WHERE b.itemID = ? AND b.brwTransStatus = 'Released'");
+            $check->execute([$id]);
+            $unreturned = (int)($check->fetch()['unreturned'] ?? 0);
+            
+            $currentlyCheckedOut = max(
+                $unreturned,
+                $currItem ? max(0, (int)$currItem['itemTotalQty'] - (int)$currItem['itemAvailableQty']) : 0
+            );
+            
+            if ($qty < $currentlyCheckedOut) {
+                redirect_with_alert('tab-inventory', 'danger', "Quantity cannot be reduced below $currentlyCheckedOut unit(s) currently checked out.");
+            }
+            
+            $newAvailableQty = $qty - $currentlyCheckedOut;
+            $stmt = $db->prepare("UPDATE item SET itemDesc = ?, itemCategory = ?, itemTotalQty = ?, itemAvailableQty = ?, itemRate = ? WHERE itemID = ?");
+            $stmt->execute([$desc, $category, $qty, $newAvailableQty, $rate, $id]);
+            redirect_with_alert('tab-inventory', 'success', "Item updated successfully.");
         }
     } else {
         $stmt = $db->prepare("SELECT itemID FROM item WHERE LOWER(TRIM(itemDesc)) = LOWER(?) AND itemCategory = ? AND is_archived = 0");

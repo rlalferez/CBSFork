@@ -37,7 +37,7 @@
                 <div class="tab-pane fade show active" id="txn-all">
                   <div class="table-responsive">
                     <table class="table-custom" id="txnAllTable">
-                      <thead><tr><th>Status</th><th>TXN ID</th><th>Item</th><th>Borrower</th><th>Qty Borrowed</th><th>Borrow Date</th><th>Processed By</th><th>RET ID</th><th>Qty Returned</th><th>Return Date</th><th>Returned To</th><th>Action</th></tr></thead>
+                      <thead><tr><th>Status</th><th>TXN ID</th><th>Item</th><th>Borrower</th><th class="col-number">Qty Borrowed</th><th>Borrow Date</th><th>Processed By</th><th>RET ID</th><th class="col-number">Qty Returned</th><th>Return Date</th><th>Returned To</th><th>Action</th></tr></thead>
                       <tbody>
                         <?php if(empty($unifiedTransactions)): ?>
                           <tr><td colspan="12" class="text-center text-muted py-4">No transactions recorded yet.</td></tr>
@@ -58,13 +58,13 @@
                               <td><?= htmlspecialchars($t['brwTransID'], ENT_QUOTES, 'UTF-8') ?></td>
                               <td><a href="#" onclick="switchTabAndHighlight('#tab-inventory', 'row-item-<?= htmlspecialchars($t['itemID'], ENT_QUOTES, 'UTF-8') ?>'); return false;" class="text-decoration-none fw-bold"><?= htmlspecialchars($t['itemDesc'], ENT_QUOTES, 'UTF-8') ?></a></td>
                               <td><a href="#" onclick="switchTabAndHighlight('#tab-borrowers', 'row-brw-<?= htmlspecialchars($t['brwID'], ENT_QUOTES, 'UTF-8') ?>'); return false;" class="text-decoration-none fw-bold"><?= htmlspecialchars($t['brwFName'].' '.$t['brwLName'], ENT_QUOTES, 'UTF-8') ?></a></td>
-                              <td><?= (int)$t['borrow_qty'] ?></td>
+                              <td class="col-number"><?= (int)$t['borrow_qty'] ?></td>
                               <td><?= htmlspecialchars($t['brwTransDate'], ENT_QUOTES, 'UTF-8') ?></td>
                               <td><?= htmlspecialchars($t['borrow_staff_f'].' '.$t['borrow_staff_l'], ENT_QUOTES, 'UTF-8') ?></td>
                               
                               <?php if($t['retTransID']): ?>
                                   <td><a href="#" onclick="openSubtabAndHighlight('#tab-transactions', '#txn-return', 'row-ret-<?= htmlspecialchars($t['retTransID'], ENT_QUOTES, 'UTF-8') ?>'); return false;" class="text-decoration-none fw-bold"><?= htmlspecialchars($t['retTransID'], ENT_QUOTES, 'UTF-8') ?></a></td>
-                                  <td><?= (int)$t['return_qty'] ?></td>
+                                  <td class="col-number"><?= (int)$t['return_qty'] ?></td>
                                   <td><?= htmlspecialchars($t['retReturnedOnDate'], ENT_QUOTES, 'UTF-8') ?></td>
                                   <td><?= htmlspecialchars($t['return_staff_f'].' '.$t['return_staff_l'], ENT_QUOTES, 'UTF-8') ?></td>
                               <?php else: ?>
@@ -103,7 +103,7 @@
                 <div class="tab-pane fade" id="txn-reserved">
                   <div class="table-responsive">
                     <table class="table-custom" id="txnReservedTable">
-                      <thead><tr><th>Status</th><th>TXN ID</th><th>Item</th><th>Qty</th><th>Borrower</th><th>Reserve Date</th><th>Due Date</th><th>Fee</th><th>Action</th></tr></thead>
+                      <thead><tr><th>Status</th><th>TXN ID</th><th>Item</th><th class="col-number">Qty</th><th>Borrower</th><th>Reserve Date</th><th>Due Date</th><th class="col-number">Fee</th><th>Action</th></tr></thead>
                       <tbody>
                         <?php 
                         $hasReserved = false;
@@ -115,11 +115,11 @@
                             <td><span class="badge bg-warning text-dark">Reserved</span></td>
                             <td><?= htmlspecialchars($b['brwTransID'], ENT_QUOTES, 'UTF-8') ?></td>
                             <td><a href="#" onclick="switchTabAndHighlight('#tab-inventory', 'row-item-<?= htmlspecialchars($b['itemID'], ENT_QUOTES, 'UTF-8') ?>'); return false;" class="text-decoration-none fw-bold"><?= htmlspecialchars($b['itemDesc'], ENT_QUOTES, 'UTF-8') ?></a></td>
-                            <td><?= (int)$b['brwTransItemQty'] ?></td>
+                            <td class="col-number"><?= (int)$b['brwTransItemQty'] ?></td>
                             <td><a href="#" onclick="switchTabAndHighlight('#tab-borrowers', 'row-brw-<?= htmlspecialchars($b['brwID'], ENT_QUOTES, 'UTF-8') ?>'); return false;" class="text-decoration-none fw-bold"><?= htmlspecialchars($b['brwFName'].' '.$b['brwLName'], ENT_QUOTES, 'UTF-8') ?></a></td>
                             <td><?= htmlspecialchars($b['brwTransBorrowOnDate'], ENT_QUOTES, 'UTF-8') ?></td>
                             <td><?= htmlspecialchars($b['brwTransReturnByDate'], ENT_QUOTES, 'UTF-8') ?></td>
-                            <td><?= number_format((float)$b['brwTransTotal'], 2) ?></td>
+                            <td class="col-number"><?= number_format((float)$b['brwTransTotal'], 2) ?></td>
                             <td>
                               <div class="d-flex gap-1">
                                 <form action="actions/txn_action.php" method="POST" class="d-inline" onsubmit="return confirm('Release reserved item(s) to borrower now?');">
@@ -148,7 +148,7 @@
                 <div class="tab-pane fade" id="txn-released">
                   <div class="table-responsive">
                     <table class="table-custom" id="txnReleasedTable">
-                      <thead><tr><th>Status</th><th>TXN ID</th><th>Item</th><th>Qty</th><th>Borrower</th><th>Borrow Date</th><th>Due Date</th><th>Fee</th><th>Action</th></tr></thead>
+                      <thead><tr><th>Status</th><th>TXN ID</th><th>Item</th><th class="col-number">Qty</th><th>Borrower</th><th>Borrow Date</th><th>Due Date</th><th class="col-number">Fee</th><th>Action</th></tr></thead>
                       <tbody>
                         <?php 
                         $hasReleased = false;
@@ -161,11 +161,11 @@
                             <td><span class="badge bg-primary">Released</span></td>
                             <td><?= htmlspecialchars($b['brwTransID'], ENT_QUOTES, 'UTF-8') ?></td>
                             <td><a href="#" onclick="switchTabAndHighlight('#tab-inventory', 'row-item-<?= htmlspecialchars($b['itemID'], ENT_QUOTES, 'UTF-8') ?>'); return false;" class="text-decoration-none fw-bold"><?= htmlspecialchars($b['itemDesc'], ENT_QUOTES, 'UTF-8') ?></a></td>
-                            <td><?= (int)$b['brwTransItemQty'] ?></td>
+                            <td class="col-number"><?= (int)$b['brwTransItemQty'] ?></td>
                             <td><a href="#" onclick="switchTabAndHighlight('#tab-borrowers', 'row-brw-<?= htmlspecialchars($b['brwID'], ENT_QUOTES, 'UTF-8') ?>'); return false;" class="text-decoration-none fw-bold"><?= htmlspecialchars($b['brwFName'].' '.$b['brwLName'], ENT_QUOTES, 'UTF-8') ?></a></td>
                             <td><?= htmlspecialchars($b['brwTransBorrowOnDate'], ENT_QUOTES, 'UTF-8') ?></td>
                             <td><?= htmlspecialchars($b['brwTransReturnByDate'], ENT_QUOTES, 'UTF-8') ?></td>
-                            <td><?= number_format((float)$b['brwTransTotal'], 2) ?></td>
+                            <td class="col-number"><?= number_format((float)$b['brwTransTotal'], 2) ?></td>
                             <td><span class="text-muted small">-</span></td>
                           </tr>
                         <?php endforeach; ?>
@@ -181,7 +181,7 @@
                 <div class="tab-pane fade" id="txn-return">
                   <div class="table-responsive">
                     <table class="table-custom" id="txnReturnTable">
-                      <thead><tr><th>RET ID</th><th>Borrow TXN ID</th><th>Item</th><th>Qty</th><th>Borrower</th><th>Return Date</th></tr></thead>
+                      <thead><tr><th>RET ID</th><th>Borrow TXN ID</th><th>Item</th><th class="col-number">Qty</th><th>Borrower</th><th>Return Date</th></tr></thead>
                       <tbody>
                         <?php if(empty($returns)): ?>
                           <tr><td colspan="6" class="text-center text-muted py-4">No returned transactions found.</td></tr>
@@ -191,7 +191,7 @@
                               <td><?= htmlspecialchars($r['retTransID'], ENT_QUOTES, 'UTF-8') ?></td>
                               <td><a href="#" onclick="openSubtabAndHighlight('#tab-transactions', '#txn-all', 'row-txn-<?= htmlspecialchars($r['brwTransID'], ENT_QUOTES, 'UTF-8') ?>'); return false;" class="text-decoration-none fw-bold"><?= htmlspecialchars($r['brwTransID'], ENT_QUOTES, 'UTF-8') ?></a></td>
                               <td><a href="#" onclick="switchTabAndHighlight('#tab-inventory', 'row-item-<?= htmlspecialchars($r['itemID'], ENT_QUOTES, 'UTF-8') ?>'); return false;" class="text-decoration-none fw-bold"><?= htmlspecialchars($r['itemDesc'], ENT_QUOTES, 'UTF-8') ?></a></td>
-                              <td><?= (int)$r['brwTransQty'] ?></td>
+                              <td class="col-number"><?= (int)$r['brwTransQty'] ?></td>
                               <td><a href="#" onclick="switchTabAndHighlight('#tab-borrowers', 'row-brw-<?= htmlspecialchars($r['brwID'], ENT_QUOTES, 'UTF-8') ?>'); return false;" class="text-decoration-none fw-bold"><?= htmlspecialchars($r['brwFName'].' '.$r['brwLName'], ENT_QUOTES, 'UTF-8') ?></a></td>
                               <td><?= htmlspecialchars($r['retReturnedOnDate'], ENT_QUOTES, 'UTF-8') ?></td>
                             </tr>
@@ -206,7 +206,7 @@
                 <div class="tab-pane fade" id="txn-cancelled">
                   <div class="table-responsive">
                     <table class="table-custom" id="txnCancelledTable">
-                      <thead><tr><th>Status</th><th>TXN ID</th><th>Item</th><th>Qty</th><th>Borrower</th><th>Reserve Date</th><th>Due Date</th><th>Fee</th></tr></thead>
+                      <thead><tr><th>Status</th><th>TXN ID</th><th>Item</th><th class="col-number">Qty</th><th>Borrower</th><th>Reserve Date</th><th>Due Date</th><th class="col-number">Fee</th></tr></thead>
                       <tbody>
                         <?php 
                         $hasCancelled = false;
@@ -218,11 +218,11 @@
                             <td><span class="badge bg-secondary">Cancelled</span></td>
                             <td><?= htmlspecialchars($b['brwTransID'], ENT_QUOTES, 'UTF-8') ?></td>
                             <td><a href="#" onclick="switchTabAndHighlight('#tab-inventory', 'row-item-<?= htmlspecialchars($b['itemID'], ENT_QUOTES, 'UTF-8') ?>'); return false;" class="text-decoration-none fw-bold"><?= htmlspecialchars($b['itemDesc'], ENT_QUOTES, 'UTF-8') ?></a></td>
-                            <td><?= (int)$b['brwTransItemQty'] ?></td>
+                            <td class="col-number"><?= (int)$b['brwTransItemQty'] ?></td>
                             <td><a href="#" onclick="switchTabAndHighlight('#tab-borrowers', 'row-brw-<?= htmlspecialchars($b['brwID'], ENT_QUOTES, 'UTF-8') ?>'); return false;" class="text-decoration-none fw-bold"><?= htmlspecialchars($b['brwFName'].' '.$b['brwLName'], ENT_QUOTES, 'UTF-8') ?></a></td>
                             <td><?= htmlspecialchars($b['brwTransBorrowOnDate'], ENT_QUOTES, 'UTF-8') ?></td>
                             <td><?= htmlspecialchars($b['brwTransReturnByDate'], ENT_QUOTES, 'UTF-8') ?></td>
-                            <td><?= number_format((float)$b['brwTransTotal'], 2) ?></td>
+                            <td class="col-number"><?= number_format((float)$b['brwTransTotal'], 2) ?></td>
                           </tr>
                         <?php endforeach; ?>
                         <?php if(!$hasCancelled): ?>

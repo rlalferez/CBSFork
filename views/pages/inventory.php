@@ -15,16 +15,16 @@
               </div>
               <div class="table-responsive">
                 <table class="table-custom" id="inventoryTable">
-                  <thead><tr><th>ID</th><th>Description</th><th>Category</th><th>Total Qty</th><th>Available</th><th>Rate</th><th>Action</th></tr></thead>
+                  <thead><tr><th>ID</th><th>Description</th><th>Category</th><th class="col-number">Total Qty</th><th class="col-number">Available</th><th class="col-number">Rate</th><th>Action</th></tr></thead>
                   <tbody>
                     <?php foreach($items as $i): ?>
                       <tr id="row-item-<?= htmlspecialchars($i['itemID'], ENT_QUOTES, 'UTF-8') ?>">
                         <td><?= htmlspecialchars($i['itemID'], ENT_QUOTES, 'UTF-8') ?></td>
                         <td><?= htmlspecialchars($i['itemDesc'], ENT_QUOTES, 'UTF-8') ?></td>
                         <td><?= htmlspecialchars($i['itemCategory'], ENT_QUOTES, 'UTF-8') ?></td>
-                        <td><?= (int)$i['itemTotalQty'] ?></td>
-                        <td><?= (int)$i['itemAvailableQty'] ?></td>
-                        <td><?= number_format((float)$i['itemRate'], 2) ?></td>
+                        <td class="col-number"><?= (int)$i['itemTotalQty'] ?></td>
+                        <td class="col-number"><?= (int)$i['itemAvailableQty'] ?></td>
+                        <td class="col-number"><?= number_format((float)$i['itemRate'], 2) ?></td>
                         <td>
                           <?php if($isAdmin): ?>
                           <button type="button" class="btn btn-sm btn-outline-primary py-0 px-2 me-1 edit-item-btn" style="font-size:12px;"

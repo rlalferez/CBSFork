@@ -23,14 +23,14 @@
                   </div>
                 <?php else: ?>
                 <table class="table-custom" id="purchasesTable">
-                  <thead><tr><th>PUR ID</th><th>OR No.</th><th>Item</th><th>Qty</th><th>Date</th><th>Logged By</th><?php if($isAdmin): ?><th>Action</th><?php endif; ?></tr></thead>
+                  <thead><tr><th>PUR ID</th><th>OR No.</th><th>Item</th><th class="col-number">Qty</th><th>Date</th><th>Logged By</th><?php if($isAdmin): ?><th>Action</th><?php endif; ?></tr></thead>
                   <tbody>
                     <?php foreach($purchases as $p): ?>
                       <tr id="row-pur-<?= htmlspecialchars($p['purTransID'], ENT_QUOTES, 'UTF-8') ?>">
                         <td><?= htmlspecialchars($p['purTransID'], ENT_QUOTES, 'UTF-8') ?></td>
                         <td><?= htmlspecialchars($p['purORNo'], ENT_QUOTES, 'UTF-8') ?></td>
                         <td><a href="#" onclick="switchTabAndHighlight('#tab-inventory', 'row-item-<?= htmlspecialchars($p['itemID'], ENT_QUOTES, 'UTF-8') ?>'); return false;" class="text-decoration-none fw-bold"><?= htmlspecialchars($p['itemDesc'], ENT_QUOTES, 'UTF-8') ?></a></td>
-                        <td><?= (int)$p['purQty'] ?></td>
+                        <td class="col-number"><?= (int)$p['purQty'] ?></td>
                         <td><?= htmlspecialchars($p['purDate'], ENT_QUOTES, 'UTF-8') ?></td>
                         <td><?= htmlspecialchars($p['userFName'].' '.$p['userLName'], ENT_QUOTES, 'UTF-8') ?></td>
                         <?php if($isAdmin): ?>

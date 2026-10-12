@@ -93,13 +93,14 @@ if ($action === 'search_active_borrows') {
             // Dynamic Category Auto-Registration
             $db->prepare("INSERT IGNORE INTO category (categoryName) VALUES (?)")->execute([$cat]);
             
-            // Find if item already exists
-            $stmt = $db->prepare("SELECT itemID FROM item WHERE LOWER(TRIM(itemDesc)) = LOWER(?) AND itemCategory = ? AND is_archived = 0 LIMIT 1");
-            $stmt->execute([$desc, $cat]);
+            // Find if item already exists in inventory
+            $stmt = $db->prepare("SELECT itemID, itemCategory FROM item WHERE LOWER(TRIM(itemDesc)) = LOWER(?) AND is_archived = 0 LIMIT 1");
+            $stmt->execute([$desc]);
             $existing = $stmt->fetch();
             
             if ($existing) {
                 $itemID = $existing['itemID'];
+                $cat = $existing['itemCategory'];
                 $db->prepare("UPDATE item SET itemTotalQty = itemTotalQty + ?, itemAvailableQty = itemAvailableQty + ? WHERE itemID = ?")->execute([$qty, $qty, $itemID]);
             } else {
                 $itemID = generate_id($db, 'item', 'itemID', 'ITM-');
