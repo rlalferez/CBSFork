@@ -23,10 +23,11 @@ if ($action === 'save_item') {
     }
 
     if (!empty($id) && $id !== 'NEW') {
-        $stmt = $db->prepare("SELECT itemID FROM item WHERE LOWER(TRIM(itemDesc)) = LOWER(?) AND itemCategory = ? AND itemID != ? AND is_archived = 0");
-        $stmt->execute([$desc, $category, $id]);
+        // 51. Cross-Category Item Description Uniqueness (Edit)
+        $stmt = $db->prepare("SELECT itemID FROM item WHERE LOWER(TRIM(itemDesc)) = LOWER(?) AND itemID != ? AND is_archived = 0");
+        $stmt->execute([$desc, $id]);
         if ($stmt->fetch()) {
-            redirect_with_alert('tab-inventory', 'danger', "An item with this description already exists in this category.");
+            redirect_with_alert('tab-inventory', 'danger', "An item with this description already exists in the inventory.");
         } else {
             // Fetch current item stock
             $currStmt = $db->prepare("SELECT itemTotalQty, itemAvailableQty FROM item WHERE itemID = ?");
@@ -53,10 +54,11 @@ if ($action === 'save_item') {
             redirect_with_alert('tab-inventory', 'success', "Item updated successfully.");
         }
     } else {
-        $stmt = $db->prepare("SELECT itemID FROM item WHERE LOWER(TRIM(itemDesc)) = LOWER(?) AND itemCategory = ? AND is_archived = 0");
-        $stmt->execute([$desc, $category]);
+        // 51. Cross-Category Item Description Uniqueness (Add)
+        $stmt = $db->prepare("SELECT itemID FROM item WHERE LOWER(TRIM(itemDesc)) = LOWER(?) AND is_archived = 0");
+        $stmt->execute([$desc]);
         if ($stmt->fetch()) {
-            redirect_with_alert('tab-inventory', 'danger', "Cannot create: An item with this description already exists in this category.");
+            redirect_with_alert('tab-inventory', 'danger', "Cannot create: An item with this description already exists in the inventory.");
         } else {
             $newId = generate_id($db, 'item', 'itemID', 'ITM-');
             $stmt = $db->prepare("INSERT INTO item (itemID, itemDesc, itemCategory, itemTotalQty, itemAvailableQty, itemRate) VALUES (?, ?, ?, ?, ?, ?)");
@@ -88,13 +90,13 @@ if ($action === 'save_item') {
 } elseif ($action === 'archive_item') {
     $id = trim($_POST['itemID'] ?? '');
     
-    // Check if any units are currently checked out and unreturned
-    $check = $db->prepare("SELECT SUM(brwTransItemQty - COALESCE((SELECT SUM(brwTransQty) FROM return_transaction r WHERE r.brwTransID = b.brwTransID), 0)) as unreturned FROM borrow_transaction b WHERE b.itemID = ? AND b.brwTransStatus = 'Released'");
+    // 46. Check if any units are currently checked out (unreturned) or reserved for future dates
+    $check = $db->prepare("SELECT SUM(CASE WHEN b.brwTransStatus = 'Released' THEN (brwTransItemQty - COALESCE((SELECT SUM(brwTransQty) FROM return_transaction r WHERE r.brwTransID = b.brwTransID), 0)) ELSE brwTransItemQty END) as active_count FROM borrow_transaction b WHERE b.itemID = ? AND b.brwTransStatus IN ('Released', 'Reserved')");
     $check->execute([$id]);
-    $activeItems = $check->fetch()['unreturned'] ?? 0;
+    $activeCount = (int)($check->fetch()['active_count'] ?? 0);
     
-    if ($activeItems > 0) {
-        redirect_with_alert('tab-inventory', 'danger', "Cannot archive item: $activeItems unit(s) are currently checked out. Return them first.");
+    if ($activeCount > 0) {
+        redirect_with_alert('tab-inventory', 'danger', "Cannot archive item: $activeCount unit(s) are currently checked out or reserved. Complete or cancel them first.");
     } else {
         $db->prepare("UPDATE item SET is_archived = 1 WHERE itemID = ?")->execute([$id]);
         redirect_with_alert('tab-inventory', 'success', 'Item archived successfully.');

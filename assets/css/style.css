@@ -1390,13 +1390,12 @@ body {
 
 /* ==========================================================================
    13. NUMERIC INPUTS & CONTAINER ALIGNMENT
-   Aligns numbers to the right and places spinner arrows on the left
+   Aligns numbers cleanly to the right with tabular figures
    ========================================================================== */
 input[type="number"],
 .input-number-align {
-  direction: rtl !important;
   text-align: right !important;
-  unicode-bidi: plaintext !important;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Numeric container and table columns right-alignment */

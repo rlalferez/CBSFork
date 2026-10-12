@@ -87,6 +87,10 @@
                                       <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-2" style="font-size:11px;" title="Cancel Reservation">Cancel</button>
                                     </form>
                                   </div>
+                                <?php elseif(in_array(strtolower($t['brwTransStatus']), ['released', 'returned'])): ?>
+                                  <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" style="font-size:11px;" title="Print Receipt" onclick="window.open('print_receipt.php?ids=<?= urlencode(json_encode([$t['brwTransID']])) ?>', 'ReceiptWindow', 'width=800,height=600')">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Receipt
+                                  </button>
                                 <?php else: ?>
                                   <span class="text-muted small">-</span>
                                 <?php endif; ?>
@@ -165,8 +169,11 @@
                             <td><a href="#" onclick="switchTabAndHighlight('#tab-borrowers', 'row-brw-<?= htmlspecialchars($b['brwID'], ENT_QUOTES, 'UTF-8') ?>'); return false;" class="text-decoration-none fw-bold"><?= htmlspecialchars($b['brwFName'].' '.$b['brwLName'], ENT_QUOTES, 'UTF-8') ?></a></td>
                             <td><?= htmlspecialchars($b['brwTransBorrowOnDate'], ENT_QUOTES, 'UTF-8') ?></td>
                             <td><?= htmlspecialchars($b['brwTransReturnByDate'], ENT_QUOTES, 'UTF-8') ?></td>
-                            <td class="col-number"><?= number_format((float)$b['brwTransTotal'], 2) ?></td>
-                            <td><span class="text-muted small">-</span></td>
+                            <td>
+                              <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" style="font-size:11px;" title="Print Receipt" onclick="window.open('print_receipt.php?ids=<?= urlencode(json_encode([$b['brwTransID']])) ?>', 'ReceiptWindow', 'width=800,height=600')">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Receipt
+                              </button>
+                            </td>
                           </tr>
                         <?php endforeach; ?>
                         <?php if(!$hasReleased): ?>

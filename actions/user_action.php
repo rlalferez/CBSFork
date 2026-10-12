@@ -51,6 +51,10 @@ if ($action === 'save_user') {
         }
         redirect_with_alert('tab-users', 'success', 'User updated.');
     } else {
+        // 50. Backend Password Enforcement for New User Accounts
+        if (empty($pass)) {
+            redirect_with_alert('tab-users', 'danger', 'Error: Password is required when creating a new user account.');
+        }
         $newId = generate_id($db, 'user', 'userID', 'USR-');
         $hash = password_hash($pass, PASSWORD_DEFAULT);
         $db->prepare("INSERT INTO user (userID, userFName, userLName, userEmail, userContactNo, userRole, userPassword) VALUES (?, ?, ?, ?, ?, ?, ?)")

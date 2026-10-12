@@ -603,7 +603,50 @@
         if (fNameInput) fNameInput.focus();
     }
 
+    // 47. Duplicate Student ID Check & Outright Rejection
+    function checkBorrowerStudentID(studentId) {
+        if (!studentId || !/^[0-9]{2}-[0-9]-[0-9]{5}$/.test(studentId)) {
+            return;
+        }
+        const selectedId = document.getElementById('selectedBrwID')?.value;
+        if (selectedId) return;
+
+        const params = new URLSearchParams();
+        params.append('action', 'check_student_id');
+        params.append('studentId', studentId);
+
+        fetch('actions/borrower_action.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: params.toString()
+        })
+        .then(res => res.json())
+        .then(res => {
+            if (res && res.exists) {
+                const status = (parseInt(res.is_archived) === 1) ? 'Archived' : 'Active';
+                alert(`Cannot use Student ID ${res.borrower.brwStudentID}: It is already registered to an ${status} borrower (${res.borrower.brwFName} ${res.borrower.brwLName}).\n\nPlease select them from the search bar above or enter a different Student ID.`);
+                const studentInput = document.getElementById('bStudentID');
+                if (studentInput) {
+                    studentInput.value = '';
+                    studentInput.focus();
+                }
+            }
+        })
+        .catch(err => {
+            console.error(err);
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
+        const studentIdInput = document.getElementById('bStudentID');
+        if (studentIdInput) {
+            studentIdInput.addEventListener('blur', function() {
+                if (!this.readOnly && this.value.trim().length >= 10) {
+                    checkBorrowerStudentID(this.value.trim());
+                }
+            });
+        }
+
         const modalTxn = document.getElementById('modalTransaction');
         if (modalTxn) {
             modalTxn.addEventListener('show.bs.modal', function() {

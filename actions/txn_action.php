@@ -144,13 +144,14 @@ if ($action === 'search_active_borrows') {
             redirect_with_alert('tab-transactions', 'danger', 'Please fill in all borrower details (Name, College).');
         }
         
-        // Check if student ID already exists
-        $checkStmt = $db->prepare("SELECT brwID FROM borrower WHERE brwStudentID = ? LIMIT 1");
+        // 47. Check if student ID already exists (both active and archived)
+        $checkStmt = $db->prepare("SELECT brwID, brwStudentID, brwFName, brwLName, is_archived FROM borrower WHERE brwStudentID = ? LIMIT 1");
         $checkStmt->execute([$studentId]);
         $existingBorrower = $checkStmt->fetch();
         
         if ($existingBorrower) {
-            $brwID = $existingBorrower['brwID'];
+            $status = ((int)$existingBorrower['is_archived'] === 1) ? 'archived' : 'active';
+            redirect_with_alert('tab-transactions', 'danger', "Cannot register borrower: Student ID {$studentId} is already registered to an {$status} borrower ({$existingBorrower['brwFName']} {$existingBorrower['brwLName']}). Please select them from the search bar or verify the ID.");
         } else {
             $brwID = generate_id($db, 'borrower', 'brwID', 'BRW-');
             $stmt = $db->prepare("INSERT INTO borrower (brwID, brwStudentID, brwFName, brwLName, brwContactNo, brwCollege, brwOrg) VALUES (?, ?, ?, ?, ?, ?, ?)");
@@ -174,6 +175,7 @@ if ($action === 'search_active_borrows') {
     $qtys = $_POST['qty'] ?? [];
     $borrowOnDate = trim($_POST['brwTransBorrowOnDate'] ?? date('Y-m-d'));
     $returnByDate = trim($_POST['brwTransReturnByDate'] ?? date('Y-m-d'));
+    
     $payStat = trim($_POST['brwTransPayStat'] ?? 'Free');
 
     if (empty($itemIDs)) {

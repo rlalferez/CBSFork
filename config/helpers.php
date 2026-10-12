@@ -90,6 +90,17 @@ function validate_student_id($studentId) {
  * @return array ['success' => bool, 'message' => string, 'available' => int, 'total' => int, 'item' => array|null]
  */
 function check_item_availability_for_dates($db, $itemID, $qtyRequested, $startDate, $endDate, $excludeTransID = null) {
+    // 49. Temporal Validation Guard: Return date cannot be earlier than borrow date
+    if (strtotime($endDate) < strtotime($startDate)) {
+        return [
+            'success' => false,
+            'message' => 'Return date cannot be earlier than borrow date.',
+            'available' => 0,
+            'total' => 0,
+            'item' => null
+        ];
+    }
+
     $qtyRequested = max(1, (int)$qtyRequested);
     
     // 1. Fetch Item Record

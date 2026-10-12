@@ -190,7 +190,16 @@ require_once 'views/layout/header.php';
             <div class="app-alert-container no-print">
                 <div class="alert alert-<?= $alert['type'] ?> app-alert alert-dismissible fade show" role="alert">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
-                    <div><?= htmlspecialchars($alert['message']) ?></div>
+                    <div>
+                        <?= htmlspecialchars($alert['message']) ?>
+                        <?php if (!empty($printReceipt)): ?>
+                            <div class="mt-2">
+                                <a href="print_receipt.php?ids=<?= urlencode(json_encode($printReceipt)) ?>" target="_blank" class="btn btn-sm btn-dark text-white">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Click here to print receipt if pop-up was blocked
+                                </a>
+                            </div>
+                        <?php endif; ?>
+                    </div>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             </div>

@@ -28,7 +28,7 @@ unset($_SESSION['alert']);
         <div class="login-logos">
            <!-- SU CCS Logo Badge -->
            <div class="login-logo-badge">
-              <span class="login-logo-text">SU CCS<br>LOGO</span>
+              <img src="assets/images/imgCCS.png" alt="SU CCS Logo" class="login-logo-image">
            </div>
            <!-- Confederates Student Council Logo Badge -->
            <div class="login-logo-badge">
