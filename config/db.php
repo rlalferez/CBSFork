@@ -56,7 +56,7 @@ function get_db() {
                 <li>Make sure <strong>Apache</strong> and <strong>MySQL</strong> are started in the <strong>XAMPP Control Panel</strong>.</li>
                 <li>Open your browser and navigate to: <a href="http://localhost/phpmyadmin/index.php" target="_blank" class="fw-bold text-primary">http://localhost/phpmyadmin/index.php</a></li>
                 <li>Click the <strong>"SQL"</strong> tab in the top navigation bar.</li>
-                <li>Open the file <strong class="text-dark">confed_borrowing.sql</strong> in your project folder, copy its entire contents, paste it into the box, and click <strong>"Go"</strong>.</li>
+                <li>Open the file <strong class="text-dark">database/confed_borrowing.sql</strong> in your project folder, copy its entire contents, paste it into the box, and click <strong>"Go"</strong>.</li>
                 <li>Once imported, <a href="index.php" class="fw-bold text-success">Click here to refresh this page</a>.</li>
               </ol>
 
