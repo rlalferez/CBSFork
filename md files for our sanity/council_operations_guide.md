@@ -178,8 +178,8 @@ Transactions represent the core operational purpose of the Council: checking out
   4. Real-time AJAX checks availability for requested date ranges (`check_item_availability_for_dates`).
   5. On submit, `actions/txn_action.php` validates the payload, creates an auto-incrementing `TXN-###` ID using `generate_id()`, inserts the record into `borrow_transaction`, decrements `itemAvailableQty` in the `item` table, and sets `$_SESSION['print_receipt']` to trigger the receipt pop-up.
 * **Key Code Responsible:**
-  - `check_item_availability_for_dates()` in [`config/helpers.php`](file:///c:/xampp/htdocs/CBSFork/config/helpers.php#L92-L221)
-  - `action === 'create_borrow'` in [`actions/txn_action.php`](file:///c:/xampp/htdocs/CBSFork/actions/txn_action.php#L121-L235)
+  - `check_item_availability_for_dates()` in [`config/helpers.php`](file:///c:/xampp/htdocs/CBSFork/config/helpers.php#L44-L164)
+  - `action === 'create_borrow'` in [`actions/txn_action.php`](file:///c:/xampp/htdocs/CBSFork/actions/txn_action.php#L119-L229)
   - JavaScript functions `checkRowAvailability()`, `handleBorrowSubmit()`, and `setupBorrowerSearch()` in [`assets/js/app.js`](file:///c:/xampp/htdocs/CBSFork/assets/js/app.js) and [`views/modals/modal_txn.php`](file:///c:/xampp/htdocs/CBSFork/views/modals/modal_txn.php).
 * **Files at Play:**
   - [`views/pages/transactions.php`](file:///c:/xampp/htdocs/CBSFork/views/pages/transactions.php) (UI display)
@@ -200,7 +200,7 @@ Transactions represent the core operational purpose of the Council: checking out
     $isReservation = ($borrowOnDate > $today);
     $status = $isReservation ? 'Reserved' : 'Released';
     ```
-  - Milestone-date conflict evaluation in [`config/helpers.php`](file:///c:/xampp/htdocs/CBSFork/config/helpers.php#L179-L195).
+  - Milestone-date conflict evaluation in [`config/helpers.php`](file:///c:/xampp/htdocs/CBSFork/config/helpers.php#L92-L137).
 
 ### 4.3. Release Reservation
 * **What it does:** Converts a `Reserved` status transaction into `Released` when the borrower arrives on the scheduled day to pick up the gear.
@@ -236,15 +236,15 @@ Transactions represent the core operational purpose of the Council: checking out
   5. When administrator selects an item, the borrow date is locked and the maximum returnable quantity is enforced.
   6. On submit, `actions/txn_action.php` creates a new `RET-###` record in `return_transaction`, increments `itemAvailableQty` in the `item` table, and if total returned equals the borrowed quantity, marks the borrow transaction as `'Returned'`.
 * **Key Code Responsible:**
-  - `action === 'search_active_borrows'` in [`actions/txn_action.php`](file:///c:/xampp/htdocs/CBSFork/actions/txn_action.php#L9-L23)
-  - `action === 'create_return'` in [`actions/txn_action.php`](file:///c:/xampp/htdocs/CBSFork/actions/txn_action.php#L236-L297)
-  - Client-side handler `selectRetBorrower()` in [`assets/js/app.js`](file:///c:/xampp/htdocs/CBSFork/assets/js/app.js#L248-L274).
+  - `action === 'search_active_borrows'` in [`actions/txn_action.php`](file:///c:/xampp/htdocs/CBSFork/actions/txn_action.php#L9-L22)
+  - `action === 'create_return'` in [`actions/txn_action.php`](file:///c:/xampp/htdocs/CBSFork/actions/txn_action.php#L230-L297)
+  - Client-side handler `selectRetBorrower()` in [`assets/js/app.js`](file:///c:/xampp/htdocs/CBSFork/assets/js/app.js#L231-L256).
 
 ### 4.6. Print Receipt / Gate Pass
 * **What it does:** Renders a clean, formatted receipt / gate pass for security checkpoint clearance at campus gates.
 * **How it works:**
   - After a checkout or release, `$_SESSION['print_receipt']` stores transaction IDs.
-  - An inline script at the bottom of [`index.php`](file:///c:/xampp/htdocs/CBSFork/index.php#L239-L247) automatically triggers `window.open('print_receipt.php?ids=...', 'ReceiptWindow')`.
+  - An inline script at the bottom of [`index.php`](file:///c:/xampp/htdocs/CBSFork/index.php#L228-L236) automatically triggers `window.open('print_receipt.php?ids=...', 'ReceiptWindow')`.
   - Alternatively, each transaction row has a manual **Receipt** button.
   - [`print_receipt.php`](file:///c:/xampp/htdocs/CBSFork/print_receipt.php) loads borrower details, item descriptions, rental fees, and staff officer name, and runs `window.print()` automatically upon load.
 
@@ -255,7 +255,7 @@ Transactions represent the core operational purpose of the Council: checking out
   - **Released:** Displays equipment currently with borrowers.
   - **Returned:** Historical log of return transactions.
   - **Cancelled:** Voided reservations.
-* **Sidebar Sub-menu Linking:** Clicking "Reserved", "Released", "Returns", or "Cancelled" in the left sidebar calls `openSubtab('#tab-transactions', '#txn-...')` in [`assets/js/app.js`](file:///c:/xampp/htdocs/CBSFork/assets/js/app.js#L289-L301), activating both the main tab and the nested tab smoothly.
+* **Sidebar Sub-menu Linking:** Clicking "Reserved", "Released", "Returns", or "Cancelled" in the left sidebar calls `openSubtab('#tab-transactions', '#txn-...')` in [`assets/js/app.js`](file:///c:/xampp/htdocs/CBSFork/assets/js/app.js#L269-L281), activating both the main tab and the nested tab smoothly.
 
 ---
 
@@ -403,13 +403,13 @@ Maintains the registry of students and student organizations borrowing council a
   2. **Philippine Mobile Number:** Must be a valid 11-digit mobile number starting with `09` (e.g. `09123456789`). The helper `validate_ph_contact()` automatically cleans spaces, dashes, and normalizes international prefixes `+63` or `63` to `0`.
   3. **Duplicate Check:** Enforces unique student IDs across the active registry.
 * **Key Code Responsible:**
-  - Helpers `validate_student_id()` and `validate_ph_contact()` in [`config/helpers.php`](file:///c:/xampp/htdocs/CBSFork/config/helpers.php#L47-L76).
+  - Helpers `validate_student_id()` and `validate_ph_contact()` in [`config/helpers.php`](file:///c:/xampp/htdocs/CBSFork/config/helpers.php#L30-L42).
   - Lines 34&ndash;76 in [`actions/borrower_action.php`](file:///c:/xampp/htdocs/CBSFork/actions/borrower_action.php#L34-L76).
 
 ### 7.2. Edit Borrower Profile
 * **What it does:** Updates contact number, college, organization, or student ID for an existing borrower.
 * **How it works:**
-  - Clicking **Edit** on a borrower row invokes `editBorrower()` in [`assets/js/app.js`](file:///c:/xampp/htdocs/CBSFork/assets/js/app.js#L387-L403), populating `#modalBorrower` with existing attributes.
+  - Clicking **Edit** on a borrower row invokes `editBorrower()` in [`assets/js/app.js`](file:///c:/xampp/htdocs/CBSFork/assets/js/app.js#L360-L384), populating `#modalBorrower` with existing attributes.
   - On submit, backend updates the record in `borrower`.
 
 ### 7.3. Live Autocomplete & Student ID Duplicate Checks
@@ -453,7 +453,7 @@ Exclusive to **Council Administrators**, this operation controls role-based acce
 * **Password Handling:**
   - The password field is optional on edit. If left blank, the existing Bcrypt hash is untouched.
 * **Key Code Responsible:**
-  - Function `editUser()` in [`assets/js/app.js`](file:///c:/xampp/htdocs/CBSFork/assets/js/app.js#L329-L347) and [`views/modals/modal_user.php`](file:///c:/xampp/htdocs/CBSFork/views/modals/modal_user.php).
+  - Function `editUser()` in [`assets/js/app.js`](file:///c:/xampp/htdocs/CBSFork/assets/js/app.js#L306-L335) and [`views/modals/modal_user.php`](file:///c:/xampp/htdocs/CBSFork/views/modals/modal_user.php).
 
 ### 8.3. Self-Archive Prevention Guard
 * **What it does:** Protects the administrator from accidentally locking themselves out of the system.
@@ -467,7 +467,7 @@ Exclusive to **Council Administrators**, this operation controls role-based acce
   - Lines 65&ndash;73 in [`actions/user_action.php`](file:///c:/xampp/htdocs/CBSFork/actions/user_action.php#L65-L73).
 
 ### 8.4. Role Pill Filter & One-Click Gmail Composition
-* **Role Pill Filter:** Administrator can click segmented pill buttons (`All`, `Council`, `Committee`) to instantly filter the users table via `filterTableByPill('#usersTable', 'Council', 2)` in [`assets/js/app.js`](file:///c:/xampp/htdocs/CBSFork/assets/js/app.js#L277-L286).
+* **Role Pill Filter:** Administrator can click segmented pill buttons (`All`, `Council`, `Committee`) to instantly filter the users table via `filterTableByPill('#usersTable', 'Council', 2)` in [`assets/js/app.js`](file:///c:/xampp/htdocs/CBSFork/assets/js/app.js#L258-L267).
 * **One-Click Gmail Link:** Clicking an officer's email opens a pre-addressed Gmail compose window:
   ```html
   <a href="https://mail.google.com/mail/?view=cm&fs=1&to=<?= urlencode($u['userEmail']) ?>" target="_blank">
@@ -487,13 +487,13 @@ The **Reports** operation produces date-bounded operational audits and printable
   4. **Year:** Evaluates January 1 to December 31 for the chosen year (`$_GET['year']`).
 * **How it works:**
   - Selecting a filter triggers URL redirection: `index.php?period=month&month=2026-10`.
-  - [`index.php`](file:///c:/xampp/htdocs/CBSFork/index.php#L58-L178) calculates `$repStartDate` and `$repEndDate`, generates `$formattedPeriodLabel`, and creates SQL parameters:
+  - [`index.php`](file:///c:/xampp/htdocs/CBSFork/index.php#L57-L170) calculates `$repStartDate` and `$repEndDate`, generates `$formattedPeriodLabel`, and creates SQL parameters:
     ```sql
     b.brwTransDate BETWEEN '2026-10-01 00:00:00' AND '2026-10-31 23:59:59'
     ```
 * **Key Code Responsible:**
-  - Period calculation logic in [`index.php`](file:///c:/xampp/htdocs/CBSFork/index.php#L58-L178).
-  - Client-side handlers `applyPeriod()`, `applySpecificDay()`, `applySpecificWeek()`, `applySpecificMonth()`, `applySpecificYear()` in [`assets/js/app.js`](file:///c:/xampp/htdocs/CBSFork/assets/js/app.js#L418-L459).
+  - Period calculation logic in [`index.php`](file:///c:/xampp/htdocs/CBSFork/index.php#L57-L170).
+  - Client-side handlers `applyPeriod()`, `applySpecificDay()`, `applySpecificWeek()`, `applySpecificMonth()`, `applySpecificYear()` in [`assets/js/app.js`](file:///c:/xampp/htdocs/CBSFork/assets/js/app.js#L387-L427).
 
 ### 9.2. Unified vs. Sub-Report Views
 * **Unified View (`#rep-unified`):** Displays combined borrows and returns, showing which borrower checked out an item, who processed it, whether it was returned, and who accepted the return.
