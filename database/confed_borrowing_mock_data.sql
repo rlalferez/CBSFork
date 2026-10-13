@@ -1,140 +1,97 @@
--- ==========================================================
--- CONFEDERATES STUDENT COUNCIL (CSC) - BORROWING SYSTEM
--- Mock Database Data
--- ==========================================================
+CREATE DATABASE IF NOT EXISTS `confed_borrowing` 
+DEFAULT CHARACTER SET utf8mb4 
+COLLATE utf8mb4_unicode_ci;
 
-USE confed_borrowing;
+USE `confed_borrowing`;
 
--- Users
-INSERT IGNORE INTO user (userID, userFName, userLName, userEmail, userContactNo, userRole, userPassword, is_archived) VALUES
-('USR-001', 'Admin', 'User', 'admin@example.com', '09123456789', 'Council', '.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 0),
-('USR-002', 'Staff', 'Member', 'staff@example.com', '09987654321', 'Committee', '.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 0);
+SET FOREIGN_KEY_CHECKS = 0;
 
--- Items
-INSERT IGNORE INTO item (itemID, itemDesc, itemCategory, itemTotalQty, itemAvailableQty, itemRate, is_archived) VALUES
-('ITM-001', 'Projector EPSON X39', 'Electronics', 5, 4, 150.00, 0),
-('ITM-002', 'Extension Cord 10m', 'Accessories', 10, 8, 20.00, 0),
-('ITM-003', 'Portable Sound System', 'Electronics', 2, 2, 300.00, 0),
-('ITM-004', 'Monoblock Chair', 'Furniture', 50, 40, 5.00, 0),
-('ITM-005', 'Foldable Table', 'Furniture', 10, 10, 50.00, 0);
-INSERT IGNORE INTO item (itemID, itemDesc, itemCategory, itemTotalQty, itemAvailableQty, itemRate, is_archived) VALUES 
-('ITM-006', 'Mock Item 6', 'Category 6', 43, 43, 10.00, 0),
-('ITM-007', 'Mock Item 7', 'Category 7', 17, 17, 10.00, 0),
-('ITM-008', 'Mock Item 8', 'Category 8', 9, 9, 10.00, 0),
-('ITM-009', 'Mock Item 9', 'Category 9', 22, 22, 10.00, 0),
-('ITM-010', 'Mock Item 10', 'Category 10', 41, 41, 10.00, 0),
-('ITM-011', 'Mock Item 11', 'Category 11', 21, 21, 10.00, 0),
-('ITM-012', 'Mock Item 12', 'Category 12', 25, 25, 10.00, 0),
-('ITM-013', 'Mock Item 13', 'Category 13', 21, 21, 10.00, 0),
-('ITM-014', 'Mock Item 14', 'Category 14', 38, 38, 10.00, 0),
-('ITM-015', 'Mock Item 15', 'Category 15', 44, 44, 10.00, 0),
-('ITM-016', 'Mock Item 16', 'Category 16', 38, 38, 10.00, 0),
-('ITM-017', 'Mock Item 17', 'Category 17', 11, 11, 10.00, 0),
-('ITM-018', 'Mock Item 18', 'Category 18', 12, 12, 10.00, 0),
-('ITM-019', 'Mock Item 19', 'Category 19', 8, 8, 10.00, 0),
-('ITM-020', 'Mock Item 20', 'Category 20', 14, 14, 10.00, 0),
-('ITM-021', 'Mock Item 21', 'Category 21', 24, 24, 10.00, 0),
-('ITM-022', 'Mock Item 22', 'Category 22', 40, 40, 10.00, 0),
-('ITM-023', 'Mock Item 23', 'Category 23', 19, 19, 10.00, 0),
-('ITM-024', 'Mock Item 24', 'Category 24', 37, 37, 10.00, 0),
-('ITM-025', 'Mock Item 25', 'Category 25', 49, 49, 10.00, 0),
-('ITM-026', 'Mock Item 26', 'Category 26', 36, 36, 10.00, 0),
-('ITM-027', 'Mock Item 27', 'Category 27', 17, 17, 10.00, 0),
-('ITM-028', 'Mock Item 28', 'Category 28', 47, 47, 10.00, 0),
-('ITM-029', 'Mock Item 29', 'Category 29', 25, 25, 10.00, 0),
-('ITM-030', 'Mock Item 30', 'Category 30', 22, 22, 10.00, 0),
-('ITM-031', 'Mock Item 31', 'Category 31', 33, 33, 10.00, 0),
-('ITM-032', 'Mock Item 32', 'Category 32', 31, 31, 10.00, 0),
-('ITM-033', 'Mock Item 33', 'Category 33', 29, 29, 10.00, 0),
-('ITM-034', 'Mock Item 34', 'Category 34', 48, 48, 10.00, 0),
-('ITM-035', 'Mock Item 35', 'Category 35', 38, 38, 10.00, 0);
+DELETE FROM `return_transaction`;
+DELETE FROM `borrow_transaction`;
+DELETE FROM `purchase_transaction`;
+DELETE FROM `item`;
+DELETE FROM `borrower`;
+DELETE FROM `category`;
+DELETE FROM `user`;
 
--- Borrowers
-INSERT IGNORE INTO borrower (brwID, brwStudentID, brwFName, brwLName, brwCollege, brwOrg, brwContactNo, is_archived) VALUES
-('BRW-001', '2023-0001', 'John', 'Doe', 'CCS', 'CSG', '09111111111', 0),
-('BRW-002', '2023-0002', 'Jane', 'Smith', 'CBA', 'JMA', '09222222222', 0),
-('BRW-003', '2022-0105', 'Alice', 'Johnson', 'CNAHS', 'NURSING', '09333333333', 0);
-INSERT IGNORE INTO borrower (brwID, brwStudentID, brwFName, brwLName, brwCollege, brwOrg, brwContactNo, is_archived) VALUES 
-('BRW-004', '2023-4', 'Student4', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-005', '2023-5', 'Student5', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-006', '2023-6', 'Student6', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-007', '2023-7', 'Student7', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-008', '2023-8', 'Student8', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-009', '2023-9', 'Student9', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-010', '2023-10', 'Student10', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-011', '2023-11', 'Student11', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-012', '2023-12', 'Student12', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-013', '2023-13', 'Student13', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-014', '2023-14', 'Student14', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-015', '2023-15', 'Student15', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-016', '2023-16', 'Student16', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-017', '2023-17', 'Student17', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-018', '2023-18', 'Student18', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-019', '2023-19', 'Student19', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-020', '2023-20', 'Student20', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-021', '2023-21', 'Student21', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-022', '2023-22', 'Student22', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-023', '2023-23', 'Student23', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-024', '2023-24', 'Student24', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-025', '2023-25', 'Student25', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-026', '2023-26', 'Student26', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-027', '2023-27', 'Student27', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-028', '2023-28', 'Student28', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-029', '2023-29', 'Student29', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-030', '2023-30', 'Student30', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-031', '2023-31', 'Student31', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-032', '2023-32', 'Student32', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-033', '2023-33', 'Student33', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-034', '2023-34', 'Student34', 'Mock', 'College', 'Org', '09000000000', 0),
-('BRW-035', '2023-35', 'Student35', 'Mock', 'College', 'Org', '09000000000', 0);
+INSERT INTO `category` (`categoryID`, `categoryName`) VALUES
+(1, 'Electronics'),
+(2, 'Audio & Visual'),
+(3, 'Furniture'),
+(4, 'Sports'),
+(5, 'Event Materials'),
+(6, 'Office Supplies');
 
--- Borrow Transactions
-INSERT IGNORE INTO borrow_transaction (brwTransID, itemID, userID, brwID, brwTransItemQty, itemRate, brwTransDate, brwTransBorrowOnDate, brwTransReturnByDate, brwTransPayStat, brwTransTotal, brwTransStatus) VALUES
-('TXN-001', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Returned'),
-('TXN-002', 'ITM-002', 'USR-001', 'BRW-001', 2, 20.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 40.00, 'Returned'),
-('TXN-003', 'ITM-004', 'USR-002', 'BRW-002', 10, 5.00, '2023-10-15', '2023-10-15', '2023-10-16', 'Free', 50.00, 'Returned');
-INSERT IGNORE INTO borrow_transaction (brwTransID, itemID, userID, brwID, brwTransItemQty, itemRate, brwTransDate, brwTransBorrowOnDate, brwTransReturnByDate, brwTransPayStat, brwTransTotal, brwTransStatus) VALUES 
-('TXN-004', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-005', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-006', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-007', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-008', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-009', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-010', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-011', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-012', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-013', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-014', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-015', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-016', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-017', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-018', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-019', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-020', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-021', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-022', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-023', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-024', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-025', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-026', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-027', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-028', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-029', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-030', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-031', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-032', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-033', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-034', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released'),
-('TXN-035', 'ITM-001', 'USR-001', 'BRW-001', 1, 150.00, '2023-10-01', '2023-10-01', '2023-10-02', 'Paid', 150.00, 'Released');
+INSERT INTO `user` (`userID`, `userFName`, `userLName`, `userEmail`, `userContactNo`, `userRole`, `userPassword`, `is_archived`) VALUES
+('USR-001', 'Council', 'Administrator', 'admin@csc.edu.ph', '09123456789', 'Council', '$2y$10$fhXdAJw791ZaaJAFJ52lReP4mAjmzfXNtnJ7sgN0Q6sMCsrYs2AzK', 0),
+('USR-002', 'Committee', 'Officer', 'committee@csc.edu.ph', '09987654321', 'Committee', '$2y$10$sUSc1V9yUcuZU6ST2h1KTu7Raf/k63wXoPFQiMi3diz1VAT09jRsO', 0),
+('USR-003', 'Desk', 'Staff', 'staff@csc.edu.ph', '09171122334', 'Committee', '$2y$10$t2hGPp9xSjKmJT8p1/r.Wu01F4pC9UqpsvIciYv1xgU57jVjGA/Mm', 0);
 
--- Return Transactions
-INSERT IGNORE INTO return_transaction (retTransID, brwTransID, itemID, userID, brwID, brwTransQty, retReturnedOnDate) VALUES
-('RET-001', 'TXN-001', 'ITM-001', 'USR-001', 'BRW-001', 1, '2023-10-02'),
-('RET-002', 'TXN-002', 'ITM-002', 'USR-001', 'BRW-001', 2, '2023-10-02');
+INSERT INTO `borrower` (`brwID`, `brwStudentID`, `brwFName`, `brwLName`, `brwCollege`, `brwOrg`, `brwContactNo`, `is_archived`) VALUES
+('BRW-001', '23-1-01451', 'Juan', 'Dela Cruz', 'CCS', 'CSS', '09171234567', 0),
+('BRW-002', '23-1-02384', 'Maria', 'Santos', 'CBA', 'JMA', '09182345678', 0),
+('BRW-003', '24-1-00912', 'Carlo', 'Reyes', 'CAS', 'Biology Society', '09203456789', 0),
+('BRW-004', '22-2-03150', 'Angelica', 'Flores', 'CED', 'UAPSA', '09214567890', 0),
+('BRW-005', '23-1-04521', 'Gabriel', 'Ramos', 'COE', 'Pink Panthers', '09225678901', 0),
+('BRW-006', '24-1-01188', 'Patricia', 'Lim', 'CON', 'Red Cross Youth', '09236789012', 0),
+('BRW-007', '22-1-05432', 'Mark', 'Bautista', 'CCS', 'CSS', '09247890123', 0),
+('BRW-008', '23-2-02199', 'Alyssa', 'Valdez', 'CAS', 'University Athletic Council', '09258901234', 0);
 
--- Purchase Transactions
-INSERT IGNORE INTO purchase_transaction (purTransID, itemID, userID, purORNo, purQty, purDate) VALUES
-('PUR-001', 'ITM-001', 'USR-001', 'OR-998877', 5, '2023-01-10'),
-('PUR-002', 'ITM-002', 'USR-001', 'OR-112233', 10, '2023-01-15');
+INSERT INTO `item` (`itemID`, `itemDesc`, `itemCategory`, `itemTotalQty`, `itemAvailableQty`, `itemRate`, `is_archived`) VALUES
+('ITM-001', 'Projector EPSON EB-X49', 'Electronics', 5, 4, 150.00, 0),
+('ITM-002', 'Extension Cord Heavy Duty (10m)', 'Electronics', 10, 8, 20.00, 0),
+('ITM-003', 'HDMI to USB-C / VGA Display Adapter', 'Electronics', 6, 6, 15.00, 0),
+('ITM-004', 'Wireless Presentation Laser Pointer', 'Electronics', 4, 4, 25.00, 0),
+('ITM-005', 'Portable PA Sound System with Bluetooth', 'Audio & Visual', 3, 2, 250.00, 0),
+('ITM-006', 'Dual Wireless UHF Microphones', 'Audio & Visual', 4, 3, 50.00, 0),
+('ITM-007', 'Professional Rechargeable Megaphone', 'Audio & Visual', 4, 4, 35.00, 0),
+('ITM-008', 'Monoblock Chairs (Stackable White)', 'Furniture', 50, 40, 5.00, 0),
+('ITM-009', 'Foldable Seminar Table (6ft Heavy Duty)', 'Furniture', 8, 8, 50.00, 0),
+('ITM-010', 'Official Molten Basketball', 'Sports', 6, 4, 20.00, 0),
+('ITM-011', 'Official Mikasa Volleyball', 'Sports', 6, 6, 20.00, 0),
+('ITM-012', 'Pickleball Paddle & Ball Set', 'Sports', 8, 8, 25.00, 0),
+('ITM-013', 'Badminton Racket Pair with Shuttlecocks', 'Sports', 6, 6, 20.00, 0),
+('ITM-014', 'Red Carpet Ceremonial Runner (10m)', 'Event Materials', 2, 2, 100.00, 0),
+('ITM-015', 'Chrome Stanchion Posts with Velvet Rope', 'Event Materials', 8, 8, 40.00, 0),
+('ITM-016', 'Heavy Duty 2-Hole Desktop Paper Puncher', 'Office Supplies', 5, 5, 0.00, 0),
+('ITM-017', 'Heavy Duty Plier Stapler with Staples', 'Office Supplies', 6, 6, 0.00, 0),
+('ITM-018', 'Dry-Erase Whiteboard Marker Set (4 Colors)', 'Office Supplies', 15, 15, 0.00, 0);
 
+INSERT INTO `purchase_transaction` (`purTransID`, `itemID`, `userID`, `purORNo`, `purQty`, `purDate`) VALUES
+('PUR-001', 'ITM-001', 'USR-001', 'OR-2024-00101', 5, '2024-01-15'),
+('PUR-002', 'ITM-002', 'USR-001', 'OR-2024-00102', 10, '2024-01-15'),
+('PUR-003', 'ITM-003', 'USR-001', 'OR-2024-00103', 6, '2024-01-16'),
+('PUR-004', 'ITM-004', 'USR-001', 'OR-2024-00104', 4, '2024-01-18'),
+('PUR-005', 'ITM-005', 'USR-001', 'OR-2024-00201', 3, '2024-02-05'),
+('PUR-006', 'ITM-006', 'USR-001', 'OR-2024-00202', 4, '2024-02-05'),
+('PUR-007', 'ITM-007', 'USR-001', 'OR-2024-00203', 4, '2024-02-08'),
+('PUR-008', 'ITM-008', 'USR-001', 'OR-2024-00301', 50, '2024-03-01'),
+('PUR-009', 'ITM-009', 'USR-001', 'OR-2024-00302', 8, '2024-03-01'),
+('PUR-010', 'ITM-010', 'USR-001', 'OR-2024-00401', 6, '2024-04-10'),
+('PUR-011', 'ITM-011', 'USR-001', 'OR-2024-00402', 6, '2024-04-10'),
+('PUR-012', 'ITM-012', 'USR-001', 'OR-2024-00403', 8, '2024-04-12'),
+('PUR-013', 'ITM-013', 'USR-001', 'OR-2024-00404', 6, '2024-04-12'),
+('PUR-014', 'ITM-014', 'USR-001', 'OR-2024-00501', 2, '2024-05-02'),
+('PUR-015', 'ITM-015', 'USR-001', 'OR-2024-00502', 8, '2024-05-02'),
+('PUR-016', 'ITM-016', 'USR-001', 'OR-2024-00601', 5, '2024-06-10'),
+('PUR-017', 'ITM-017', 'USR-001', 'OR-2024-00602', 6, '2024-06-10'),
+('PUR-018', 'ITM-018', 'USR-001', 'OR-2024-00603', 15, '2024-06-12');
 
+INSERT INTO `borrow_transaction` (`brwTransID`, `itemID`, `userID`, `brwID`, `brwTransItemQty`, `itemRate`, `brwTransDate`, `brwTransBorrowOnDate`, `brwTransReturnByDate`, `brwTransPayStat`, `brwTransTotal`, `brwTransStatus`) VALUES
+('TXN-001', 'ITM-001', 'USR-002', 'BRW-001', 1, 150.00, CURDATE(), CURDATE(), DATE_ADD(CURDATE(), INTERVAL 2 DAY), 'Paid', 150.00, 'Released'),
+('TXN-002', 'ITM-002', 'USR-002', 'BRW-002', 2, 20.00, CURDATE(), CURDATE(), DATE_ADD(CURDATE(), INTERVAL 3 DAY), 'Paid', 40.00, 'Released'),
+('TXN-002', 'ITM-006', 'USR-002', 'BRW-002', 1, 50.00, CURDATE(), CURDATE(), DATE_ADD(CURDATE(), INTERVAL 3 DAY), 'Paid', 50.00, 'Released'),
+('TXN-003', 'ITM-005', 'USR-001', 'BRW-003', 1, 250.00, DATE_SUB(CURDATE(), INTERVAL 5 DAY), DATE_SUB(CURDATE(), INTERVAL 5 DAY), DATE_SUB(CURDATE(), INTERVAL 2 DAY), 'Paid', 250.00, 'Released'),
+('TXN-004', 'ITM-008', 'USR-002', 'BRW-004', 10, 5.00, CURDATE(), CURDATE(), DATE_ADD(CURDATE(), INTERVAL 1 DAY), 'Paid', 50.00, 'Released'),
+('TXN-005', 'ITM-010', 'USR-002', 'BRW-008', 2, 20.00, CURDATE(), CURDATE(), DATE_ADD(CURDATE(), INTERVAL 1 DAY), 'Paid', 40.00, 'Released'),
+('TXN-006', 'ITM-009', 'USR-002', 'BRW-005', 2, 50.00, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 4 DAY), DATE_ADD(CURDATE(), INTERVAL 6 DAY), 'Paid', 100.00, 'Reserved'),
+('TXN-007', 'ITM-001', 'USR-001', 'BRW-007', 1, 150.00, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 5 DAY), DATE_ADD(CURDATE(), INTERVAL 7 DAY), 'Paid', 150.00, 'Reserved'),
+('TXN-008', 'ITM-007', 'USR-001', 'BRW-006', 1, 35.00, DATE_SUB(CURDATE(), INTERVAL 3 DAY), DATE_ADD(CURDATE(), INTERVAL 2 DAY), DATE_ADD(CURDATE(), INTERVAL 4 DAY), 'Free', 0.00, 'Cancelled'),
+('TXN-009', 'ITM-004', 'USR-002', 'BRW-001', 1, 25.00, DATE_SUB(CURDATE(), INTERVAL 10 DAY), DATE_SUB(CURDATE(), INTERVAL 10 DAY), DATE_SUB(CURDATE(), INTERVAL 8 DAY), 'Paid', 25.00, 'Returned'),
+('TXN-010', 'ITM-012', 'USR-002', 'BRW-008', 2, 25.00, DATE_SUB(CURDATE(), INTERVAL 7 DAY), DATE_SUB(CURDATE(), INTERVAL 7 DAY), DATE_SUB(CURDATE(), INTERVAL 5 DAY), 'Paid', 50.00, 'Returned');
+
+INSERT INTO `return_transaction` (`retTransID`, `brwTransID`, `itemID`, `userID`, `brwID`, `brwTransQty`, `retReturnedOnDate`) VALUES
+('RET-001', 'TXN-009', 'ITM-004', 'USR-002', 'BRW-001', 1, DATE_SUB(CURDATE(), INTERVAL 8 DAY)),
+('RET-002', 'TXN-010', 'ITM-012', 'USR-002', 'BRW-008', 2, DATE_SUB(CURDATE(), INTERVAL 5 DAY));
+
+SET FOREIGN_KEY_CHECKS = 1;

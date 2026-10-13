@@ -61,18 +61,6 @@ unset($_SESSION['alert']);
               <input type="password" id="loginPassword" name="password" class="form-control" placeholder="••••••••" required>
             </div>
 
-            <div class="login-quick-signin">
-              <span class="login-quick-signin-label">Quick Sign-In (Testing):</span>
-              <div class="login-quick-signin-buttons">
-                <button type="button" class="btn btn-outline-primary btn-sm login-quick-btn" onclick="document.getElementById('loginEmail').value='admin@csc.edu.ph'; document.getElementById('loginPassword').value='admin123';">
-                  Council
-                </button>
-                <button type="button" class="btn btn-outline-secondary btn-sm login-quick-btn" onclick="document.getElementById('loginEmail').value='staff@csc.edu.ph'; document.getElementById('loginPassword').value='staff123';">
-                  Committee
-                </button>
-              </div>
-            </div>
-
             <button type="submit" class="btn btn-primary-action login-submit-btn">Sign In</button>
           </form>
         </div>
